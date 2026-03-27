@@ -1,5 +1,6 @@
 .env
 AI_CONTEXT.md
+seo.md
 node_modules/
 dist/
 coverage/

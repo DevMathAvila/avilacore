@@ -10,8 +10,8 @@ const compactViewport = window.matchMedia("(max-width: 768px)");
 
 const routeMetadata = {
     home: {
-        title: "Avila Core - Solucoes Tecnologicas",
-        description: "Avila Core | Desenvolvimento, infraestrutura de TI, suporte tecnico, criacao de sites, landing pages, paginas de pagamento e solucoes tecnologicas para empresas.",
+        title: "Ávila Core - Tecnologia de ponta",
+        description: "Ávila Core - Desenvolvimento & Infra",
         canonical: "https://www.avilacore.com.br/",
         ogType: "website"
     },
