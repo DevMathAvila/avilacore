@@ -1,0 +1,20 @@
+{
+  "name": "avilacore",
+  "version": "1.0.0",
+  "description": "Ávila Core - Desenvolvimento & Infra",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "lint": "echo 'No linter configured'"
+  },
+  "keywords": [
+    "avilacore",
+    "infrastructure",
+    "development"
+  ],
+  "author": "Matheus Avila",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}
