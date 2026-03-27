@@ -1,0 +1,5 @@
+.env
+AI_CONTEXT.md
+node_modules/
+dist/
+coverage/
