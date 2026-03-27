@@ -1,9 +1,12 @@
 const contentShell = document.getElementById("content-shell");
 const themeBtn = document.getElementById("themeBtn");
+const menuBtn = document.getElementById("menuBtn");
+const primaryNav = document.getElementById("primaryNav");
 const html = document.documentElement;
 const navLinks = document.querySelectorAll("[data-route]");
 const validRoutes = new Set(["home", "infraestrutura", "sobre", "contato"]);
 const pageRoot = contentShell || document;
+const compactViewport = window.matchMedia("(max-width: 768px)");
 
 const routeMetadata = {
     home: {
@@ -33,6 +36,69 @@ const routeMetadata = {
 };
 
 let revealObserver;
+const networkGlobeControllers = new WeakMap();
+
+if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+}
+
+function scrollToPageStart() {
+    window.scrollTo(0, 0);
+}
+
+function closeMobileMenu() {
+    if (!menuBtn || !primaryNav) {
+        return;
+    }
+
+    document.body.classList.remove("menu-open");
+    menuBtn.classList.remove("is-open");
+    menuBtn.setAttribute("aria-expanded", "false");
+    primaryNav.classList.remove("is-open");
+}
+
+function initializeMobileMenu() {
+    if (!menuBtn || !primaryNav) {
+        return;
+    }
+
+    menuBtn.addEventListener("click", () => {
+        const willOpen = !primaryNav.classList.contains("is-open");
+        document.body.classList.toggle("menu-open", willOpen);
+        primaryNav.classList.toggle("is-open", willOpen);
+        menuBtn.classList.toggle("is-open", willOpen);
+        menuBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    });
+
+    primaryNav.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+            closeMobileMenu();
+        });
+    });
+
+    compactViewport.addEventListener("change", (event) => {
+        if (!event.matches) {
+            closeMobileMenu();
+        }
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!primaryNav.classList.contains("is-open")) {
+            return;
+        }
+
+        const clickedInsideMenu = primaryNav.contains(event.target) || menuBtn.contains(event.target);
+        if (!clickedInsideMenu) {
+            closeMobileMenu();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closeMobileMenu();
+        }
+    });
+}
 
 function updateThemeIcon(theme) {
     if (!themeBtn) {
@@ -118,6 +184,310 @@ function initializePageInteractions() {
             window.location.hash = nextPage;
         });
     });
+
+    initializeNetworkGlobes();
+}
+
+function createSeededPoints(isCompact) {
+    const seedPoints = [
+        { theta: 0.2, phi: 1.0, accent: true },
+        { theta: 0.9, phi: 1.35, accent: false },
+        { theta: 1.45, phi: 1.85, accent: false },
+        { theta: 2.1, phi: 1.1, accent: true },
+        { theta: 2.7, phi: 1.6, accent: false },
+        { theta: 3.05, phi: 2.05, accent: false },
+        { theta: 3.7, phi: 1.2, accent: true },
+        { theta: 4.2, phi: 1.72, accent: false },
+        { theta: 4.85, phi: 1.28, accent: false },
+        { theta: 5.45, phi: 1.9, accent: true },
+        { theta: 5.95, phi: 1.42, accent: false }
+    ];
+
+    return (isCompact ? seedPoints.slice(0, 8) : seedPoints).map((point, index) => ({
+        ...point,
+        pulseOffset: index * 0.45
+    }));
+}
+
+function initializeNetworkGlobes() {
+    pageRoot.querySelectorAll("[data-network-globe]").forEach((element) => {
+        if (networkGlobeControllers.has(element)) {
+            return;
+        }
+
+        const canvas = element.querySelector("canvas");
+
+        if (!canvas) {
+            return;
+        }
+
+        const context = canvas.getContext("2d");
+
+        if (!context) {
+            return;
+        }
+
+        const state = {
+            canvas,
+            context,
+            points: createSeededPoints(compactViewport.matches),
+            rotationY: 0.5,
+            rotationX: -0.28,
+            velocityY: compactViewport.matches ? 0.0018 : 0.0026,
+            velocityX: compactViewport.matches ? 0.00055 : 0.0008,
+            dragging: false,
+            lastX: 0,
+            lastY: 0,
+            animationFrame: 0,
+            width: 0,
+            height: 0,
+            pixelRatio: 1,
+            running: false
+        };
+
+        const resize = () => {
+            const rect = element.getBoundingClientRect();
+            const pixelRatio = Math.min(window.devicePixelRatio || 1, compactViewport.matches ? 1.5 : 2);
+
+            state.width = rect.width;
+            state.height = rect.height || 320;
+            state.pixelRatio = pixelRatio;
+
+            canvas.width = state.width * pixelRatio;
+            canvas.height = state.height * pixelRatio;
+            context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        };
+
+        const projectPoint = (point) => {
+            const radius = Math.min(state.width, state.height) * 0.28;
+            const x = Math.sin(point.phi) * Math.cos(point.theta);
+            const y = Math.cos(point.phi);
+            const z = Math.sin(point.phi) * Math.sin(point.theta);
+
+            const cosY = Math.cos(state.rotationY);
+            const sinY = Math.sin(state.rotationY);
+            const cosX = Math.cos(state.rotationX);
+            const sinX = Math.sin(state.rotationX);
+
+            const rotatedX = x * cosY - z * sinY;
+            const rotatedZ = x * sinY + z * cosY;
+            const rotatedY = y * cosX - rotatedZ * sinX;
+            const depthZ = y * sinX + rotatedZ * cosX;
+
+            const perspective = 0.72 + (depthZ + 1) * 0.24;
+
+            return {
+                x: state.width / 2 + rotatedX * radius * perspective,
+                y: state.height / 2 + rotatedY * radius * perspective,
+                depth: depthZ,
+                size: (point.accent ? 3.4 : 2.2) * perspective,
+                accent: point.accent,
+                pulseOffset: point.pulseOffset
+            };
+        };
+
+        const draw = (time) => {
+            context.clearRect(0, 0, state.width, state.height);
+
+            const points2d = state.points.map(projectPoint).sort((a, b) => a.depth - b.depth);
+            const maxDistance = Math.min(state.width, state.height) * (compactViewport.matches ? 0.24 : 0.28);
+            const isLightTheme = html.getAttribute("data-theme") === "light";
+            const lineColor = isLightTheme ? "37, 99, 235" : "0, 255, 157";
+            const lineAlpha = isLightTheme ? 0.46 : 0.26;
+            const glowCore = isLightTheme
+                ? { accent: "rgba(29, 78, 216, 0.98)", base: "rgba(59, 130, 246, 0.95)" }
+                : { accent: "rgba(100, 255, 218, 0.95)", base: "rgba(0, 255, 157, 0.82)" };
+            const glowMid = isLightTheme ? "rgba(59, 130, 246, 0.42)" : "rgba(0, 255, 157, 0.24)";
+            const pointFill = isLightTheme
+                ? { accent: "rgba(30, 64, 175, 1)", base: "rgba(37, 99, 235, 0.98)" }
+                : { accent: "rgba(194, 255, 237, 0.98)", base: "rgba(100, 255, 218, 0.9)" };
+
+            context.save();
+            context.globalCompositeOperation = isLightTheme ? "source-over" : "screen";
+
+            for (let i = 0; i < points2d.length; i += 1) {
+                for (let j = i + 1; j < points2d.length; j += 1) {
+                    const dx = points2d[i].x - points2d[j].x;
+                    const dy = points2d[i].y - points2d[j].y;
+                    const distance = Math.hypot(dx, dy);
+
+                    if (distance > maxDistance) {
+                        continue;
+                    }
+
+                    const alpha = (1 - distance / maxDistance) * (compactViewport.matches ? lineAlpha * 0.78 : lineAlpha);
+
+                    context.strokeStyle = `rgba(${lineColor}, ${alpha})`;
+                    context.lineWidth = isLightTheme ? 1.15 : 1;
+                    context.beginPath();
+                    context.moveTo(points2d[i].x, points2d[i].y);
+                    context.lineTo(points2d[j].x, points2d[j].y);
+                    context.stroke();
+                }
+            }
+
+            points2d.forEach((point) => {
+                const pulse = 0.7 + Math.sin(time * 0.0014 + point.pulseOffset) * 0.3;
+                const glowSize = point.size * (point.accent ? 4.6 : 3.2) * pulse;
+                const gradient = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, glowSize);
+
+                gradient.addColorStop(0, point.accent ? glowCore.accent : glowCore.base);
+                gradient.addColorStop(0.45, glowMid);
+                gradient.addColorStop(1, isLightTheme ? "rgba(59, 130, 246, 0)" : "rgba(0, 255, 157, 0)");
+
+                context.fillStyle = gradient;
+                context.beginPath();
+                context.arc(point.x, point.y, glowSize, 0, Math.PI * 2);
+                context.fill();
+
+                context.fillStyle = point.accent ? pointFill.accent : pointFill.base;
+                context.beginPath();
+                context.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+                context.fill();
+            });
+
+            context.restore();
+        };
+
+        const animate = (time) => {
+            if (!state.running) {
+                return;
+            }
+
+            if (!state.dragging) {
+                state.rotationY += state.velocityY;
+                state.rotationX += state.velocityX;
+            }
+
+            draw(time);
+            state.animationFrame = window.requestAnimationFrame(animate);
+        };
+
+        const start = () => {
+            if (state.running) {
+                return;
+            }
+
+            state.running = true;
+            state.animationFrame = window.requestAnimationFrame(animate);
+        };
+
+        const stop = () => {
+            state.running = false;
+
+            if (state.animationFrame) {
+                window.cancelAnimationFrame(state.animationFrame);
+                state.animationFrame = 0;
+            }
+        };
+
+        const pointerPosition = (event) => {
+            const rect = canvas.getBoundingClientRect();
+
+            return {
+                x: event.clientX - rect.left,
+                y: event.clientY - rect.top
+            };
+        };
+
+        const onPointerDown = (event) => {
+            const position = pointerPosition(event);
+            state.dragging = true;
+            state.lastX = position.x;
+            state.lastY = position.y;
+            canvas.setPointerCapture?.(event.pointerId);
+        };
+
+        const onPointerMove = (event) => {
+            if (!state.dragging) {
+                return;
+            }
+
+            const position = pointerPosition(event);
+            const deltaX = position.x - state.lastX;
+            const deltaY = position.y - state.lastY;
+
+            state.rotationY += deltaX * 0.008;
+            state.rotationX += deltaY * 0.006;
+            state.velocityY = deltaX * (compactViewport.matches ? 0.00016 : 0.00022);
+            state.velocityX = deltaY * (compactViewport.matches ? 0.00012 : 0.00018);
+            state.lastX = position.x;
+            state.lastY = position.y;
+        };
+
+        const onPointerUp = (event) => {
+            if (!state.dragging) {
+                return;
+            }
+
+            state.dragging = false;
+            canvas.releasePointerCapture?.(event.pointerId);
+        };
+
+        const onClick = (event) => {
+            const position = pointerPosition(event);
+            const dx = (position.x - state.width / 2) / (Math.min(state.width, state.height) * 0.28);
+            const dy = (position.y - state.height / 2) / (Math.min(state.width, state.height) * 0.28);
+            const distance = Math.hypot(dx, dy);
+
+            if (distance > 1) {
+                return;
+            }
+
+            const phi = Math.acos(Math.max(-1, Math.min(1, -dy)));
+            const theta = Math.atan2(dx, Math.sqrt(Math.max(0.0001, 1 - dx * dx - dy * dy)));
+
+            state.points.push({
+                theta: theta + state.rotationY + Math.PI / 2,
+                phi,
+                accent: true,
+                pulseOffset: state.points.length * 0.37
+            });
+
+            const maxPoints = compactViewport.matches ? 12 : 18;
+
+            if (state.points.length > maxPoints) {
+                state.points.splice(0, state.points.length - maxPoints);
+            }
+        };
+
+        const visibilityObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    start();
+                } else {
+                    stop();
+                }
+            });
+        }, { threshold: 0.12 });
+
+        resize();
+
+        canvas.addEventListener("pointerdown", onPointerDown);
+        canvas.addEventListener("pointermove", onPointerMove);
+        canvas.addEventListener("pointerup", onPointerUp);
+        canvas.addEventListener("pointerleave", onPointerUp);
+        canvas.addEventListener("click", onClick);
+        window.addEventListener("resize", resize);
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                stop();
+                return;
+            }
+
+            const rect = element.getBoundingClientRect();
+            const inViewport = rect.bottom > 0 && rect.top < window.innerHeight;
+
+            if (inViewport) {
+                start();
+            }
+        });
+        visibilityObserver.observe(element);
+
+        networkGlobeControllers.set(element, {
+            resize
+        });
+    });
 }
 
 function updateRouteMetadata(pageName) {
@@ -199,6 +569,7 @@ async function loadPage(pageName) {
 
     try {
         const normalizedPage = normalizeRoute(pageName);
+        scrollToPageStart();
         const response = await fetch(`./pages/${normalizedPage}.html`, { cache: "no-store" });
 
         if (!response.ok) {
@@ -211,7 +582,7 @@ async function loadPage(pageName) {
         updateRouteMetadata(normalizedPage);
         initializeReveals();
         initializePageInteractions();
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        scrollToPageStart();
     } catch (error) {
         console.error(error);
         setActiveNavigation("");
@@ -247,7 +618,9 @@ document.addEventListener("click", (event) => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
+    scrollToPageStart();
     initializeTheme();
+    initializeMobileMenu();
     initializeReveals();
     initializePageInteractions();
 
@@ -259,3 +632,7 @@ window.addEventListener("DOMContentLoaded", () => {
 if (contentShell) {
     window.addEventListener("hashchange", resolveRoute);
 }
+
+window.addEventListener("pageshow", () => {
+    scrollToPageStart();
+});

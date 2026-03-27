@@ -64,16 +64,23 @@
                 ÁVILA<span>CORE</span>
             </a>
 
-            <ul class="nav-links">
+            <ul class="nav-links" id="primaryNav">
                 <li><a href="#home" data-route="home" class="active">Início</a></li>
                 <li><a href="#infraestrutura" data-route="infraestrutura">Serviços</a></li>
                 <li><a href="#sobre" data-route="sobre">Sobre</a></li>
                 <li><a href="#contato" data-route="contato">Contato</a></li>
             </ul>
 
-            <button class="theme-toggle" id="themeBtn" type="button" aria-label="Alternar tema">
-                <i class="fas fa-moon" aria-hidden="true"></i>
-            </button>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeBtn" type="button" aria-label="Alternar tema">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <button class="menu-toggle" id="menuBtn" type="button" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="primaryNav">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </nav>
     </header>
 
