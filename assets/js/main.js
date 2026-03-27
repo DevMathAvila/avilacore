@@ -171,9 +171,71 @@ function initializePageInteractions() {
     const contactForm = pageRoot.querySelector("[data-contact-form]");
 
     if (contactForm) {
-        contactForm.addEventListener("submit", (event) => {
+        const feedback = contactForm.querySelector("[data-contact-feedback]");
+        const submitButton = contactForm.querySelector('button[type="submit"]');
+        const defaultLabel = submitButton?.dataset.submitLabel || submitButton?.textContent || "Enviar";
+
+        contactForm.addEventListener("submit", async (event) => {
             event.preventDefault();
-            window.alert("Mensagem enviada com sucesso!");
+
+            const formData = new FormData(contactForm);
+            const payload = {
+                name: String(formData.get("name") || "").trim(),
+                email: String(formData.get("email") || "").trim(),
+                message: String(formData.get("message") || "").trim(),
+                company: String(formData.get("company") || "").trim()
+            };
+
+            if (!payload.name || !payload.email || !payload.message) {
+                if (feedback) {
+                    feedback.textContent = "Preencha nome, e-mail e mensagem para continuar.";
+                    feedback.dataset.status = "error";
+                }
+                return;
+            }
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = "Enviando...";
+            }
+
+            if (feedback) {
+                feedback.textContent = "Enviando sua mensagem...";
+                feedback.dataset.status = "pending";
+            }
+
+            try {
+                const response = await fetch("/api/contact", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(result?.error || "Nao foi possivel enviar a mensagem agora.");
+                }
+
+                contactForm.reset();
+
+                if (feedback) {
+                    feedback.textContent = "Mensagem enviada com sucesso. Vou te responder o quanto antes.";
+                    feedback.dataset.status = "success";
+                }
+            } catch (error) {
+                if (feedback) {
+                    feedback.textContent = error.message || "Nao foi possivel enviar a mensagem agora.";
+                    feedback.dataset.status = "error";
+                }
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = defaultLabel;
+                }
+            }
         });
     }
 

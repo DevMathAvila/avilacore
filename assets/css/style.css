@@ -2089,6 +2089,38 @@ nav {
     box-shadow: 0 0 0 3px var(--primary-muted);
 }
 
+.contact-honeypot {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 1px;
+    height: 1px;
+}
+
+.contact-feedback {
+    min-height: 1.4rem;
+    margin-top: 1rem;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+}
+
+.contact-feedback[data-status="success"] {
+    color: var(--primary);
+}
+
+.contact-feedback[data-status="error"] {
+    color: #ff6b6b;
+}
+
+.contact-feedback[data-status="pending"] {
+    color: var(--accent);
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
 .social-links {
     margin-top: 2rem;
     display: flex;

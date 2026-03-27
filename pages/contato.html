@@ -3,23 +3,25 @@
         <h2 class="section-title">Vamos <span>Conectar</span></h2>
 
         <div class="contact-container reveal">
-            <form data-contact-form>
+            <form data-contact-form novalidate>
                 <div class="form-group">
                     <label for="nome">Nome</label>
-                    <input id="nome" type="text" placeholder="Seu nome">
+                    <input id="nome" name="name" type="text" placeholder="Seu nome" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input id="email" type="email" placeholder="seu@email.com">
+                    <input id="email" name="email" type="email" placeholder="seu@email.com" required>
                 </div>
 
                 <div class="form-group">
                     <label for="mensagem">Mensagem</label>
-                    <textarea id="mensagem" rows="5" placeholder="Como posso ajudar?"></textarea>
+                    <textarea id="mensagem" name="message" rows="5" placeholder="Como posso ajudar?" required></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">Enviar Mensagem</button>
+                <input type="text" name="company" class="contact-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <button type="submit" class="btn btn-primary btn-block" data-submit-label="Enviar Mensagem">Enviar Mensagem</button>
+                <p class="contact-feedback" data-contact-feedback aria-live="polite"></p>
             </form>
 
             <div class="contact-direct-links">
