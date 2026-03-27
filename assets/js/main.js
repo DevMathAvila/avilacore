@@ -177,14 +177,6 @@ function initializePageInteractions() {
         });
     }
 
-    pageRoot.querySelectorAll("[data-route-target]").forEach((trigger) => {
-        trigger.addEventListener("click", (event) => {
-            event.preventDefault();
-            const nextPage = trigger.dataset.routeTarget;
-            window.location.hash = nextPage;
-        });
-    });
-
     initializeNetworkGlobes();
 }
 
@@ -551,24 +543,47 @@ function renderError(pageName) {
             <div class="container">
                 <h1 class="section-title">Página <span>indisponível</span></h1>
                 <p>Não foi possível carregar <strong>${pageName}</strong>. Verifique o arquivo em <code>/pages/${pageName}.html</code>.</p>
-                <a href="#home" class="btn btn-primary" data-route-target="home">Voltar ao início</a>
+                <a href="/" class="btn btn-primary" data-route="home">Voltar ao início</a>
             </div>
         </section>
     `;
     initializePageInteractions();
 }
 
-function normalizeRoute(pageName) {
-    return validRoutes.has(pageName) ? pageName : "home";
+function normalizeRoute(routeName) {
+    return validRoutes.has(routeName) ? routeName : "home";
 }
 
-async function loadPage(pageName) {
+function routeToPath(routeName) {
+    return routeName === "home" ? "/" : `/${routeName}`;
+}
+
+function pathToRoute(pathname) {
+    const trimmedPath = pathname.replace(/\/+$/, "") || "/";
+    const routeName = trimmedPath === "/" ? "home" : trimmedPath.replace(/^\//, "");
+    return normalizeRoute(routeName);
+}
+
+function navigateToRoute(routeName, shouldPushState = true) {
+    const normalizedRoute = normalizeRoute(routeName);
+    const nextPath = routeToPath(normalizedRoute);
+
+    if (shouldPushState && window.location.pathname !== nextPath) {
+        window.history.pushState({ route: normalizedRoute }, "", nextPath);
+    }
+
+    loadPage(normalizedRoute);
+}
+
+async function loadPage(pathOrRoute) {
     if (!contentShell) {
         return;
     }
 
     try {
-        const normalizedPage = normalizeRoute(pageName);
+        const normalizedPage = validRoutes.has(pathOrRoute)
+            ? normalizeRoute(pathOrRoute)
+            : pathToRoute(pathOrRoute);
         scrollToPageStart();
         const response = await fetch(`./pages/${normalizedPage}.html`, { cache: "no-store" });
 
@@ -586,7 +601,7 @@ async function loadPage(pageName) {
     } catch (error) {
         console.error(error);
         setActiveNavigation("");
-        renderError(pageName);
+        renderError(pathOrRoute);
     }
 }
 
@@ -595,26 +610,48 @@ function resolveRoute() {
         return;
     }
 
-    const pageName = normalizeRoute(window.location.hash.replace("#", "") || "home");
-    loadPage(pageName);
+    loadPage(window.location.pathname);
 }
 
 document.addEventListener("click", (event) => {
-    const routeLink = event.target.closest("[data-route]");
+    const routeLink = event.target.closest("a");
 
     if (!routeLink) {
         return;
     }
 
-    event.preventDefault();
-    const nextPage = normalizeRoute(routeLink.dataset.route);
+    if (routeLink.target === "_blank" || routeLink.hasAttribute("download")) {
+        return;
+    }
 
-    if (window.location.hash.replace("#", "") === nextPage) {
+    const href = routeLink.getAttribute("href");
+
+    if (!href || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("https://") || href.startsWith("http://") && !href.startsWith(window.location.origin)) {
+        return;
+    }
+
+    const linkUrl = new URL(routeLink.href, window.location.origin);
+
+    if (linkUrl.origin !== window.location.origin) {
+        return;
+    }
+
+    const nextPage = routeLink.dataset.route
+        ? normalizeRoute(routeLink.dataset.route)
+        : pathToRoute(linkUrl.pathname);
+
+    if (!validRoutes.has(nextPage)) {
+        return;
+    }
+
+    event.preventDefault();
+
+    if (pathToRoute(window.location.pathname) === nextPage) {
         loadPage(nextPage);
         return;
     }
 
-    window.location.hash = nextPage;
+    navigateToRoute(nextPage, true);
 });
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -630,7 +667,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 if (contentShell) {
-    window.addEventListener("hashchange", resolveRoute);
+    window.addEventListener("popstate", resolveRoute);
 }
 
 window.addEventListener("pageshow", () => {
