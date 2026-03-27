@@ -27,6 +27,34 @@ async function readJsonBody(req) {
     return raw ? JSON.parse(raw) : {};
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const NAME_REGEX = /^[\p{L}]+(?:[ '-][\p{L}]+)*$/u;
+const MESSAGE_REGEX = /^[\p{L}\p{N}\s.,!?;:()'"\/-]+$/u;
+
+function validatePayload({ name, email, message }) {
+    if (!name || !email || !message) {
+        return "Nome, e-mail e mensagem sao obrigatorios.";
+    }
+
+    if (name.length < 2 || name.length > 80 || !NAME_REGEX.test(name)) {
+        return "O nome aceita apenas letras, espacos, apostrofo e hifen.";
+    }
+
+    if (email.length > 120 || !EMAIL_REGEX.test(email)) {
+        return "Digite um e-mail valido.";
+    }
+
+    if (message.length < 10 || message.length > 1200) {
+        return "A mensagem precisa ter entre 10 e 1200 caracteres.";
+    }
+
+    if (!MESSAGE_REGEX.test(message)) {
+        return "A mensagem aceita apenas letras, numeros, espacos e pontuacoes comuns.";
+    }
+
+    return "";
+}
+
 module.exports = async (req, res) => {
     if (req.method !== "POST") {
         res.setHeader("Allow", "POST");
@@ -52,8 +80,10 @@ module.exports = async (req, res) => {
             return sendJson(res, 200, { ok: true });
         }
 
-        if (!name || !email || !message) {
-            return sendJson(res, 400, { error: "Name, email and message are required." });
+        const validationError = validatePayload({ name, email, message });
+
+        if (validationError) {
+            return sendJson(res, 400, { error: validationError });
         }
 
         const safeName = escapeHtml(name);

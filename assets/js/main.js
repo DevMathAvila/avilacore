@@ -167,6 +167,34 @@ function initializeReveals() {
     });
 }
 
+const CONTACT_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const CONTACT_NAME_REGEX = /^[\p{L}]+(?:[ '-][\p{L}]+)*$/u;
+const CONTACT_MESSAGE_REGEX = /^[\p{L}\p{N}\s.,!?;:()'"\/-]+$/u;
+
+function validateContactPayload(payload) {
+    if (!payload.name || !payload.email || !payload.message) {
+        return "Preencha nome, e-mail e mensagem para continuar.";
+    }
+
+    if (!CONTACT_NAME_REGEX.test(payload.name)) {
+        return "No nome, use apenas letras. Espacos, apostrofo e hifen sao permitidos.";
+    }
+
+    if (!CONTACT_EMAIL_REGEX.test(payload.email)) {
+        return "Digite um e-mail valido para continuar.";
+    }
+
+    if (payload.message.length < 10) {
+        return "A mensagem precisa ter pelo menos 10 caracteres.";
+    }
+
+    if (!CONTACT_MESSAGE_REGEX.test(payload.message)) {
+        return "Na mensagem, use apenas letras, numeros e pontuacoes comuns.";
+    }
+
+    return "";
+}
+
 function initializePageInteractions() {
     const contactForm = pageRoot.querySelector("[data-contact-form]");
 
@@ -186,9 +214,11 @@ function initializePageInteractions() {
                 company: String(formData.get("company") || "").trim()
             };
 
-            if (!payload.name || !payload.email || !payload.message) {
+            const validationMessage = validateContactPayload(payload);
+
+            if (validationMessage) {
                 if (feedback) {
-                    feedback.textContent = "Preencha nome, e-mail e mensagem para continuar.";
+                    feedback.textContent = validationMessage;
                     feedback.dataset.status = "error";
                 }
                 return;
