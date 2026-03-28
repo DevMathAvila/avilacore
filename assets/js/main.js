@@ -10,25 +10,25 @@ const compactViewport = window.matchMedia("(max-width: 768px)");
 
 const routeMetadata = {
     home: {
-        title: "Ávila Core - Tecnologia de ponta",
+        title: "Ávila Core - Desenvolvimento & Infra",
         description: "Ávila Core - Desenvolvimento & Infra",
         canonical: "https://www.avilacore.com.br/",
         ogType: "website"
     },
     infraestrutura: {
-        title: "Infraestrutura, Desenvolvimento e Suporte | Avila Core",
+        title: "Infraestrutura, Desenvolvimento e Suporte | Ávila Core - Desenvolvimento & Infra",
         description: "Infraestrutura de TI, desenvolvimento continuo e suporte tecnico N1, N2 e N3 para empresas com foco em estabilidade, seguranca e continuidade operacional.",
         canonical: "https://www.avilacore.com.br/infraestrutura/",
         ogType: "article"
     },
     sobre: {
-        title: "Sobre Matheus Avila e Avila Core",
+        title: "Sobre Matheus Avila | Ávila Core - Desenvolvimento & Infra",
         description: "Conheca a proposta da Avila Core e a visao tecnica por tras de infraestrutura, desenvolvimento e sustentacao para empresas.",
         canonical: "https://www.avilacore.com.br/sobre/",
         ogType: "profile"
     },
     contato: {
-        title: "Contato | Avila Core",
+        title: "Contato | Ávila Core - Desenvolvimento & Infra",
         description: "Entre em contato com a Avila Core para projetos de infraestrutura, desenvolvimento web, automacoes e suporte tecnico continuo para empresas.",
         canonical: "https://www.avilacore.com.br/contato/",
         ogType: "website"
