@@ -1,6 +1,6 @@
 # WhatsApp Float Button
 
-Este arquivo documenta a implementacao e a correcao do botao flutuante de contato via WhatsApp.
+Este arquivo documenta a implementacao, as correcoes e os comportamentos atuais do botao flutuante de contato via WhatsApp.
 
 ## O que foi feito
 
@@ -11,6 +11,11 @@ Este arquivo documenta a implementacao e a correcao do botao flutuante de contat
 - O botao abre em nova aba com `target="_blank"` e `rel="noreferrer"`
 - O botao recebeu `aria-label` para acessibilidade
 - O CSS foi corrigido para garantir que o botao fique fixo no viewport, e nao no fluxo da pagina
+- Foi adicionado um balao de hover no desktop com o texto `Fale comigo!`
+- Foi adicionada animacao de pulso no mobile
+- Foi adicionada rotacao automatica de frases no mobile via `assets/js/main.js`
+- A logica das frases do mobile foi reescrita para garantir que elas aparecam de fato depois que o botao existe no DOM
+- A abordagem das frases do mobile foi alterada novamente: agora a mensagem nao fica dentro do botao, ela e criada direto no `body` e posicionada via JavaScript
 
 ## Problema corrigido
 
@@ -28,7 +33,36 @@ Para corrigir isso:
 
 - HTML: `index.html`
 - CSS: `assets/css/style.css`
-- JavaScript: nenhum
+- JavaScript: `assets/js/main.js`
+
+## O que existe hoje no botao
+
+### Estrutura base
+
+- Link flutuante com classe `.whatsapp-float`
+- SVG inline do WhatsApp
+- Posicionamento fixo no canto inferior direito
+- Abertura em nova aba
+
+### Desktop
+
+- Hover com escala leve no botao
+- Balao de mensagem saindo para a esquerda
+- Texto atual do balao: `Fale comigo!`
+- Balao implementado apenas com CSS usando `::before` e `::after`
+
+### Mobile
+
+- Animacao de pulso suave em loop
+- Frases rotativas aparecendo ao lado esquerdo do botao
+- Frases atuais:
+  - `Me chame!`
+  - `Vamos conversar?`
+  - `Faça um orçamento`
+- As frases sao inseridas e controladas por JS
+- O elemento da frase agora e inserido no `body`, nao dentro de `.whatsapp-float`
+- A logica so ativa em largura `<= 768px`
+- A inicializacao acontece uma unica vez
 
 ## Regra final de CSS aplicada
 
@@ -77,6 +111,64 @@ Para corrigir isso:
 }
 ```
 
+## Comportamento adicional inserido depois
+
+### Balao no hover do desktop
+
+- Feito com pseudo-elementos do `.whatsapp-float`
+- Nao usa JavaScript
+- Fica oculto por padrao
+- Aparece no `hover` e no `focus-visible`
+- Usa:
+  - `var(--surface)` no fundo
+  - `var(--border)` na borda
+  - `var(--text-main)` no texto
+
+### Pulso no mobile
+
+- Feito com `@keyframes whatsappFloatPulse`
+- Loop infinito
+- Escala sutil para chamar atencao sem exagero
+
+### Frases rotativas no mobile
+
+- Elemento criado no DOM como filho de `.whatsapp-float`
+- Classe usada: `.whatsapp-float-message`
+- Controle feito em `assets/js/main.js`
+- Rotacao feita por `setTimeout`
+- A frase recebe a classe `.visible` para aparecer
+- A primeira exibicao comeca alguns segundos depois do carregamento em mobile
+- Ao sair do breakpoint mobile, o timer ativo e limpo
+- Quando volta para mobile, a rotacao reinicia
+- A implementacao busca o botao com `document.querySelector('.whatsapp-float')` antes de continuar
+- A mensagem e posicionada por `getBoundingClientRect()` com base na posicao real do botao na tela
+
+## Correcao mais recente
+
+Problema encontrado:
+
+- o JavaScript rodava, mas a frase continuava sem aparecer no mobile
+
+Nova abordagem aplicada:
+
+- a mensagem deixou de ser filha do botao
+- agora o elemento `.whatsapp-float-message` e criado como filho direto do `body`
+- a posicao da mensagem e recalculada por JS com base na posicao real do botao
+- isso evita corte visual por contexto do pai, overflow ou empilhamento local
+
+O que mudou no JS:
+
+- criada funcao para montar o elemento no `body`
+- criada funcao para posicionar a mensagem com `getBoundingClientRect()`
+- a exibicao continua por `setTimeout`
+- o resize limpa o timer e agenda novamente
+
+O que mudou no CSS:
+
+- `.whatsapp-float-message` passou de `position: absolute` para `position: fixed`
+- o elemento recebeu `z-index: 9998`
+- o estilo continua com fade e slide usando a classe `.visible`
+
 ## Comportamento visual esperado
 
 - Posicao fixa no canto inferior direito da tela
@@ -98,5 +190,19 @@ Para corrigir isso:
 - Se o numero mudar, atualizar o `href` em `index.html`
 - Se a identidade visual mudar, ajustar somente em `assets/css/style.css`
 - Nao criar CSS separado para esse botao
-- Nao adicionar JS para comportamento basico
+- O comportamento basico continua sem JS
+- Os textos rotativos do mobile ficam em `assets/js/main.js`
+- Se mudar as frases, atualizar tambem esta documentacao
+- Se mudar o texto do balao desktop, atualizar tambem esta documentacao
+- Se mudar timings, animacoes ou breakpoint, atualizar tambem esta documentacao
 - Antes de alterar a posicao, testar se o botao nao cobre conteudo critico no mobile
+
+## Regra de processo
+
+- Sempre que esse botao for alterado, este arquivo `whatsapp.md` deve ser atualizado junto
+- A documentacao deve refletir:
+  - o que foi feito
+  - o que foi inserido
+  - o que mudou no HTML
+  - o que mudou no CSS
+  - o que mudou no JS

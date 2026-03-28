@@ -37,6 +37,11 @@ const routeMetadata = {
 
 let revealObserver;
 const networkGlobeControllers = new WeakMap();
+const whatsappFloatMessages = ["Me chame!", "Vamos conversar?", "Faça um orçamento"];
+let whatsappFloatMessageIndex = 0;
+let whatsappFloatMessageTimeout = null;
+let whatsappFloatMessageElement = null;
+let whatsappFloatResizeBound = false;
 
 if ("scrollRestoration" in window.history) {
     window.history.scrollRestoration = "manual";
@@ -127,6 +132,86 @@ function initializeTheme() {
         updateThemeIcon(newTheme);
         localStorage.setItem("theme", newTheme);
     });
+}
+
+function initializeWhatsAppFloatMessages() {
+    const criarMsgEl = () => {
+        if (document.querySelector(".whatsapp-float-message")) {
+            whatsappFloatMessageElement = document.querySelector(".whatsapp-float-message");
+            return;
+        }
+
+        whatsappFloatMessageElement = document.createElement("span");
+        whatsappFloatMessageElement.className = "whatsapp-float-message";
+        whatsappFloatMessageElement.setAttribute("aria-hidden", "true");
+        document.body.appendChild(whatsappFloatMessageElement);
+    };
+
+    const posicionarMsg = () => {
+        const botao = document.querySelector(".whatsapp-float");
+
+        if (!botao || !whatsappFloatMessageElement) {
+            return;
+        }
+
+        const rect = botao.getBoundingClientRect();
+        whatsappFloatMessageElement.style.top = `${rect.top + rect.height / 2}px`;
+        whatsappFloatMessageElement.style.right = `${window.innerWidth - rect.left + 8}px`;
+    };
+
+    const mostrarFrase = () => {
+        if (window.innerWidth > 768) {
+            return;
+        }
+
+        if (!whatsappFloatMessageElement) {
+            criarMsgEl();
+        }
+
+        posicionarMsg();
+
+        whatsappFloatMessageElement.textContent = whatsappFloatMessages[whatsappFloatMessageIndex];
+        whatsappFloatMessageIndex = (whatsappFloatMessageIndex + 1) % whatsappFloatMessages.length;
+
+        whatsappFloatMessageElement.classList.remove("visible");
+        void whatsappFloatMessageElement.offsetWidth;
+        whatsappFloatMessageElement.classList.add("visible");
+
+        window.setTimeout(() => {
+            whatsappFloatMessageElement?.classList.remove("visible");
+        }, 2500);
+
+        whatsappFloatMessageTimeout = window.setTimeout(mostrarFrase, 15000);
+    };
+
+    const iniciarFrases = () => {
+        if (window.innerWidth <= 768) {
+            criarMsgEl();
+            whatsappFloatMessageTimeout = window.setTimeout(mostrarFrase, 3000);
+        }
+    };
+
+    const syncWhatsAppMessagesOnResize = () => {
+        if (whatsappFloatMessageTimeout) {
+            window.clearTimeout(whatsappFloatMessageTimeout);
+            whatsappFloatMessageTimeout = null;
+        }
+
+        if (whatsappFloatMessageElement) {
+            whatsappFloatMessageElement.classList.remove("visible");
+        }
+
+        if (window.innerWidth <= 768) {
+            whatsappFloatMessageTimeout = window.setTimeout(mostrarFrase, 3000);
+        }
+    };
+
+    iniciarFrases();
+
+    if (!whatsappFloatResizeBound) {
+        window.addEventListener("resize", syncWhatsAppMessagesOnResize);
+        whatsappFloatResizeBound = true;
+    }
 }
 
 function setActiveNavigation(pageName) {
@@ -750,6 +835,7 @@ window.addEventListener("DOMContentLoaded", () => {
     scrollToPageStart();
     initializeTheme();
     initializeMobileMenu();
+    initializeWhatsAppFloatMessages();
     initializeReveals();
     initializePageInteractions();
 

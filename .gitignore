@@ -1,6 +1,7 @@
 .env
 AI_CONTEXT.md
 seo.md
+whatsapp.md
 node_modules/
 dist/
 coverage/
