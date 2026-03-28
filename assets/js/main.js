@@ -357,25 +357,73 @@ function initializePageInteractions() {
     initializeNetworkGlobes();
 }
 
+function lonLatToSpherical(lon, lat) {
+    const theta = lon * (Math.PI / 180);
+    const phi = (90 - lat) * (Math.PI / 180);
+    return { theta, phi };
+}
+
 function createSeededPoints(isCompact) {
     const seedPoints = [
-        { theta: 0.2, phi: 1.0, accent: true },
-        { theta: 0.9, phi: 1.35, accent: false },
-        { theta: 1.45, phi: 1.85, accent: false },
-        { theta: 2.1, phi: 1.1, accent: true },
-        { theta: 2.7, phi: 1.6, accent: false },
-        { theta: 3.05, phi: 2.05, accent: false },
-        { theta: 3.7, phi: 1.2, accent: true },
-        { theta: 4.2, phi: 1.72, accent: false },
-        { theta: 4.85, phi: 1.28, accent: false },
-        { theta: 5.45, phi: 1.9, accent: true },
-        { theta: 5.95, phi: 1.42, accent: false }
+        { lon: -122.33, lat: 47.6, accent: true },
+        { lon: -46.63, lat: -23.55, accent: true },
+        { lon: -0.13, lat: 51.51, accent: false },
+        { lon: 13.4, lat: 52.52, accent: false },
+        { lon: 31.24, lat: 30.04, accent: false },
+        { lon: 55.27, lat: 25.2, accent: true },
+        { lon: 72.88, lat: 19.08, accent: false },
+        { lon: 103.82, lat: 1.35, accent: true },
+        { lon: 139.69, lat: 35.68, accent: false },
+        { lon: 151.21, lat: -33.87, accent: true }
     ];
 
-    return (isCompact ? seedPoints.slice(0, 8) : seedPoints).map((point, index) => ({
-        ...point,
+    return (isCompact ? seedPoints.slice(0, 7) : seedPoints).map((point, index) => ({
+        ...lonLatToSpherical(point.lon, point.lat),
+        accent: point.accent,
         pulseOffset: index * 0.45
     }));
+}
+
+function createLandMassPoints() {
+    const masses = [
+        { lon: -108, lat: 51, width: 44, height: 22, step: 5 },
+        { lon: -88, lat: 19, width: 18, height: 10, step: 4 },
+        { lon: -60, lat: -17, width: 20, height: 28, step: 4 },
+        { lon: 8, lat: 50, width: 20, height: 10, step: 4 },
+        { lon: 20, lat: 8, width: 25, height: 33, step: 4 },
+        { lon: 78, lat: 45, width: 62, height: 24, step: 5 },
+        { lon: 105, lat: 12, width: 28, height: 15, step: 4 },
+        { lon: 134, lat: -24, width: 18, height: 12, step: 4 },
+        { lon: -41, lat: 73, width: 12, height: 8, step: 4 }
+    ];
+
+    const landPoints = [];
+
+    masses.forEach((mass, massIndex) => {
+        for (let latOffset = -mass.height; latOffset <= mass.height; latOffset += mass.step) {
+            for (let lonOffset = -mass.width; lonOffset <= mass.width; lonOffset += mass.step) {
+                const normalizedLon = lonOffset / mass.width;
+                const normalizedLat = latOffset / mass.height;
+                const wobble = Math.sin((normalizedLon + massIndex) * 2.4) * 0.08
+                    + Math.cos((normalizedLat - massIndex) * 2.1) * 0.06;
+                const ellipse = normalizedLon ** 2 + normalizedLat ** 2;
+
+                if (ellipse > 0.98 + wobble) {
+                    continue;
+                }
+
+                landPoints.push({
+                    ...lonLatToSpherical(
+                        mass.lon + lonOffset + Math.sin((latOffset + massIndex) * 0.2) * 1.4,
+                        mass.lat + latOffset + Math.cos((lonOffset - massIndex) * 0.18) * 1.2
+                    ),
+                    weight: 0.5 + (1 - ellipse) * 0.5
+                });
+            }
+        }
+    });
+
+    return landPoints;
 }
 
 function initializeNetworkGlobes() {
@@ -400,16 +448,19 @@ function initializeNetworkGlobes() {
             canvas,
             context,
             points: createSeededPoints(compactViewport.matches),
-            rotationY: 0.5,
-            rotationX: -0.28,
-            velocityY: compactViewport.matches ? 0.0018 : 0.0026,
-            velocityX: compactViewport.matches ? 0.00055 : 0.0008,
+            landPoints: createLandMassPoints(),
+            rotationY: 0.7,
+            rotationX: -0.32,
+            velocityY: compactViewport.matches ? 0.0014 : 0.002,
+            velocityX: compactViewport.matches ? 0.00035 : 0.00055,
             dragging: false,
+            dragDistance: 0,
             lastX: 0,
             lastY: 0,
             animationFrame: 0,
             width: 0,
             height: 0,
+            radius: 0,
             pixelRatio: 1,
             running: false
         };
@@ -420,6 +471,7 @@ function initializeNetworkGlobes() {
 
             state.width = rect.width;
             state.height = rect.height || 320;
+            state.radius = Math.min(state.width, state.height) * (compactViewport.matches ? 0.31 : 0.34);
             state.pixelRatio = pixelRatio;
 
             canvas.width = state.width * pixelRatio;
@@ -427,52 +479,164 @@ function initializeNetworkGlobes() {
             context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         };
 
-        const projectPoint = (point) => {
-            const radius = Math.min(state.width, state.height) * 0.28;
-            const x = Math.sin(point.phi) * Math.cos(point.theta);
-            const y = Math.cos(point.phi);
-            const z = Math.sin(point.phi) * Math.sin(point.theta);
+        const toCartesian = (point) => ({
+            x: Math.sin(point.phi) * Math.cos(point.theta),
+            y: Math.cos(point.phi),
+            z: Math.sin(point.phi) * Math.sin(point.theta)
+        });
 
+        const rotatePoint = (point) => {
             const cosY = Math.cos(state.rotationY);
             const sinY = Math.sin(state.rotationY);
             const cosX = Math.cos(state.rotationX);
             const sinX = Math.sin(state.rotationX);
 
-            const rotatedX = x * cosY - z * sinY;
-            const rotatedZ = x * sinY + z * cosY;
-            const rotatedY = y * cosX - rotatedZ * sinX;
-            const depthZ = y * sinX + rotatedZ * cosX;
+            const x1 = point.x * cosY - point.z * sinY;
+            const z1 = point.x * sinY + point.z * cosY;
+            const y1 = point.y * cosX - z1 * sinX;
+            const z2 = point.y * sinX + z1 * cosX;
 
-            const perspective = 0.72 + (depthZ + 1) * 0.24;
+            return { x: x1, y: y1, z: z2 };
+        };
+
+        const inverseRotatePoint = (point) => {
+            const cosX = Math.cos(-state.rotationX);
+            const sinX = Math.sin(-state.rotationX);
+            const cosY = Math.cos(-state.rotationY);
+            const sinY = Math.sin(-state.rotationY);
+
+            const y1 = point.y * cosX - point.z * sinX;
+            const z1 = point.y * sinX + point.z * cosX;
+            const x2 = point.x * cosY - z1 * sinY;
+            const z2 = point.x * sinY + z1 * cosY;
+
+            return { x: x2, y: y1, z: z2 };
+        };
+
+        const projectPoint = (point) => {
+            const rotated = rotatePoint(toCartesian(point));
+            const scale = 0.82 + (rotated.z + 1) * 0.18;
 
             return {
-                x: state.width / 2 + rotatedX * radius * perspective,
-                y: state.height / 2 + rotatedY * radius * perspective,
-                depth: depthZ,
-                size: (point.accent ? 3.4 : 2.2) * perspective,
+                x: state.width / 2 + rotated.x * state.radius,
+                y: state.height / 2 + rotated.y * state.radius,
+                depth: rotated.z,
+                size: (point.accent ? 3.2 : 2.1) * scale,
                 accent: point.accent,
                 pulseOffset: point.pulseOffset
             };
         };
 
+        const drawGeoLine = (samples, strokeStyle, lineWidth) => {
+            let started = false;
+
+            context.beginPath();
+
+            samples.forEach((sample) => {
+                const rotated = rotatePoint(toCartesian(sample));
+
+                if (rotated.z < -0.12) {
+                    started = false;
+                    return;
+                }
+
+                const x = state.width / 2 + rotated.x * state.radius;
+                const y = state.height / 2 + rotated.y * state.radius;
+
+                if (!started) {
+                    context.moveTo(x, y);
+                    started = true;
+                    return;
+                }
+
+                context.lineTo(x, y);
+            });
+
+            context.strokeStyle = strokeStyle;
+            context.lineWidth = lineWidth;
+            context.stroke();
+        };
+
         const draw = (time) => {
             context.clearRect(0, 0, state.width, state.height);
 
-            const points2d = state.points.map(projectPoint).sort((a, b) => a.depth - b.depth);
-            const maxDistance = Math.min(state.width, state.height) * (compactViewport.matches ? 0.24 : 0.28);
             const isLightTheme = html.getAttribute("data-theme") === "light";
-            const lineColor = isLightTheme ? "37, 99, 235" : "0, 255, 157";
-            const lineAlpha = isLightTheme ? 0.46 : 0.26;
-            const glowCore = isLightTheme
-                ? { accent: "rgba(29, 78, 216, 0.98)", base: "rgba(59, 130, 246, 0.95)" }
-                : { accent: "rgba(100, 255, 218, 0.95)", base: "rgba(0, 255, 157, 0.82)" };
-            const glowMid = isLightTheme ? "rgba(59, 130, 246, 0.42)" : "rgba(0, 255, 157, 0.24)";
-            const pointFill = isLightTheme
-                ? { accent: "rgba(30, 64, 175, 1)", base: "rgba(37, 99, 235, 0.98)" }
-                : { accent: "rgba(194, 255, 237, 0.98)", base: "rgba(100, 255, 218, 0.9)" };
+            const centerX = state.width / 2;
+            const centerY = state.height / 2;
+            const globeFill = context.createRadialGradient(
+                centerX - state.radius * 0.35,
+                centerY - state.radius * 0.45,
+                state.radius * 0.08,
+                centerX,
+                centerY,
+                state.radius * 1.08
+            );
+
+            if (isLightTheme) {
+                globeFill.addColorStop(0, "rgba(10, 77, 61, 0.94)");
+                globeFill.addColorStop(0.52, "rgba(9, 68, 55, 0.92)");
+                globeFill.addColorStop(1, "rgba(8, 50, 44, 0.88)");
+            } else {
+                globeFill.addColorStop(0, "rgba(8, 56, 43, 0.94)");
+                globeFill.addColorStop(0.5, "rgba(8, 52, 41, 0.93)");
+                globeFill.addColorStop(1, "rgba(6, 40, 34, 0.9)");
+            }
 
             context.save();
-            context.globalCompositeOperation = isLightTheme ? "source-over" : "screen";
+            context.beginPath();
+            context.arc(centerX, centerY, state.radius, 0, Math.PI * 2);
+            context.fillStyle = globeFill;
+            context.fill();
+            context.clip();
+
+            const latitudes = [-60, -30, 0, 30, 60];
+            const meridians = [-150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150];
+            const gridStroke = isLightTheme ? "rgba(110, 255, 208, 0.16)" : "rgba(0, 255, 157, 0.16)";
+            const landFill = isLightTheme ? "rgba(118, 255, 215, 0.28)" : "rgba(0, 255, 157, 0.2)";
+
+            latitudes.forEach((lat) => {
+                const samples = [];
+                for (let lon = -180; lon <= 180; lon += 6) {
+                    samples.push(lonLatToSpherical(lon, lat));
+                }
+                drawGeoLine(samples, gridStroke, 1);
+            });
+
+            meridians.forEach((lon) => {
+                const samples = [];
+                for (let lat = -80; lat <= 80; lat += 5) {
+                    samples.push(lonLatToSpherical(lon, lat));
+                }
+                drawGeoLine(samples, gridStroke, 1);
+            });
+
+            state.landPoints.forEach((point) => {
+                const projected = projectPoint(point);
+
+                if (projected.depth < -0.08) {
+                    return;
+                }
+
+                context.globalAlpha = 0.25 + point.weight * 0.55;
+                context.fillStyle = landFill;
+                context.beginPath();
+                context.arc(projected.x, projected.y, 1.2 + point.weight * 0.9, 0, Math.PI * 2);
+                context.fill();
+            });
+
+            context.globalAlpha = 1;
+
+            const points2d = state.points
+                .map(projectPoint)
+                .filter((point) => point.depth > -0.22)
+                .sort((a, b) => a.depth - b.depth);
+            const maxDistance = state.radius * (compactViewport.matches ? 0.72 : 0.82);
+            const lineColor = isLightTheme ? "16, 185, 129" : "0, 255, 157";
+            const lineAlpha = isLightTheme ? 0.38 : 0.22;
+            const glowCore = isLightTheme
+                ? { accent: "rgba(196, 255, 234, 0.98)", base: "rgba(110, 255, 208, 0.92)" }
+                : { accent: "rgba(194, 255, 237, 0.98)", base: "rgba(100, 255, 218, 0.88)" };
+            const glowMid = isLightTheme ? "rgba(52, 211, 153, 0.22)" : "rgba(0, 255, 157, 0.18)";
 
             for (let i = 0; i < points2d.length; i += 1) {
                 for (let j = i + 1; j < points2d.length; j += 1) {
@@ -484,10 +648,10 @@ function initializeNetworkGlobes() {
                         continue;
                     }
 
-                    const alpha = (1 - distance / maxDistance) * (compactViewport.matches ? lineAlpha * 0.78 : lineAlpha);
+                    const alpha = (1 - distance / maxDistance) * lineAlpha;
 
                     context.strokeStyle = `rgba(${lineColor}, ${alpha})`;
-                    context.lineWidth = isLightTheme ? 1.15 : 1;
+                    context.lineWidth = points2d[i].accent || points2d[j].accent ? 1.2 : 0.9;
                     context.beginPath();
                     context.moveTo(points2d[i].x, points2d[i].y);
                     context.lineTo(points2d[j].x, points2d[j].y);
@@ -496,12 +660,12 @@ function initializeNetworkGlobes() {
             }
 
             points2d.forEach((point) => {
-                const pulse = 0.7 + Math.sin(time * 0.0014 + point.pulseOffset) * 0.3;
-                const glowSize = point.size * (point.accent ? 4.6 : 3.2) * pulse;
+                const pulse = 0.76 + Math.sin(time * 0.0014 + point.pulseOffset) * 0.24;
+                const glowSize = point.size * (point.accent ? 4.2 : 3) * pulse;
                 const gradient = context.createRadialGradient(point.x, point.y, 0, point.x, point.y, glowSize);
 
                 gradient.addColorStop(0, point.accent ? glowCore.accent : glowCore.base);
-                gradient.addColorStop(0.45, glowMid);
+                gradient.addColorStop(0.52, glowMid);
                 gradient.addColorStop(1, isLightTheme ? "rgba(59, 130, 246, 0)" : "rgba(0, 255, 157, 0)");
 
                 context.fillStyle = gradient;
@@ -509,13 +673,25 @@ function initializeNetworkGlobes() {
                 context.arc(point.x, point.y, glowSize, 0, Math.PI * 2);
                 context.fill();
 
-                context.fillStyle = point.accent ? pointFill.accent : pointFill.base;
+                context.fillStyle = point.accent ? glowCore.accent : glowCore.base;
                 context.beginPath();
                 context.arc(point.x, point.y, point.size, 0, Math.PI * 2);
                 context.fill();
             });
 
             context.restore();
+
+            context.beginPath();
+            context.arc(centerX, centerY, state.radius, 0, Math.PI * 2);
+            context.strokeStyle = isLightTheme ? "rgba(22, 163, 74, 0.28)" : "rgba(100, 255, 218, 0.22)";
+            context.lineWidth = 1.25;
+            context.stroke();
+
+            context.beginPath();
+            context.arc(centerX, centerY, state.radius + 7, 0, Math.PI * 2);
+            context.strokeStyle = isLightTheme ? "rgba(22, 163, 74, 0.09)" : "rgba(0, 255, 157, 0.08)";
+            context.lineWidth = 10;
+            context.stroke();
         };
 
         const animate = (time) => {
@@ -562,6 +738,7 @@ function initializeNetworkGlobes() {
         const onPointerDown = (event) => {
             const position = pointerPosition(event);
             state.dragging = true;
+            state.dragDistance = 0;
             state.lastX = position.x;
             state.lastY = position.y;
             canvas.setPointerCapture?.(event.pointerId);
@@ -576,10 +753,11 @@ function initializeNetworkGlobes() {
             const deltaX = position.x - state.lastX;
             const deltaY = position.y - state.lastY;
 
+            state.dragDistance += Math.abs(deltaX) + Math.abs(deltaY);
             state.rotationY += deltaX * 0.008;
-            state.rotationX += deltaY * 0.006;
+            state.rotationX = Math.max(-1.15, Math.min(1.15, state.rotationX + deltaY * 0.006));
             state.velocityY = deltaX * (compactViewport.matches ? 0.00016 : 0.00022);
-            state.velocityX = deltaY * (compactViewport.matches ? 0.00012 : 0.00018);
+            state.velocityX = deltaY * (compactViewport.matches ? 0.00008 : 0.00012);
             state.lastX = position.x;
             state.lastY = position.y;
         };
@@ -594,26 +772,40 @@ function initializeNetworkGlobes() {
         };
 
         const onClick = (event) => {
-            const position = pointerPosition(event);
-            const dx = (position.x - state.width / 2) / (Math.min(state.width, state.height) * 0.28);
-            const dy = (position.y - state.height / 2) / (Math.min(state.width, state.height) * 0.28);
-            const distance = Math.hypot(dx, dy);
-
-            if (distance > 1) {
+            if (state.dragDistance > 8) {
                 return;
             }
 
-            const phi = Math.acos(Math.max(-1, Math.min(1, -dy)));
-            const theta = Math.atan2(dx, Math.sqrt(Math.max(0.0001, 1 - dx * dx - dy * dy)));
+            const position = pointerPosition(event);
+            const normalizedX = (position.x - state.width / 2) / state.radius;
+            const normalizedY = (position.y - state.height / 2) / state.radius;
+            const squaredDistance = normalizedX ** 2 + normalizedY ** 2;
+
+            if (squaredDistance > 1) {
+                return;
+            }
+
+            const frontPoint = {
+                x: normalizedX,
+                y: normalizedY,
+                z: Math.sqrt(Math.max(0, 1 - squaredDistance))
+            };
+            const unrotatedPoint = inverseRotatePoint(frontPoint);
+            const normalizedLength = Math.hypot(unrotatedPoint.x, unrotatedPoint.y, unrotatedPoint.z) || 1;
+            const spherePoint = {
+                x: unrotatedPoint.x / normalizedLength,
+                y: unrotatedPoint.y / normalizedLength,
+                z: unrotatedPoint.z / normalizedLength
+            };
 
             state.points.push({
-                theta: theta + state.rotationY + Math.PI / 2,
-                phi,
+                theta: Math.atan2(spherePoint.z, spherePoint.x),
+                phi: Math.acos(Math.max(-1, Math.min(1, spherePoint.y))),
                 accent: true,
                 pulseOffset: state.points.length * 0.37
             });
 
-            const maxPoints = compactViewport.matches ? 12 : 18;
+            const maxPoints = compactViewport.matches ? 14 : 20;
 
             if (state.points.length > maxPoints) {
                 state.points.splice(0, state.points.length - maxPoints);
