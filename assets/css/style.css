@@ -2172,6 +2172,41 @@ footer {
     text-align: center;
 }
 
+.whatsapp-float {
+    position: fixed !important;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9999;
+    width: 52px;
+    height: 52px;
+    background-color: var(--primary);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(0, 255, 157, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.whatsapp-float svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 24px rgba(0, 255, 157, 0.4);
+}
+
+.whatsapp-float:focus-visible {
+    outline: 2px solid var(--primary-strong);
+    outline-offset: 4px;
+}
+
 .footer-copy {
     color: var(--text-dim);
     margin: 15px 0;
@@ -2305,6 +2340,18 @@ footer {
 
     .section {
         padding: 80px 0;
+    }
+
+    .whatsapp-float {
+        bottom: 20px;
+        right: 20px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .whatsapp-float svg {
+        width: 24px;
+        height: 24px;
     }
 
     .contact-container,
