@@ -1,29 +1,27 @@
 # Ávila Core
 
-Esse site é a apresentação da Ávila Core.
+Site pessoal de Matheus Ávila, assinado como Ávila Core. Apresenta as três frentes
+de trabalho: criação de sites, filmagens com drone e suporte técnico.
 
-Eu fiz ele pra mostrar de forma mais clara o tipo de serviço que quero entregar e a forma que eu enxergo tecnologia dentro de uma empresa. A ideia aqui não é ser só um site bonito ou um cartão de visita online. Ele foi pensado pra passar uma imagem mais séria, técnica e confiável, mostrando que a Ávila Core trabalha com infraestrutura, desenvolvimento e suporte de forma conectada.
+## Stack
 
-Hoje o site tem:
+- [Astro](https://astro.build) (site estático, multipágina)
+- HTML/CSS com tokens próprios e tipografia Satoshi (self-hosted)
+- Deploy na Vercel
 
-- uma página principal com a identidade da marca
-- uma parte mostrando os pilares e a forma que eu enxergo continuidade e operação
-- uma página de serviços
-- uma página sobre mim e sobre a proposta da Ávila Core
-- uma página de contato
-- dark mode e light mode
-- versão responsiva pra funcionar bem no celular também
+## Desenvolvimento
 
-O foco do projeto é apresentar a Ávila Core como uma marca que consegue atender desde a parte mais operacional até a parte mais estratégica, sempre com uma pegada mais organizada e profissional. Eu quis fugir daquele visual genérico que parece igual a qualquer outro site de tecnologia.
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # gera dist/
+npm run preview  # serve o build localmente
+```
 
-Sobre como ele funciona, o site foi feito de forma leve, usando HTML, CSS e JavaScript puro. A navegação interna acontece carregando os conteúdos das páginas sem precisar transformar tudo num projeto pesado. Isso me dá mais controle visual, deixa o site mais direto e mantém ele simples de manter.
+## Estrutura
 
-As stacks usadas aqui são:
-
-- HTML5
-- CSS3
-- JavaScript Vanilla
-
-Tambem fui pensando nele já pra ter uma base boa de identidade visual, SEO, navegação no mobile e uma apresentação mais madura da marca.
-
-Resumindo bem: esse projeto existe pra representar a Ávila Core do jeito certo, do jeito que eu quero que as pessoas enxerguem meu trabalho quando entrarem no site.
+- `src/pages/` — páginas (Home, Sites, Filmagens, Suporte)
+- `src/components/` — Nav, botão de WhatsApp, bloco "em construção"
+- `src/layouts/Base.astro` — layout base com SEO e fontes
+- `src/styles/global.css` — tokens de cor, fontes e base
+- `public/fonts/` — fontes Satoshi (woff2)

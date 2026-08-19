@@ -1,7 +1,11 @@
-.env
-AI_CONTEXT.md
-seo.md
-whatsapp.md
-node_modules/
+# build output
 dist/
-coverage/
+# dependencies
+node_modules/
+# generated types
+.astro/
+# environment
+.env
+.env.production
+# macos/editor
+.DS_Store
