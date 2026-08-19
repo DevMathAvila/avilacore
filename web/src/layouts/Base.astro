@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+import WhatsappFab from '../components/WhatsappFab.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Matheus Ávila · Ávila Core',
+  description = 'Criação de sites, filmagens com drone e suporte técnico. Trabalho feito com cuidado por Matheus Ávila — Ávila Core.',
+} = Astro.props;
+
+const url = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f4ef" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={url} />
+
+    <!-- Preload das fontes principais (peso da dobra) -->
+    <link rel="preload" href="/fonts/satoshi-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <slot />
+    <WhatsappFab />
+  </body>
+</html>

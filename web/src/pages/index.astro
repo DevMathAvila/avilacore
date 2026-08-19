@@ -1,0 +1,746 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+
+const phone = '5519993808005';
+
+const areas = [
+  {
+    id: 'sites',
+    nome: 'Sites',
+    href: '/sites',
+    categoria: 'Desenvolvimento',
+    texto:
+      'Sites sob medida, pensados a partir do objetivo de cada cliente e não de um modelo pronto. O foco é entregar algo rápido, claro de usar e com identidade própria.',
+  },
+  {
+    id: 'filmagens',
+    nome: 'Filmagens com drone',
+    href: '/filmagens',
+    categoria: 'Audiovisual',
+    texto:
+      'Imagens aéreas para imóveis, eventos e produções que precisam de um ângulo diferente. Cuido de tudo, da captação à entrega do material já tratado.',
+  },
+  {
+    id: 'suporte',
+    nome: 'Suporte técnico',
+    href: '/suporte',
+    categoria: 'Infraestrutura',
+    texto:
+      'Ajudo a resolver o que trava a rotina, desde a configuração de infraestrutura até aquele detalhe que ninguém consegue encontrar.',
+  },
+];
+
+const marquee = [
+  'Desenvolvimento de sites',
+  'Filmagens com drone',
+  'Suporte técnico',
+  'Identidade visual',
+  'Infraestrutura',
+];
+---
+
+<Base>
+  <div class="intro" data-intro>
+    <p class="intro__line">
+      Bem-vindo ao <span class="intro__accent">meu mundo</span>.
+    </p>
+  </div>
+
+  <Nav animateIn={true} />
+
+  <main class="home" data-home>
+    <section class="hero" id="topo">
+      <div class="container hero__inner">
+        <div class="hero__meta">
+          <span>Desenvolvimento · Audiovisual · Suporte</span>
+          <span class="hero__status">
+            <span class="hero__dot"></span>
+            Disponível para novos projetos
+          </span>
+        </div>
+
+        <h1 class="hero__headline">
+          Tecnologia feita com capricho, do primeiro rascunho até o site no ar.
+        </h1>
+
+        <div class="hero__foot">
+          <p class="hero__lead">
+            Sou Matheus Ávila. Há alguns anos transformo aquilo que começou como
+            curiosidade em trabalho de verdade: desenvolvo sites, faço filmagens
+            aéreas com drone e ajudo pessoas e empresas a resolverem problemas
+            técnicos do dia a dia. Cada projeto passa inteiro pelas minhas mãos e
+            leva a assinatura da Ávila Core.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="/sites">Ver os sites</a>
+            <a class="hero__link" href="#contato">Entrar em contato</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          {[...marquee, ...marquee].map((m) => (
+            <span class="marquee__item">{m}<i class="marquee__sep">/</i></span>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="work" id="trabalho">
+      <div class="container">
+        <p class="section-label">No que eu trabalho</p>
+        <div class="work__list">
+          {areas.map((a) => (
+            <a class="work__item" href={a.href} id={a.id}>
+              <span class="work__cat">{a.categoria}</span>
+              <span class="work__name">{a.nome}</span>
+              <span class="work__text">{a.texto}</span>
+              <span class="work__go" aria-hidden="true">Ver</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="sobre" id="sobre">
+      <div class="container sobre__grid">
+        <p class="section-label">Sobre</p>
+        <div class="sobre__body">
+          <p class="sobre__lead">
+            Gosto de entender como as coisas funcionam e de deixá-las funcionando
+            bem. É isso que carrego para cada projeto.
+          </p>
+          <p>
+            Comecei mexendo em tudo que envolvia computador e, com o tempo,
+            transformei essa curiosidade no que faço hoje. Não sou uma agência com
+            um discurso pronto: sou uma pessoa que atende do começo ao fim, então
+            quando você fala comigo, é comigo mesmo que você conversa.
+          </p>
+          <p>
+            Trabalho com calma, explico o que estou fazendo e entrego aquilo que
+            foi combinado. Cada trabalho leva a assinatura da Ávila Core, e essa
+            assinatura é uma questão de responsabilidade.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contato" id="contato">
+      <div class="container contato__grid">
+        <div class="contato__intro">
+          <p class="section-label">Contato</p>
+          <h2 class="contato__heading">Vamos conversar sobre a sua ideia.</h2>
+          <p class="contato__text">
+            Me conte o que você precisa que eu retorno pessoalmente. Se preferir,
+            é só chamar direto no WhatsApp.
+          </p>
+          <a
+            class="contato__phone"
+            href={`https://wa.me/${phone}?text=${encodeURIComponent('Olá, Matheus! Vim pelo seu site.')}`}
+            target="_blank"
+            rel="noopener"
+          >
+            (19) 99380-8005
+          </a>
+        </div>
+
+        <form class="form" data-form data-phone={phone}>
+          <div class="form__row">
+            <label class="field">
+              <span class="field__label">Nome</span>
+              <input type="text" name="nome" autocomplete="name" required />
+            </label>
+            <label class="field">
+              <span class="field__label">Telefone</span>
+              <input type="tel" name="telefone" autocomplete="tel" required />
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field__label">O que você precisa</span>
+            <select name="assunto" required>
+              <option value="" disabled selected>Selecione</option>
+              <option value="Criação de site">Criação de site</option>
+              <option value="Filmagem com drone">Filmagem com drone</option>
+              <option value="Suporte técnico">Suporte técnico</option>
+              <option value="Outro assunto">Outro assunto</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="field__label">
+              Conta um pouco <span class="field__opt">(opcional)</span>
+            </span>
+            <textarea name="mensagem" rows="4"></textarea>
+          </label>
+
+          <button type="submit" class="btn btn--primary form__submit">
+            Enviar pelo WhatsApp
+          </button>
+          <p class="form__hint" data-form-hint hidden></p>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <p class="footer__wordmark" aria-hidden="true">Ávila Core</p>
+        <div class="footer__bottom">
+          <span class="footer__sig">Matheus Ávila</span>
+          <nav class="footer__links" aria-label="Rodapé">
+            <a href="/sites">Sites</a>
+            <a href="/filmagens">Filmagens</a>
+            <a href="/suporte">Suporte</a>
+            <a href="#sobre">Sobre</a>
+          </nav>
+          <span class="footer__copy">© {new Date().getFullYear()}</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Base>
+
+<style>
+  /* ---------- Intro (só na primeira visita) ---------- */
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    background: var(--bg);
+    padding: 2rem;
+    text-align: center;
+  }
+  .intro__line {
+    font-weight: 300;
+    font-size: clamp(1.9rem, 6vw, 3.6rem);
+    letter-spacing: -0.03em;
+    opacity: 0;
+    animation: introIn 1.1s var(--ease) 0.3s forwards;
+  }
+  .intro__accent {
+    color: var(--accent);
+  }
+  .intro.is-leaving {
+    animation: introOut 0.7s var(--ease) forwards;
+    pointer-events: none;
+  }
+  @keyframes introIn {
+    to { opacity: 1; }
+  }
+  @keyframes introOut {
+    to { opacity: 0; visibility: hidden; }
+  }
+
+  .home {
+    opacity: 0;
+    transition: opacity 0.8s var(--ease);
+  }
+  .home.is-visible {
+    opacity: 1;
+  }
+
+  /* ---------- Rótulo de seção (assinatura editorial) ---------- */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .section-label::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: calc(100dvh - 74px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .hero__inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(2rem, 5vh, 3.5rem);
+    padding-block: clamp(2.5rem, 6vh, 4rem);
+  }
+  .hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .hero__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .hero__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .hero__headline {
+    max-width: 18ch;
+    font-size: clamp(2.6rem, 6.2vw, 5.2rem);
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+  }
+  .hero__foot {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 46ch);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: end;
+  }
+  .hero__lead {
+    grid-column: 2;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.7;
+  }
+  .hero__actions {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .hero__link {
+    color: var(--text);
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--line);
+    transition: border-color 0.25s var(--ease);
+  }
+  .hero__link:hover {
+    border-color: var(--accent);
+  }
+
+  /* ---------- Faixa em movimento (assinatura, não animação de entrada) ---------- */
+  .marquee {
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding-block: 1.1rem;
+  }
+  .marquee__track {
+    display: inline-flex;
+    white-space: nowrap;
+    will-change: transform;
+    animation: marquee 34s linear infinite;
+  }
+  .marquee__item {
+    display: inline-flex;
+    align-items: center;
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: -0.01em;
+  }
+  .marquee__sep {
+    font-style: normal;
+    color: var(--accent);
+    margin-inline: 1.4rem;
+    opacity: 0.7;
+  }
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+
+  /* ---------- No que eu trabalho ---------- */
+  .work {
+    padding-block: clamp(4rem, 10vh, 7rem);
+  }
+  .work__list {
+    margin-top: 3rem;
+    border-top: 1px solid var(--line);
+  }
+  .work__item {
+    display: grid;
+    grid-template-columns: 12ch minmax(0, 1fr) auto;
+    grid-template-areas: 'cat name go' 'cat text go';
+    column-gap: clamp(1.5rem, 4vw, 4rem);
+    row-gap: 0.6rem;
+    padding-block: clamp(1.75rem, 3vw, 2.5rem);
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+    transition: background 0.3s var(--ease);
+  }
+  .work__cat {
+    grid-area: cat;
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding-top: 0.5rem;
+  }
+  .work__name {
+    grid-area: name;
+    font-size: clamp(1.9rem, 4vw, 3.2rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    transition: color 0.25s var(--ease);
+  }
+  .work__text {
+    grid-area: text;
+    max-width: 54ch;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+  .work__go {
+    grid-area: go;
+    align-self: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease),
+      color 0.3s var(--ease);
+  }
+  .work__item:hover .work__name {
+    color: var(--accent);
+  }
+  .work__item:hover .work__go {
+    opacity: 1;
+    transform: none;
+    color: var(--accent);
+  }
+
+  /* ---------- Sobre ---------- */
+  .sobre {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .sobre__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 2fr);
+    gap: clamp(1.5rem, 5vw, 5rem);
+  }
+  .sobre__body {
+    max-width: 60ch;
+  }
+  .sobre__lead {
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .sobre__body p + p {
+    margin-top: 1.5rem;
+  }
+  .sobre__body p:not(.sobre__lead) {
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.75;
+  }
+
+  /* ---------- Contato ---------- */
+  .contato {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .contato__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .contato__heading {
+    margin-top: 1.5rem;
+    max-width: 16ch;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .contato__text {
+    margin-top: 1.5rem;
+    max-width: 40ch;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.7;
+  }
+  .contato__phone {
+    display: inline-block;
+    margin-top: 1.75rem;
+    font-size: 1.4rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 3px;
+    transition: border-color 0.25s var(--ease);
+  }
+  .contato__phone:hover {
+    border-color: var(--accent);
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .field__label {
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .field__opt {
+    color: color-mix(in srgb, var(--muted) 70%, transparent);
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 0.8rem 0.95rem;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1.02rem;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: color-mix(in srgb, var(--muted) 70%, transparent);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 96px;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .field select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23a89d8e' stroke-width='1.5'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.95rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+  .form__submit {
+    align-self: stretch;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+  .form__hint {
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  /* ---------- Footer ---------- */
+  .footer {
+    padding-top: clamp(3rem, 8vh, 5rem);
+    padding-bottom: 2.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .footer__wordmark {
+    font-size: clamp(3.5rem, 15vw, 11rem);
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--line);
+    user-select: none;
+  }
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2.5rem;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: clamp(2rem, 5vh, 3.5rem);
+  }
+  .footer__sig {
+    font-weight: 500;
+  }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .footer__links a {
+    color: var(--muted);
+    font-size: 0.95rem;
+    transition: color 0.2s var(--ease);
+  }
+  .footer__links a:hover {
+    color: var(--text);
+  }
+  .footer__copy {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 860px) {
+    .hero__foot {
+      grid-template-columns: 1fr;
+    }
+    .hero__lead,
+    .hero__actions {
+      grid-column: 1;
+    }
+    .work__item {
+      grid-template-columns: 1fr;
+      grid-template-areas: 'cat' 'name' 'text';
+    }
+    .work__go {
+      display: none;
+    }
+    .sobre__grid,
+    .contato__grid {
+      grid-template-columns: 1fr;
+    }
+    .section-label {
+      margin-bottom: 1.5rem;
+    }
+  }
+  @media (max-width: 540px) {
+    .form__row {
+      grid-template-columns: 1fr;
+    }
+    .footer__bottom {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  /* No celular, compacta o hero para a faixa em movimento
+     aparecer já na primeira tela, logo abaixo da dobra. */
+  @media (max-width: 640px) {
+    .hero {
+      min-height: auto;
+    }
+    .hero__inner {
+      justify-content: flex-start;
+      gap: 1.4rem;
+      padding-block: 1.75rem;
+    }
+    .hero__meta {
+      font-size: 0.85rem;
+    }
+    .hero__headline {
+      font-size: clamp(1.9rem, 8.5vw, 2.4rem);
+      max-width: 100%;
+    }
+    .hero__foot {
+      gap: 1.25rem;
+    }
+    .hero__lead {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .marquee {
+      padding-block: 0.85rem;
+    }
+    .marquee__item {
+      font-size: 1.1rem;
+    }
+    .marquee__sep {
+      margin-inline: 1rem;
+    }
+  }
+
+  /* Respeita quem prefere menos movimento: a faixa para */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  const intro = document.querySelector('[data-intro]') as HTMLElement | null;
+  const home = document.querySelector('[data-home]') as HTMLElement | null;
+  const nav = document.querySelector('[data-nav]') as HTMLElement | null;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const revealSite = () => {
+    home?.classList.add('is-visible');
+    nav?.classList.add('is-revealed');
+  };
+
+  let alreadySeen = false;
+  try {
+    alreadySeen = sessionStorage.getItem('introSeen') === '1';
+  } catch (e) {}
+
+  if (intro && !alreadySeen && !reduce) {
+    try {
+      sessionStorage.setItem('introSeen', '1');
+    } catch (e) {}
+    window.setTimeout(() => {
+      intro.classList.add('is-leaving');
+      revealSite();
+    }, 2000);
+    window.setTimeout(() => {
+      intro.style.display = 'none';
+    }, 2800);
+  } else {
+    if (intro) intro.style.display = 'none';
+    revealSite();
+  }
+
+  // Formulário -> WhatsApp
+  const form = document.querySelector('[data-form]') as HTMLFormElement | null;
+  const hint = document.querySelector('[data-form-hint]') as HTMLElement | null;
+  if (form) {
+    const phone = form.dataset.phone || '';
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const data = new FormData(form);
+      const nome = String(data.get('nome') || '').trim();
+      const tel = String(data.get('telefone') || '').trim();
+      const assunto = String(data.get('assunto') || '').trim();
+      const msg = String(data.get('mensagem') || '').trim();
+
+      const linhas = [
+        `Olá, Matheus! Meu nome é ${nome}.`,
+        `Telefone: ${tel}`,
+        `Preciso de: ${assunto}`,
+      ];
+      if (msg) linhas.push(`Sobre: ${msg}`);
+
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(linhas.join('\n'))}`;
+      if (hint) {
+        hint.hidden = false;
+        hint.textContent = 'Abrindo o WhatsApp com a sua mensagem.';
+      }
+      window.open(url, '_blank', 'noopener');
+    });
+  }
+</script>

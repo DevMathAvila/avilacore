@@ -1,0 +1,66 @@
+---
+import Nav from './Nav.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  desc: string;
+}
+const { eyebrow, title, desc } = Astro.props;
+---
+
+<Nav />
+
+<main class="wip">
+  <div class="container wip__inner">
+    <p class="wip__kicker">{eyebrow}</p>
+    <h1 class="wip__title">{title}</h1>
+    <p class="wip__desc">{desc}</p>
+    <p class="wip__status">Esta página está em construção.</p>
+    <a class="wip__back" href="/">Voltar para a página inicial</a>
+  </div>
+</main>
+
+<style>
+  .wip {
+    min-height: calc(100dvh - 74px);
+    display: grid;
+    place-items: center;
+    padding-block: 4rem;
+  }
+  .wip__inner {
+    max-width: 40ch;
+  }
+  .wip__kicker {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .wip__title {
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+  }
+  .wip__desc {
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-top: 1.25rem;
+  }
+  .wip__status {
+    margin-top: 1.5rem;
+    color: var(--accent);
+    font-size: 0.95rem;
+  }
+  .wip__back {
+    display: inline-block;
+    margin-top: 2rem;
+    color: var(--text);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 3px;
+    transition: border-color 0.25s var(--ease);
+  }
+  .wip__back:hover {
+    border-color: var(--accent);
+  }
+</style>
