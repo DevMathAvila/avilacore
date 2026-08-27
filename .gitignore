@@ -9,3 +9,7 @@ node_modules/
 .env.production
 # macos/editor
 .DS_Store
+# marketing / social media (documentos internos, não vão pro site nem pro repo público)
+marketing/
+# pacote de skills (repositório próprio, não faz parte do site)
+claude-ig/

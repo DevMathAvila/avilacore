@@ -1,12 +1,450 @@
 ---
 import Base from '../layouts/Base.astro';
-import EmConstrucao from '../components/EmConstrucao.astro';
+import Nav from '../components/Nav.astro';
+import SitePreview from '../components/SitePreview.astro';
+
+const phone = '5519993808005';
+const waSite = `https://wa.me/${phone}?text=${encodeURIComponent('Olá, Matheus! Quero um site pro meu negócio.')}`;
+
+const cases = [
+  {
+    title: 'Mayara Gaspareto',
+    descricao: 'Engenheira civil. Projetos, arquitetura e design reunidos num site com a cara do trabalho dela.',
+    domain: 'mayaragaspareto.com.br',
+    url: 'https://www.mayaragaspareto.com.br',
+    mode: 'live' as const,
+  },
+  {
+    title: 'Deckboost',
+    descricao: 'Estruturação de narrativa de vendas para times comerciais. Um site que conta uma história, do jeito que a marca fala.',
+    domain: 'deckboost.com.br',
+    url: 'https://www.deckboost.com.br',
+    mode: 'image' as const,
+  },
+  {
+    title: 'Tatiane Silva',
+    descricao: 'Advocacia em Salto. Um site institucional claro e acolhedor, feito pra explicar sem juridiquês.',
+    domain: 'tatianesilvadv.com.br',
+    url: 'https://www.tatianesilvadv.com.br',
+    mode: 'live' as const,
+  },
+];
+
+const depoimentos = [
+  {
+    nome: 'Mayara Gaspareto',
+    papel: 'Engenheira civil',
+    foto: '/clientes/MayaraGaspareto.png',
+    texto:
+      'Adorei o trabalho do Matheus! Foi super atencioso, entendeu exatamente o que eu precisava e deixou tudo muito mais profissional. O site ficou lindo e a parte do Google também fez toda diferença. Super recomendo!',
+  },
+  {
+    nome: 'Renato Fresneda',
+    papel: 'Deckboost',
+    foto: '/clientes/RenatoFresneda.png',
+    texto:
+      'Sempre levei a criação do meu site muito a sério, por ser a principal porta de entrada e a cara do meu negócio. Eu não queria nada genérico ou feito por inteligência artificial. Buscava algo único, memorável e exclusivo. O Matheus superou todas as expectativas: desde a primeira reunião até a entrega final, prestou um suporte impecável, combinando alta qualidade e um ótimo custo-benefício. Recomendo de olhos fechados e com certeza faremos novos trabalhos no futuro!',
+  },
+  {
+    nome: 'Tatiane Silva',
+    papel: 'Advocacia',
+    foto: '/clientes/TatianeSilva.png',
+    texto:
+      'Eu amei! Ficou muito melhor do que eu imaginava. Está lindo, sério, perfeito! Eu nem sei o que falar, só tenho a agradecer pelo cuidado e por ter conseguido deixar tudo ainda melhor do que eu tinha imaginado. Muito obrigada! ❤️',
+  },
+];
+
+const pilares = [
+  {
+    nome: 'Ser encontrado',
+    texto:
+      'Quando alguém procura o que você faz, você precisa estar ali. Um site bem feito coloca o seu nome na frente na hora exata da decisão.',
+  },
+  {
+    nome: 'Passar seriedade',
+    texto:
+      'Um site com identidade mostra que o seu trabalho é profissional antes mesmo do primeiro contato. A primeira impressão acontece no Google.',
+  },
+  {
+    nome: 'Virar referência',
+    texto:
+      'Com portfólio, prova e uma presença que é só sua, você deixa de competir por preço e passa a ser lembrado pelo nome.',
+  },
+];
 ---
 
-<Base title="Sites · Matheus Ávila" description="Portfólio de sites criados por Matheus Ávila — Ávila Core.">
-  <EmConstrucao
-    eyebrow="Site"
-    title="Meus sites"
-    desc="Aqui vão entrar os projetos que já coloquei no ar, com print e link ao vivo. Estou preparando essa seção com carinho."
-  />
+<Base
+  title="Sites · Matheus Ávila"
+  description="Criação de sites que colocam o seu negócio no mapa. Cases reais por Matheus Ávila, Ávila Core."
+>
+  <Nav />
+
+  <main class="sites">
+    <section class="hero container">
+      <p class="section-label">Sites</p>
+      <h1 class="hero__title">Ninguém decora o nome da sua loja.</h1>
+      <p class="hero__lead">
+        As pessoas abrem o Google e procuram "barbeiro em Indaiatuba", "advogada
+        em Salto", "engenheira civil perto de mim". Quem aparece nessa hora é
+        quem tem um site de verdade. É assim que um negócio deixa de ser mais um
+        e passa a ser a referência.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href={waSite}>Quero um site assim</a>
+        <a class="hero__link" href="#trabalhos">Ver os trabalhos</a>
+      </div>
+    </section>
+
+    <section class="porque">
+      <div class="container porque__grid">
+        {pilares.map((p) => (
+          <div class="porque__item">
+            <h2 class="porque__nome">{p.nome}</h2>
+            <p class="porque__texto">{p.texto}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="trabalhos" id="trabalhos">
+      <div class="container">
+        <p class="section-label">Cases</p>
+        <h2 class="trabalhos__titulo">Quem já confiou no meu trabalho.</h2>
+        <p class="trabalhos__intro">
+          Passa o mouse e explore por dentro. São sites que estão no ar agora,
+          trabalhando pelos seus donos todos os dias.
+        </p>
+        <div class="trabalhos__grid">
+          {cases.map((c) => (
+            <SitePreview
+              title={c.title}
+              descricao={c.descricao}
+              domain={c.domain}
+              url={c.url}
+              mode={c.mode}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="depoimentos">
+      <div class="container">
+        <p class="section-label">Depoimentos</p>
+        <h2 class="depoimentos__titulo">O que eles disseram.</h2>
+        <div class="depoimentos__grid">
+          {depoimentos.map((d) => (
+            <figure class="dep">
+              <blockquote class="dep__quote">{d.texto}</blockquote>
+              <figcaption class="dep__autor">
+                <img
+                  class="dep__foto"
+                  src={d.foto}
+                  alt={d.nome}
+                  width="56"
+                  height="56"
+                  loading="lazy"
+                />
+                <span class="dep__info">
+                  <span class="dep__nome">{d.nome}</span>
+                  <span class="dep__papel">{d.papel}</span>
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="fechamento">
+      <div class="container fechamento__inner">
+        <h2 class="fechamento__titulo">Seu negócio pode ser o próximo.</h2>
+        <p class="fechamento__texto">
+          Me conta o que você faz que eu penso num site com a sua cara, feito pra
+          te encontrarem e te levarem a sério.
+        </p>
+        <a class="btn btn--primary" href={waSite}>Começar pelo WhatsApp</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div class="footer__brand">
+          <span class="footer__name">Matheus Ávila</span>
+          <span class="footer__tag">Ávila Core</span>
+        </div>
+        <nav class="footer__links" aria-label="Rodapé">
+          <a href="/sites">Sites</a>
+          <a href="/filmagens">Filmagens</a>
+          <a href="/suporte">Suporte</a>
+          <a href="/#sobre">Sobre</a>
+        </nav>
+        <span class="footer__copy">© {new Date().getFullYear()} Matheus Ávila</span>
+      </div>
+    </footer>
+  </main>
 </Base>
+
+<style>
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .section-label::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* Hero */
+  .hero {
+    padding-top: clamp(3rem, 9vh, 6rem);
+    padding-bottom: clamp(3rem, 8vh, 5rem);
+  }
+  .hero__title {
+    margin-top: 1.5rem;
+    max-width: 16ch;
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+  .hero__lead {
+    margin-top: 1.75rem;
+    max-width: 62ch;
+    color: var(--muted);
+    font-size: clamp(1.08rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.7;
+  }
+  .hero__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+  .hero__link {
+    color: var(--text);
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--line);
+    transition: border-color 0.25s var(--ease);
+  }
+  .hero__link:hover {
+    border-color: var(--accent);
+  }
+
+  /* Porquê */
+  .porque {
+    padding-block: clamp(3rem, 8vh, 5rem);
+    border-top: 1px solid var(--line);
+  }
+  .porque__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+  .porque__nome {
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .porque__nome::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .porque__texto {
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+
+  /* Trabalhos */
+  .trabalhos {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .trabalhos__titulo {
+    margin-top: 1.25rem;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+  }
+  .trabalhos__intro {
+    margin-top: 1rem;
+    max-width: 52ch;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.7;
+  }
+  .trabalhos__grid {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  .trabalhos__grid > :global(.case:first-child) {
+    grid-column: 1 / -1;
+  }
+
+  /* Depoimentos */
+  .depoimentos {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .depoimentos__titulo {
+    margin-top: 1.25rem;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+  }
+  .depoimentos__grid {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2rem);
+    align-items: stretch;
+  }
+  .dep {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: clamp(1.5rem, 2.5vw, 2rem);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  }
+  .dep__quote {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.05rem;
+    line-height: 1.65;
+  }
+  .dep__quote::before {
+    content: '\201C';
+    display: block;
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    line-height: 0.4;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .dep__autor {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .dep__foto {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+  }
+  .dep__info {
+    display: flex;
+    flex-direction: column;
+  }
+  .dep__nome {
+    font-weight: 500;
+  }
+  .dep__papel {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* Fechamento */
+  .fechamento {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .fechamento__inner {
+    max-width: 40ch;
+  }
+  .fechamento__titulo {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .fechamento__texto {
+    margin-top: 1.25rem;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+  .fechamento .btn {
+    margin-top: 2rem;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--line);
+    padding-block: 2.5rem;
+  }
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2.5rem;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .footer__name {
+    font-weight: 500;
+    margin-right: 0.6rem;
+  }
+  .footer__tag {
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .footer__links a {
+    color: var(--muted);
+    font-size: 0.95rem;
+    transition: color 0.2s var(--ease);
+  }
+  .footer__links a:hover {
+    color: var(--text);
+  }
+  .footer__copy {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* Responsivo */
+  @media (max-width: 820px) {
+    .porque__grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .trabalhos__grid {
+      grid-template-columns: 1fr;
+    }
+    .trabalhos__grid > :global(.case:first-child) {
+      grid-column: auto;
+    }
+    .depoimentos__grid {
+      grid-template-columns: 1fr;
+    }
+    .footer__inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

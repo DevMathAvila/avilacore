@@ -1,12 +1,460 @@
 ---
 import Base from '../layouts/Base.astro';
-import EmConstrucao from '../components/EmConstrucao.astro';
+import Nav from '../components/Nav.astro';
+
+const phone = '5519993808005';
+const waSuporte = `https://wa.me/${phone}?text=${encodeURIComponent('Olá, Matheus! Quero organizar a TI da minha empresa.')}`;
+
+const areas = [
+  {
+    titulo: 'Suporte técnico',
+    imagem: '/suporte/computadorimpressora.jpg',
+    itens: [
+      'Computadores lentos ou travando',
+      'Impressoras e periféricos',
+      'Programas e sistemas com erro',
+      'Configuração de máquinas e usuários',
+    ],
+  },
+  {
+    titulo: 'Rede e Internet',
+    imagem: '/suporte/redeeinternet.jpg',
+    itens: [
+      'Internet instável ou lenta',
+      'Wi-Fi com problema ou sinal fraco',
+      'Computadores que não se enxergam na rede',
+      'VPN, roteador e rede interna',
+    ],
+  },
+  {
+    titulo: 'Segurança e Backup',
+    imagem: '/suporte/seguran%C3%A7aebackup.jpg',
+    itens: [
+      'Backup inexistente ou mal configurado',
+      'Vírus e malware',
+      'Senhas fracas e acessos indevidos',
+      'Proteção dos dados da empresa',
+    ],
+  },
+];
+
+const riscos = [
+  {
+    situacao: 'O funcionário saiu há meses e ainda tem acesso ao servidor.',
+    consequencia: 'Um clique de mágoa e a empresa perde tudo o que construiu.',
+  },
+  {
+    situacao: 'O AnyDesk continua instalado, com a mesma senha que meia dúzia de pessoas conhece.',
+    consequencia: 'É uma porta destrancada pra qualquer um entrar na máquina de longe.',
+  },
+  {
+    situacao: 'O Wi-Fi dos visitantes é o mesmo dos computadores da empresa.',
+    consequencia: 'Quem entra só pra tomar um café enxerga os seus arquivos.',
+  },
+  {
+    situacao: 'O switch e o roteador estão do jeito que saíram da caixa.',
+    consequencia: 'A rede fica lenta e exposta, e ninguém entende o porquê.',
+  },
+  {
+    situacao: 'O backup existe, mas nunca foi testado.',
+    consequencia: 'No dia que você precisa, descobre que ele nunca funcionou.',
+  },
+  {
+    situacao: 'O cabeamento é um emaranhado que ninguém sabe o que conecta.',
+    consequencia: 'Um problema simples vira horas de parada procurando o fio certo.',
+  },
+];
 ---
 
-<Base title="Suporte · Matheus Ávila" description="Suporte técnico e resolução de problemas por Matheus Ávila — Ávila Core.">
-  <EmConstrucao
-    eyebrow="Suporte"
-    title="Suporte & resolução"
-    desc="Casos reais de problemas que resolvi vão morar aqui. Precisa de ajuda agora? É só me chamar."
-  />
+<Base
+  title="Suporte · Matheus Ávila"
+  description="Suporte técnico, rede e segurança para empresas. Resolvo o que trava a sua operação antes de virar problema. Ávila Core."
+>
+  <Nav />
+
+  <main class="suporte">
+    <section class="hero container">
+      <p class="section-label">Suporte</p>
+      <h1 class="hero__title">Quase todo problema sério começa com um "depois eu vejo".</h1>
+      <p class="hero__lead">
+        Cabo largado atrás da mesa, Wi-Fi que cai bem na hora da reunião, um
+        servidor que a empresa inteira acessa, a VPN que some quando você mais
+        precisa. Parece pequeno e dá pra empurrar com a barriga. Só que o que é
+        simples hoje vira dor de cabeça, prejuízo e noite mal dormida amanhã. Eu
+        resolvo antes de virar problema e deixo tudo organizado do jeito que
+        deveria ter sido desde o começo.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href={waSuporte}>Chamar no WhatsApp</a>
+        <a class="hero__link" href="#areas">Ver no que eu ajudo</a>
+      </div>
+    </section>
+
+    <section class="areas" id="areas">
+      <div class="container">
+        <p class="section-label">No que eu resolvo</p>
+        <h2 class="areas__titulo">Do computador lento à sua rede inteira.</h2>
+        <div class="areas__grid">
+          {areas.map((a) => (
+            <article class="area">
+              <div class="area__img">
+                <img src={a.imagem} alt={a.titulo} loading="lazy" />
+              </div>
+              <h3 class="area__titulo">{a.titulo}</h3>
+              <ul class="area__lista">
+                {a.itens.map((i) => (
+                  <li>{i}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="riscos">
+      <div class="container">
+        <p class="section-label">O preço do "depois"</p>
+        <h2 class="riscos__titulo">O que o "depois eu vejo" cobra lá na frente.</h2>
+        <p class="riscos__intro">
+          Não é pra assustar. É pra você enxergar antes que aconteça. São
+          situações que eu encontro toda hora dentro das empresas.
+        </p>
+        <div class="riscos__grid">
+          {riscos.map((r) => (
+            <div class="risco">
+              <p class="risco__situacao">{r.situacao}</p>
+              <p class="risco__consequencia">{r.consequencia}</p>
+            </div>
+          ))}
+        </div>
+        <p class="riscos__fecho">
+          No fim, está tudo em jogo ao mesmo tempo. O seu bolso, com a operação
+          parada e o prejuízo. A sua cabeça, com os seus dados e os do seu
+          cliente. E a sua paz, de dormir sabendo que está tudo no lugar.
+        </p>
+      </div>
+    </section>
+
+    <section class="ajuda">
+      <div class="container ajuda__grid">
+        <h2 class="ajuda__titulo">Como a Ávila Core entra nisso.</h2>
+        <div class="ajuda__texto">
+          <p>
+            Eu chego, olho tudo com calma e mapeio o que está bagunçado ou
+            exposto. Organizo a rede, tranco os acessos que não deveriam existir,
+            deixo o backup funcionando de verdade e documento cada passo.
+          </p>
+          <p>
+            Sem juridiquês técnico e sem te deixar no escuro. Você entende o que
+            foi feito e por quê. E eu fico por perto pra quando precisar de novo,
+            porque tecnologia boa é aquela que você nem precisa lembrar que
+            existe.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="fechamento">
+      <div class="container fechamento__inner">
+        <h2 class="fechamento__titulo">Vamos tirar esse "depois" da frente.</h2>
+        <p class="fechamento__texto">
+          Me conta como está a sua estrutura hoje que eu te mostro o que dá pra
+          organizar, sem enrolação.
+        </p>
+        <a class="btn btn--primary" href={waSuporte}>Começar pelo WhatsApp</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div class="footer__brand">
+          <span class="footer__name">Matheus Ávila</span>
+          <span class="footer__tag">Ávila Core</span>
+        </div>
+        <nav class="footer__links" aria-label="Rodapé">
+          <a href="/sites">Sites</a>
+          <a href="/filmagens">Filmagens</a>
+          <a href="/suporte">Suporte</a>
+          <a href="/#sobre">Sobre</a>
+        </nav>
+        <span class="footer__copy">© {new Date().getFullYear()} Matheus Ávila</span>
+      </div>
+    </footer>
+  </main>
 </Base>
+
+<style>
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .section-label::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* Hero */
+  .hero {
+    padding-top: clamp(3rem, 9vh, 6rem);
+    padding-bottom: clamp(3rem, 8vh, 5rem);
+  }
+  .hero__title {
+    margin-top: 1.5rem;
+    max-width: 20ch;
+    font-size: clamp(2.2rem, 5.5vw, 4rem);
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+  }
+  .hero__lead {
+    margin-top: 1.75rem;
+    max-width: 64ch;
+    color: var(--muted);
+    font-size: clamp(1.08rem, 1rem + 0.4vw, 1.22rem);
+    line-height: 1.7;
+  }
+  .hero__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 2.25rem;
+  }
+  .hero__link {
+    color: var(--text);
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--line);
+    transition: border-color 0.25s var(--ease);
+  }
+  .hero__link:hover {
+    border-color: var(--accent);
+  }
+
+  /* Áreas */
+  .areas {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .areas__titulo {
+    margin-top: 1.25rem;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+  }
+  .areas__grid {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .area {
+    display: flex;
+    flex-direction: column;
+  }
+  .area__img {
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--card);
+  }
+  .area__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .area__titulo {
+    margin-top: 1.4rem;
+    font-size: 1.35rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .area__lista {
+    margin-top: 1rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .area__lista li {
+    position: relative;
+    padding-left: 1.3rem;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .area__lista li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Riscos */
+  .riscos {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .riscos__titulo {
+    margin-top: 1.25rem;
+    max-width: 22ch;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+  }
+  .riscos__intro {
+    margin-top: 1rem;
+    max-width: 56ch;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.7;
+  }
+  .riscos__grid {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .risco {
+    border-left: 2px solid var(--accent);
+    padding: 0.4rem 0 0.4rem 1.5rem;
+  }
+  .risco__situacao {
+    font-size: 1.08rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .risco__consequencia {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+  .riscos__fecho {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    max-width: 60ch;
+    font-size: clamp(1.15rem, 1rem + 0.5vw, 1.4rem);
+    font-weight: 300;
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+  }
+
+  /* Ajuda */
+  .ajuda {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .ajuda__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+  }
+  .ajuda__titulo {
+    font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+  .ajuda__texto {
+    max-width: 60ch;
+  }
+  .ajuda__texto p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.75;
+  }
+  .ajuda__texto p + p {
+    margin-top: 1.3rem;
+  }
+
+  /* Fechamento */
+  .fechamento {
+    padding-block: clamp(4rem, 10vh, 7rem);
+    border-top: 1px solid var(--line);
+  }
+  .fechamento__inner {
+    max-width: 42ch;
+  }
+  .fechamento__titulo {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .fechamento__texto {
+    margin-top: 1.25rem;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+  .fechamento .btn {
+    margin-top: 2rem;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--line);
+    padding-block: 2.5rem;
+  }
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2.5rem;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .footer__name {
+    font-weight: 500;
+    margin-right: 0.6rem;
+  }
+  .footer__tag {
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .footer__links a {
+    color: var(--muted);
+    font-size: 0.95rem;
+    transition: color 0.2s var(--ease);
+  }
+  .footer__links a:hover {
+    color: var(--text);
+  }
+  .footer__copy {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* Responsivo */
+  @media (max-width: 860px) {
+    .areas__grid {
+      grid-template-columns: 1fr;
+      max-width: 32rem;
+    }
+    .riscos__grid {
+      grid-template-columns: 1fr;
+    }
+    .ajuda__grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .footer__inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
