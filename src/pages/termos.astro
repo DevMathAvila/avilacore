@@ -1,0 +1,95 @@
+---
+/** Termos de uso simples: o que é o site, de quem é o conteúdo e o que ele não promete. */
+import Base from '../layouts/Base.astro';
+import TopoPagina from '../components/TopoPagina.astro';
+import { site, linkWhatsapp } from '../config/site';
+
+const atualizado = '2026-10-01';
+const migalhas = [{ nome: 'Termos de uso', caminho: '/termos' }];
+---
+
+<Base
+  titulo="Termos de uso · AvilaCore"
+  descricao="Regras de uso do site da AvilaCore: de quem é o conteúdo, como funcionam os orçamentos e o que o site não promete."
+  migalhas={migalhas}
+  atualizado={atualizado}
+>
+  <TopoPagina
+    titulo="Termos de uso"
+    lead="Regras simples sobre o conteúdo deste site e sobre como um contato vira trabalho."
+    migalhas={migalhas}
+  />
+
+  <section class="legal">
+    <div class="grade">
+      <div class="prosa legal__texto">
+        <p class="apoio pequeno">Atualizados em 1º de outubro de 2026.</p>
+
+        <h2>O que é este site</h2>
+        <p>
+          Este é o site da {site.nome}, marca de {site.pessoa}, de {site.cidade}, {site.uf}. Ele
+          apresenta os serviços de vídeo, imagens aéreas com drone e criação de sites, e serve para
+          você entrar em contato.
+        </p>
+
+        <h2>Conteúdo e marca</h2>
+        <p>
+          Os textos, o desenho do site, o logo e o símbolo da {site.nome} são meus. Você pode
+          compartilhar os links à vontade. Para reproduzir textos, imagens ou vídeos em outro lugar,
+          peça antes.
+        </p>
+        <p>
+          Os estudos autorais mostrados em Trabalhos usam marcas, pessoas e dados fictícios, criados
+          para demonstração. As fotos que aparecem dentro desses estudos são de bancos de imagem e
+          pertencem aos seus autores, creditados em cada projeto.
+        </p>
+
+        <h2>Orçamentos e contratação</h2>
+        <p>
+          O que está no site é informação sobre os serviços e não uma oferta fechada. Preço, prazo e
+          escopo de cada trabalho são combinados por escrito na conversa, antes de começar.
+        </p>
+
+        <h2>Links para outros sites</h2>
+        <p>
+          O site tem links para o WhatsApp, o Instagram, sites de clientes e fontes oficiais. Eu não
+          controlo o conteúdo desses endereços.
+        </p>
+
+        <h2>O que o site não promete</h2>
+        <p>
+          Eu cuido para que as informações estejam certas e o site fique no ar, mas pode haver erro
+          ou indisponibilidade. Os guias são conteúdo informativo e não substituem a consulta às
+          normas oficiais, que estão sempre indicadas com link.
+        </p>
+
+        <h2>Privacidade</h2>
+        <p>
+          O tratamento de dados pessoais está descrito na
+          <a href="/politica-de-privacidade">política de privacidade</a>.
+        </p>
+
+        <h2>Dúvidas</h2>
+        <p>
+          Fale comigo pelo
+          <a href={linkWhatsapp('Olá, Matheus! Tenho uma dúvida sobre os termos de uso do site.')} rel="noopener">WhatsApp {site.whatsapp.exibicao}</a>.
+          Estes termos seguem a lei brasileira.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .legal {
+    padding-bottom: var(--espaco-3xl);
+  }
+  .legal__texto :global(h2) {
+    font-size: var(--passo-2);
+  }
+  @media (min-width: 48rem) {
+    .legal__texto {
+      grid-column: 3 / 11;
+    }
+  }
+</style>

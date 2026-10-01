@@ -1,0 +1,228 @@
+---
+/** Cabeçalho fixo: logo, navegação e o botão "Conte sua ideia". No celular, menu de tela cheia. */
+import Logo from '../brand/logo-avilacore-clara.svg';
+import { menu, linkWhatsapp } from '../config/site';
+
+const atual = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const ativo = (href: string) => atual === href || atual.startsWith(`${href}/`);
+---
+
+<header class="cabecalho">
+  <div class="cabecalho__dentro">
+    <a class="marca" href="/">
+      <Logo class="marca__logo" />
+      <span class="so-leitor">Página inicial</span>
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <ul role="list">
+        {
+          menu.map((m) => (
+            <li>
+              <a href={m.href} aria-current={ativo(m.href) ? 'page' : undefined}>
+                {m.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="botao botao--acao botao--compacto cabecalho__acao" href="/contato">Conte sua ideia</a>
+
+    <button class="abrir" type="button" data-abrir-menu aria-haspopup="dialog" aria-controls="menu">
+      Menu
+    </button>
+  </div>
+
+  <dialog id="menu" class="menu" aria-label="Menu">
+    <div class="menu__topo">
+      <Logo class="marca__logo" aria-hidden="true" />
+      <button class="abrir" type="button" data-fechar-menu>Fechar</button>
+    </div>
+    <nav aria-label="Menu">
+      <ul role="list" class="menu__lista">
+        {
+          menu.map((m) => (
+            <li>
+              <a href={m.href} aria-current={ativo(m.href) ? 'page' : undefined}>
+                {m.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="menu__acoes">
+      <a class="botao botao--acao" href="/contato">Conte sua ideia</a>
+      <a class="link" href={linkWhatsapp()} rel="noopener">Falar no WhatsApp</a>
+    </div>
+  </dialog>
+</header>
+
+<script>
+  const menu = document.getElementById('menu') as HTMLDialogElement | null;
+  if (menu) {
+    document.querySelector('[data-abrir-menu]')?.addEventListener('click', () => menu.showModal());
+    menu.querySelector('[data-fechar-menu]')?.addEventListener('click', () => menu.close());
+    // ao escolher um destino, fecha antes de navegar
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.close()));
+  }
+</script>
+
+<style>
+  .cabecalho {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--fundo);
+    border-bottom: var(--traco) solid var(--linha);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .cabecalho__dentro {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-m);
+    height: var(--cabecalho);
+    max-width: calc(var(--largura-max) + 2 * var(--margem));
+    margin-inline: auto;
+    padding-inline: var(--margem);
+  }
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--toque);
+    margin-right: auto;
+    color: var(--texto);
+  }
+  .marca__logo {
+    width: auto;
+    height: 1.2rem;
+  }
+
+  .nav,
+  .cabecalho__acao {
+    display: none;
+  }
+  .nav ul {
+    display: flex;
+    gap: clamp(1rem, 2.2vw, 2.25rem);
+  }
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--toque);
+    color: var(--texto-apoio);
+    font-size: var(--passo--1);
+    font-weight: 520;
+    text-decoration: none;
+    box-shadow: inset 0 -2px 0 transparent;
+    transition:
+      color var(--dur-1) var(--curva),
+      box-shadow var(--dur-1) var(--curva);
+  }
+  .nav a:hover {
+    color: var(--texto);
+  }
+  .nav a[aria-current='page'] {
+    color: var(--texto);
+    box-shadow: inset 0 -2px 0 var(--ciano);
+  }
+
+  .abrir {
+    min-height: var(--toque);
+    min-width: 4.5rem;
+    padding: 0 1rem;
+    background: transparent;
+    border: var(--traco) solid var(--borda);
+    border-radius: var(--raio-1);
+    font-size: var(--passo--1);
+    font-weight: var(--peso-forte);
+    cursor: pointer;
+  }
+  .abrir:hover {
+    border-color: var(--papel);
+  }
+
+  /* ----- menu do celular: tela cheia, itens grandes, ações ao alcance do polegar ----- */
+  .menu {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: env(safe-area-inset-top, 0px) var(--margem) calc(var(--espaco-m) + env(safe-area-inset-bottom, 0px));
+    border: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    overflow-y: auto;
+  }
+  .menu[open] {
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--dur-2) var(--curva),
+      transform var(--dur-2) var(--curva);
+  }
+  @starting-style {
+    .menu[open] {
+      opacity: 0;
+      transform: translateY(-0.75rem);
+    }
+  }
+  .menu::backdrop {
+    background: var(--fundo);
+  }
+  .menu__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--cabecalho);
+    flex: none;
+  }
+  .menu__lista {
+    margin-top: var(--espaco-l);
+    border-top: var(--traco) solid var(--linha);
+  }
+  .menu__lista a {
+    display: flex;
+    align-items: center;
+    min-height: 4.25rem;
+    border-bottom: var(--traco) solid var(--linha);
+    color: var(--texto);
+    font-size: var(--passo-3);
+    font-weight: var(--peso-titulo);
+    font-stretch: var(--largura-titulo);
+    letter-spacing: var(--espaco-letras-titulo);
+    text-decoration: none;
+  }
+  .menu__lista a[aria-current='page'] {
+    color: var(--ciano);
+  }
+  .menu__acoes {
+    display: grid;
+    gap: var(--espaco-2xs);
+    margin-top: auto;
+    padding-top: var(--espaco-l);
+  }
+  .menu__acoes .link {
+    justify-content: center;
+  }
+
+  @media (min-width: 60rem) {
+    .nav {
+      display: block;
+    }
+    .cabecalho__acao {
+      display: inline-flex;
+    }
+    .abrir[data-abrir-menu] {
+      display: none;
+    }
+    .marca__logo {
+      height: 1.3rem;
+    }
+  }
+</style>

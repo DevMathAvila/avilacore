@@ -1,0 +1,93 @@
+---
+/**
+ * Lista de guias. Só os guias com `publicado: true` aparecem para o público.
+ * Enquanto nenhum estiver publicado, a página fica com noindex, fora do menu e do
+ * sitemap, e mostra os rascunhos para revisão.
+ */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import TopoPagina from '../../components/TopoPagina.astro';
+import { frentes } from '../../config/site';
+
+const todos = (await getCollection('guias')).sort((a, b) => a.data.titulo.localeCompare(b.data.titulo, 'pt-BR'));
+const publicados = todos.filter((g) => g.data.publicado);
+const emRevisao = publicados.length === 0;
+const lista = emRevisao ? todos : publicados;
+const migalhas = [{ nome: 'Guias', caminho: '/guias' }];
+---
+
+<Base
+  titulo="Guias sobre vídeo, drone e sites · AvilaCore"
+  descricao="Guias práticos da AvilaCore sobre filmagem com drone, vídeos para redes sociais e sites para negócios locais."
+  migalhas={migalhas}
+  noindex={emRevisao}
+  tipoPagina="CollectionPage"
+>
+  <TopoPagina
+    titulo="Guias"
+    lead={
+      emRevisao
+        ? 'Rascunhos em revisão. Ainda não fazem parte do site público.'
+        : 'Textos práticos sobre vídeo, drone e sites, com as fontes oficiais indicadas.'
+    }
+    migalhas={migalhas}
+  />
+
+  <section class="guias">
+    <div class="grade">
+      <ul role="list" class="guias__lista">
+        {
+          lista.map((g) => (
+            <li>
+              <a href={`/guias/${g.id}`}>
+                <span class="guias__titulo">{g.data.titulo}</span>
+                <span class="apoio">{g.data.resumo}</span>
+                <span class="pequeno apoio">
+                  {frentes[g.data.frente].nome}
+                  {!g.data.publicado && ' (rascunho)'}
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .guias {
+    padding-bottom: var(--espaco-3xl);
+  }
+  .guias__lista {
+    border-top: var(--traco) solid var(--linha);
+  }
+  .guias__lista a {
+    display: grid;
+    gap: 0.3rem;
+    padding-block: var(--espaco-m);
+    border-bottom: var(--traco) solid var(--linha);
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .guias__titulo {
+    font-family: var(--fonte-titulo);
+    font-size: var(--passo-2);
+    font-weight: var(--peso-titulo);
+    font-stretch: var(--largura-titulo);
+    letter-spacing: var(--espaco-letras-titulo);
+    line-height: 1.15;
+    max-width: 24ch;
+  }
+  .guias__lista a:hover .guias__titulo {
+    text-decoration: underline;
+    text-decoration-color: var(--ciano);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.16em;
+  }
+  @media (min-width: 48rem) {
+    .guias__lista {
+      grid-column: 3 / 12;
+    }
+  }
+</style>

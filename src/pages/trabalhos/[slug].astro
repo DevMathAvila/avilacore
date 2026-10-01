@@ -1,0 +1,325 @@
+---
+/**
+ * Página de um trabalho. Gerada só para o que tem `publicado: true`.
+ * Estudo autoral sempre aparece identificado como estudo, com a nota de honestidade.
+ */
+import { render } from 'astro:content';
+import { Picture, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Migalhas from '../../components/Migalhas.astro';
+import Quadro from '../../components/Quadro.astro';
+import PlayerExterno from '../../components/PlayerExterno.astro';
+import Fechamento from '../../components/Fechamento.astro';
+import { site, frentes } from '../../config/site';
+import { trabalhosPublicados, dataISO, type Trabalho } from '../../lib/conteudo';
+import { absoluta } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  const lista = await trabalhosPublicados();
+  return lista.map((t, i) => ({
+    params: { slug: t.id },
+    props: { trabalho: t, proximo: lista[(i + 1) % lista.length] },
+  }));
+}
+
+interface Props {
+  trabalho: Trabalho;
+  proximo: Trabalho;
+}
+const { trabalho, proximo } = Astro.props;
+const { data, id } = trabalho;
+const m = data.midia;
+const { Content } = await render(trabalho);
+const estudo = data.tipo === 'estudo';
+const frente = frentes[data.frente];
+
+const titulo = `${data.titulo}, ${data.categoria.toLowerCase()} · AvilaCore`;
+const descricao = `${estudo ? 'Estudo autoral. ' : ''}${data.resumo}`;
+const migalhas = [
+  { nome: 'Trabalhos', caminho: '/trabalhos' },
+  { nome: data.titulo, caminho: `/trabalhos/${id}` },
+];
+
+const capa = m.formato === 'imagem' ? m.src : m.poster;
+const capaGrande = await getImage({ src: capa, width: 1200, format: 'jpg' });
+const url = absoluta(`/trabalhos/${id}`);
+
+const schema: unknown[] = [
+  {
+    '@type': 'CreativeWork',
+    '@id': `${url}#trabalho`,
+    name: data.titulo,
+    description: descricao,
+    genre: data.categoria,
+    url,
+    image: `${site.url}${capaGrande.src}`,
+    creator: { '@id': `${site.url}/#matheus-avila` },
+    dateModified: dataISO(data.atualizado),
+    ...(data.ano ? { dateCreated: String(data.ano) } : {}),
+    ...(data.link ? { sameAs: data.link.url } : {}),
+  },
+];
+if (m.formato !== 'imagem') {
+  schema.push({
+    '@type': 'VideoObject',
+    '@id': `${url}#video`,
+    name: data.titulo,
+    description: m.transcricao ? m.transcricao.slice(0, 300) : descricao,
+    thumbnailUrl: `${site.url}${capaGrande.src}`,
+    uploadDate: dataISO(data.atualizado),
+    ...(m.formato === 'video'
+      ? { contentUrl: `${site.url}${m.arquivo}` }
+      : {
+          embedUrl:
+            m.provedor === 'youtube'
+              ? `https://www.youtube-nocookie.com/embed/${m.id}`
+              : `https://player.vimeo.com/video/${m.id}`,
+        }),
+  });
+}
+---
+
+<Base
+  titulo={titulo}
+  descricao={descricao}
+  atualizado={dataISO(data.atualizado)}
+  migalhas={migalhas}
+  og={`trabalhos-${id}`}
+  schema={schema}
+>
+  <article>
+    <header class="topo-pagina">
+      <div class="grade">
+        <Migalhas itens={migalhas} />
+        <p class="selo">
+          <span class="etiqueta">{estudo ? 'Estudo autoral' : 'Trabalho para cliente'}</span>
+          <span class="apoio pequeno">{data.categoria}</span>
+        </p>
+        <h1>{data.titulo}</h1>
+        <p class="eixo-b resumo">{data.resumo}</p>
+      </div>
+    </header>
+
+    <div class:list={['midia', m.formato === 'imagem' && m.celular ? 'midia--dupla' : '']}>
+      <Quadro proporcao={m.proporcao} class="midia__principal">
+        {
+          m.formato === 'imagem' && (
+            <Picture
+              src={m.src}
+              alt={m.alt}
+              formats={['avif', 'webp']}
+              widths={[640, 960, 1280, 1600]}
+              sizes="(min-width: 60rem) 70vw, 96vw"
+              loading="eager"
+              fetchpriority="high"
+            />
+          )
+        }
+        {
+          m.formato === 'video' && (
+            <video controls playsinline preload="none" poster={capaGrande.src} aria-label={m.alt}>
+              <source src={m.arquivo} type={m.arquivo.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+            </video>
+          )
+        }
+        {
+          m.formato === 'video-externo' && (
+            <PlayerExterno provedor={m.provedor} id={m.id} poster={capaGrande.src} titulo={data.titulo} />
+          )
+        }
+      </Quadro>
+      {
+        m.formato === 'imagem' && m.celular && (
+          <div class="midia__celular">
+            <Picture
+              src={m.celular}
+              alt={m.altCelular ?? `${data.titulo} no celular`}
+              formats={['avif', 'webp']}
+              widths={[240, 390, 780]}
+              sizes="(min-width: 60rem) 18vw, 40vw"
+              loading="lazy"
+            />
+          </div>
+        )
+      }
+    </div>
+
+    <section class="secao detalhes">
+      <div class="grade">
+        <dl class="ficha">
+          <div><dt>Frente</dt><dd><a href={frente.href}>{frente.nome}</a></dd></div>
+          {data.cliente && <div><dt>Cliente</dt><dd>{data.cliente}</dd></div>}
+          {data.local && <div><dt>Local</dt><dd>{data.local}</dd></div>}
+          {data.ano && <div><dt>Ano</dt><dd class="numeros">{data.ano}</dd></div>}
+          {data.creditos.map((c) => <div><dt>{c.papel}</dt><dd>{c.nome}</dd></div>)}
+        </dl>
+
+        <div class="contexto">
+          <div class="prosa"><Content /></div>
+          {m.formato !== 'imagem' && m.transcricao && (
+            <details class="transcricao">
+              <summary>Transcrição do vídeo</summary>
+              <p>{m.transcricao}</p>
+            </details>
+          )}
+          {data.nota && <p class="nota pequeno apoio">{data.nota}</p>}
+          {
+            data.link && (
+              <p class="visitar">
+                <a class="botao botao--contorno" href={data.link.url} rel="noopener">{data.link.rotulo}</a>
+              </p>
+            )
+          }
+        </div>
+      </div>
+    </section>
+  </article>
+
+  {
+    proximo.id !== id && (
+      <nav class="proximo" aria-label="Próximo trabalho">
+        <div class="grade">
+          <a href={`/trabalhos/${proximo.id}`}>
+            <span class="apoio pequeno">Próximo</span>
+            <span class="proximo__titulo">{proximo.data.titulo}</span>
+          </a>
+        </div>
+      </nav>
+    )
+  }
+
+  <Fechamento titulo={estudo && data.frente === 'sites' ? 'Quer um site assim para o seu negócio?' : 'Vamos conversar sobre a sua ideia.'} mensagem={frente.whatsapp} />
+</Base>
+
+<style>
+  .selo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.75rem;
+    max-width: none;
+    margin-bottom: var(--espaco-xs);
+  }
+  .resumo {
+    margin-top: var(--espaco-m);
+    font-size: var(--passo-1);
+    line-height: 1.4;
+    color: var(--texto-apoio);
+    max-width: 30ch;
+  }
+
+  /* mídia: moldura principal e, quando existe, a versão de celular ao lado */
+  .midia {
+    display: grid;
+    gap: var(--calha);
+    align-items: end;
+    max-width: calc(var(--largura-max) + 2 * var(--margem));
+    margin-inline: auto;
+    padding-inline: var(--margem);
+  }
+  .midia--dupla {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 28%);
+  }
+  .midia__celular {
+    position: relative;
+    aspect-ratio: 390 / 844;
+    overflow: hidden;
+    border: var(--traco) solid var(--borda);
+    border-radius: 0.9rem;
+    background: var(--noite-2);
+  }
+  .midia__celular :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .midia :global(video) {
+    background: var(--noite-2);
+  }
+
+  .detalhes .grade {
+    row-gap: var(--espaco-l);
+  }
+  .ficha {
+    border-top: var(--traco) solid var(--linha);
+  }
+  .ficha div {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--calha);
+    padding-block: var(--espaco-xs);
+    border-bottom: var(--traco) solid var(--linha);
+  }
+  .ficha dt {
+    color: var(--texto-apoio);
+    font-size: var(--passo--1);
+  }
+  .ficha a {
+    display: inline-block;
+    padding-block: 0.6rem;
+    margin-block: -0.6rem;
+  }
+  .nota {
+    margin-top: var(--espaco-m);
+    padding-top: var(--espaco-s);
+    border-top: var(--traco) solid var(--linha);
+    max-width: 60ch;
+  }
+  .visitar {
+    margin-top: var(--espaco-m);
+  }
+  .transcricao {
+    margin-top: var(--espaco-m);
+  }
+  .transcricao summary {
+    min-height: var(--toque);
+    cursor: pointer;
+  }
+
+  .proximo {
+    border-top: var(--traco) solid var(--linha);
+  }
+  .proximo a {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: var(--espaco-l);
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .proximo__titulo {
+    font-family: var(--fonte-titulo);
+    font-size: var(--passo-3);
+    font-weight: var(--peso-titulo);
+    font-stretch: var(--largura-titulo);
+    letter-spacing: var(--espaco-letras-titulo);
+    line-height: 1.1;
+  }
+  .proximo a:hover .proximo__titulo {
+    text-decoration: underline;
+    text-decoration-color: var(--ciano);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.16em;
+  }
+
+  @media (min-width: 48rem) {
+    h1 {
+      grid-column: 1 / 11;
+    }
+    .resumo {
+      max-width: 40ch;
+    }
+    .midia--dupla {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 19%);
+    }
+    .ficha {
+      grid-column: 1 / 5;
+      align-self: start;
+    }
+    .contexto {
+      grid-column: 6 / 13;
+    }
+  }
+</style>

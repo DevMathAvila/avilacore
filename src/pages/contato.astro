@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import TopoPagina from '../components/TopoPagina.astro';
+import FormContato from '../components/FormContato.astro';
+import { site, linkWhatsapp } from '../config/site';
+
+const titulo = 'Contato · AvilaCore';
+const descricao = `Fale com Matheus Ávila pelo WhatsApp ${site.whatsapp.exibicao} ou pelo formulário. Vídeo e drone na região de Indaiatuba, sites para todo o Brasil.`;
+const migalhas = [{ nome: 'Contato', caminho: '/contato' }];
+---
+
+<Base titulo={titulo} descricao={descricao} migalhas={migalhas} tipoPagina="ContactPage">
+  <TopoPagina
+    titulo="Conte sua ideia"
+    lead="Me diga o que você precisa. Quem lê e responde sou eu."
+    migalhas={migalhas}
+  />
+
+  <section class="contato">
+    <div class="grade">
+      <div class="contato__form">
+        <FormContato />
+      </div>
+
+      <aside class="contato__direto" aria-labelledby="t-direto">
+        <h2 id="t-direto">Prefere falar direto?</h2>
+        <p class="apoio">O WhatsApp é o caminho mais rápido.</p>
+        <a class="botao botao--contorno" href={linkWhatsapp()} rel="noopener">
+          WhatsApp <span class="numeros">{site.whatsapp.exibicao}</span>
+        </a>
+        <ul role="list" class="contato__canais">
+          <li><a class="link" href={site.instagram.url} rel="noopener me">Instagram @{site.instagram.usuario}</a></li>
+          {site.email && <li><a class="link" href={`mailto:${site.email}`}>{site.email}</a></li>}
+        </ul>
+        <p class="apoio pequeno">
+          Vídeo e drone: {site.areaPresencial.join(', ')} e região.<br />
+          Sites: todo o Brasil, à distância.
+        </p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contato {
+    padding-bottom: var(--espaco-3xl);
+  }
+  .contato .grade {
+    row-gap: var(--espaco-2xl);
+  }
+  .contato__direto {
+    display: grid;
+    gap: var(--espaco-xs);
+    justify-items: start;
+    align-content: start;
+    padding-top: var(--espaco-l);
+    border-top: var(--traco) solid var(--linha);
+  }
+  .contato__direto h2 {
+    font-size: var(--passo-2);
+  }
+  @media (min-width: 60rem) {
+    .contato__form {
+      grid-column: 1 / 8;
+    }
+    .contato__direto {
+      grid-column: 9 / 13;
+      padding-top: 0;
+      border-top: 0;
+    }
+  }
+</style>

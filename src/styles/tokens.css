@@ -1,0 +1,135 @@
+/*
+ * Tokens da AvilaCore. Único lugar onde cor, tipografia, espaço, raio e
+ * movimento são definidos. Os componentes só usam as variáveis daqui.
+ * Regras de uso em BRAND.md.
+ */
+
+@font-face {
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-var.woff2') format('woff2');
+  font-weight: 400 800;
+  font-stretch: 100% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fontes de reserva com métricas próximas da Archivo, para a troca de fonte não empurrar o layout */
+@font-face {
+  font-family: 'Archivo Reserva';
+  src: local('Arial');
+  size-adjust: 98.1%;
+  ascent-override: 89.5%;
+  descent-override: 21.4%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Archivo Titulo Reserva';
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Arial');
+  font-weight: 400 800;
+  size-adjust: 118%;
+  ascent-override: 74.4%;
+  descent-override: 17.8%;
+  line-gap-override: 0%;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* ---------- Cor: primitivos ---------- */
+  --noite: #0e1624; /* fundo do site */
+  --noite-2: #152033; /* superfícies, campos */
+  --noite-3: #1c2a40; /* superfície elevada */
+  --linha: #26344b; /* filetes e grade (decorativo) */
+  --borda: #6a7890; /* borda de campo e controles (3:1 sobre as superfícies) */
+  --papel: #edebe6; /* texto principal */
+  --nevoa: #a7adb5; /* texto de apoio */
+  --ciano: #5cc0d0; /* foco, links, detalhe digital */
+  --coral: #ef6f55; /* ações */
+  --coral-claro: #f38670; /* hover do botão principal */
+  --ciano-escuro: #0b6477; /* ciano sobre fundo claro */
+  --coral-escuro: #b2412a; /* coral sobre fundo claro */
+
+  /* ---------- Cor: papéis ---------- */
+  --fundo: var(--noite);
+  --superficie: var(--noite-2);
+  --texto: var(--papel);
+  --texto-apoio: var(--nevoa);
+  --link: var(--ciano);
+  --acao: var(--coral);
+  --acao-hover: var(--coral-claro);
+  --sobre-acao: var(--noite);
+  --foco: var(--papel); /* anel de foco: nunca ciano junto de coral */
+  --erro: #f38670;
+
+  /* ---------- Tipografia ---------- */
+  --fonte: 'Archivo', 'Archivo Reserva', 'Helvetica Neue', Arial, sans-serif;
+  --fonte-titulo: 'Archivo', 'Archivo Titulo Reserva', 'Helvetica Neue', Arial, sans-serif;
+  /* largura dos títulos: mais estreita no celular (vídeo vertical), larga no desktop (panorama) */
+  --largura-titulo: 108%;
+  --largura-display: 108%;
+  --peso-titulo: 780;
+  --peso-texto: 400;
+  --peso-forte: 620;
+
+  /* escala fluida de 360 a 1440 px (razão 1,2 no celular, 1,333 no desktop) */
+  --passo--1: clamp(0.875rem, 0.8542rem + 0.0926vw, 0.9375rem); /* 14 a 15 px */
+  --passo-0: clamp(1.0625rem, 1.0208rem + 0.1852vw, 1.1875rem); /* 17 a 19 */
+  --passo-1: clamp(1.275rem, 1.1724rem + 0.4562vw, 1.5829rem); /* 20,4 a 25,3 */
+  --passo-2: clamp(1.53rem, 1.3366rem + 0.8593vw, 2.1101rem); /* 24,5 a 33,8 */
+  --passo-3: clamp(1.836rem, 1.5104rem + 1.447vw, 2.8127rem); /* 29,4 a 45 */
+  --passo-4: clamp(2.2032rem, 1.6878rem + 2.2906vw, 3.7493rem); /* 35,3 a 60 */
+  --passo-5: clamp(2.4rem, 1.3333rem + 4.7407vw, 5.6rem); /* 38,4 a 89,6 */
+
+  --altura-display: 1;
+  --altura-titulo: 1.12;
+  --altura-texto: 1.6;
+  --espaco-letras-titulo: -0.015em;
+  --medida: 36ch; /* parágrafo no celular */
+
+  /* ---------- Espaço ---------- */
+  --espaco-2xs: clamp(0.5rem, 0.4583rem + 0.1852vw, 0.625rem);
+  --espaco-xs: clamp(0.75rem, 0.6875rem + 0.2778vw, 0.9375rem);
+  --espaco-s: clamp(1.0625rem, 1.0208rem + 0.1852vw, 1.1875rem);
+  --espaco-m: clamp(1.5625rem, 1.4792rem + 0.3704vw, 1.8125rem);
+  --espaco-l: clamp(2.125rem, 2.0417rem + 0.3704vw, 2.375rem);
+  --espaco-xl: clamp(3.1875rem, 3.0625rem + 0.5556vw, 3.5625rem);
+  --espaco-2xl: clamp(4.25rem, 3.5rem + 3.3333vw, 6.5rem);
+  --espaco-3xl: clamp(5.5rem, 4.1667rem + 5.9259vw, 9.5rem);
+
+  /* ---------- Grade ---------- */
+  --margem: clamp(1.25rem, 5.5vw, 1.75rem);
+  --calha: 0.875rem;
+  --largura-max: 78rem;
+
+  /* ---------- Forma ---------- */
+  --raio-0: 0; /* molduras: canto vivo, como o visor */
+  --raio-1: 3px; /* botões, campos */
+  --traco: 1px;
+  --traco-foco: 2px;
+  --toque: 3rem; /* área mínima de toque: 48 px */
+  --cabecalho: 4rem;
+
+  /* ---------- Movimento ---------- */
+  --dur-1: 160ms;
+  --dur-2: 280ms;
+  --dur-3: 620ms;
+  --curva: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --largura-titulo: 114%;
+    --largura-display: 116%;
+    --margem: clamp(2rem, 4.2vw, 4rem);
+    --calha: 1.5rem;
+    --medida: 62ch;
+    --cabecalho: 4.5rem;
+  }
+}
+
+@media (min-width: 75rem) {
+  :root {
+    --largura-titulo: 118%;
+    --largura-display: 125%;
+  }
+}

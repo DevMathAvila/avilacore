@@ -1,0 +1,72 @@
+---
+/** Página de erro com caminhos úteis. A Vercel responde com status 404 de verdade. */
+import Base from '../layouts/Base.astro';
+import { menu, linkWhatsapp } from '../config/site';
+---
+
+<Base
+  titulo="Página não encontrada · AvilaCore"
+  descricao="O endereço que você abriu não existe no site da AvilaCore."
+  noindex
+  og="home"
+>
+  <section class="erro moldura">
+    <div class="grade">
+      <p class="erro__codigo numeros apoio">Erro 404</p>
+      <h1>Esta página saiu do quadro.</h1>
+      <p class="eixo-b erro__texto apoio">
+        O endereço não existe ou mudou de lugar. Estes caminhos funcionam:
+      </p>
+      <nav class="eixo-b" aria-label="Páginas do site">
+        <ul role="list" class="erro__lista">
+          <li><a href="/">Início</a></li>
+          {menu.map((m) => <li><a href={m.href}>{m.rotulo}</a></li>)}
+          <li><a href="/contato">Contato</a></li>
+        </ul>
+      </nav>
+      <div class="eixo-b acoes erro__acoes">
+        <a class="botao botao--acao" href={linkWhatsapp()} rel="noopener">Falar no WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .erro {
+    --recuo: clamp(0.6rem, 1.6vw, 1.25rem);
+    display: grid;
+    align-content: center;
+    min-height: calc(100svh - var(--cabecalho));
+    padding-block: var(--espaco-2xl);
+  }
+  .erro__codigo {
+    margin-bottom: var(--espaco-xs);
+  }
+  .erro__texto {
+    margin-top: var(--espaco-m);
+  }
+  .erro__lista {
+    margin-top: var(--espaco-s);
+    border-top: var(--traco) solid var(--linha);
+  }
+  .erro__lista a {
+    display: flex;
+    align-items: center;
+    min-height: 3.25rem;
+    border-bottom: var(--traco) solid var(--linha);
+    color: var(--texto);
+    font-weight: var(--peso-forte);
+    text-decoration: none;
+  }
+  .erro__lista a:hover {
+    color: var(--ciano);
+  }
+  .erro__acoes {
+    margin-top: var(--espaco-m);
+  }
+  @media (min-width: 48rem) {
+    .erro h1 {
+      grid-column: 1 / 10;
+    }
+  }
+</style>

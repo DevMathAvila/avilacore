@@ -1,0 +1,174 @@
+---
+/**
+ * Sobre: só o que existe nos arquivos do projeto (nome, cidade, frentes e o texto
+ * que o Matheus já tinha publicado). Sem anos de experiência, formação ou clientes.
+ * A foto só aparece se houver um arquivo em src/assets/matheus/retrato.(jpg|png|webp).
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Base from '../layouts/Base.astro';
+import TopoPagina from '../components/TopoPagina.astro';
+import Quadro from '../components/Quadro.astro';
+import Fechamento from '../components/Fechamento.astro';
+import { site } from '../config/site';
+import { servicos } from '../lib/conteudo';
+
+const fotos = import.meta.glob<{ default: ImageMetadata }>('../assets/matheus/retrato.{jpg,jpeg,png,webp}', {
+  eager: true,
+});
+const retrato = Object.values(fotos)[0]?.default;
+const frentes = await servicos();
+const cidades = site.areaPresencial;
+
+const titulo = 'Sobre Matheus Ávila · AvilaCore';
+const descricao =
+  'Matheus Ávila, de Indaiatuba (SP), grava vídeos, voa com drone e cria sites sob a marca AvilaCore.';
+const migalhas = [{ nome: 'Sobre', caminho: '/sobre' }];
+---
+
+<Base titulo={titulo} descricao={descricao} migalhas={migalhas} tipoPagina="AboutPage">
+  <TopoPagina
+    titulo="Matheus Ávila"
+    lead="Sou de Indaiatuba, no interior de São Paulo. AvilaCore é o nome que assina o meu trabalho com vídeo, drone e sites."
+    migalhas={migalhas}
+  />
+
+  <section class="historia">
+    <div class="grade">
+      {
+        retrato && (
+          <div class="historia__foto">
+            <Quadro proporcao="4:5">
+              <Picture
+                src={retrato}
+                alt="Retrato de Matheus Ávila"
+                formats={['avif', 'webp']}
+                widths={[360, 560, 800]}
+                sizes="(min-width: 48rem) 30vw, 60vw"
+                loading="eager"
+              />
+            </Quadro>
+          </div>
+        )
+      }
+      <div class:list={['prosa', 'historia__texto', retrato ? 'historia__texto--com-foto' : '']}>
+        <p>
+          Comecei mexendo em tudo que envolvia computador e, com o tempo, essa curiosidade virou o
+          que faço hoje. Gosto de entender como as coisas funcionam e de deixá-las funcionando bem.
+        </p>
+        <p>
+          Trabalho sozinho. Quando você fala comigo, é comigo mesmo que você conversa, do primeiro
+          contato até a entrega. Quem grava, voa, edita e programa é a mesma pessoa.
+        </p>
+        <p>
+          Trabalho com calma, explico o que estou fazendo e entrego o que foi combinado. Cada
+          projeto leva a assinatura da AvilaCore, e para mim essa assinatura é uma questão de
+          responsabilidade.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>O que eu faço</h2>
+      <ul class="bloco__corpo lista-frentes" role="list">
+        {
+          frentes.map((f) => (
+            <li>
+              <a href={`/${f.data.frente}`}>
+                <span class="lista-frentes__nome">{f.data.nome}</span>
+                <span class="apoio">{f.data.resumo}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Como eu penso o trabalho</h2>
+      <ul class="bloco__corpo lista-linhas">
+        <li>Prefiro mostrar o trabalho a prometer resultado.</li>
+        <li>Site e vídeo precisam ter a cara de quem contrata.</li>
+        <li>O acabamento é responsabilidade minha: cada projeto leva a minha assinatura.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Onde atendo</h2>
+      <div class="bloco__corpo prosa">
+        <p>
+          Vídeo e drone, presencialmente: {cidades.slice(0, -1).join(', ')} e {cidades[cidades.length - 1]}, e cidades
+          próximas.
+        </p>
+        <p>Sites: todo o Brasil, à distância.</p>
+        <p class="apoio pequeno numeros">
+          {site.cidade}, {site.uf}. {site.coordenadas.lat}, {site.coordenadas.lon}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <Fechamento titulo="Vamos conversar sobre a sua ideia." />
+</Base>
+
+<style>
+  .historia {
+    padding-bottom: var(--espaco-2xl);
+  }
+  .historia .grade {
+    row-gap: var(--espaco-l);
+  }
+  .historia__foto {
+    grid-column: 1 / 4;
+  }
+  .historia__texto {
+    grid-column: 2 / -1;
+    font-size: var(--passo-1);
+    line-height: 1.5;
+  }
+  .historia__texto p {
+    max-width: 32ch;
+  }
+  .lista-frentes {
+    border-top: var(--traco) solid var(--linha);
+  }
+  .lista-frentes a {
+    display: grid;
+    gap: 0.2rem;
+    padding-block: var(--espaco-s);
+    border-bottom: var(--traco) solid var(--linha);
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .lista-frentes__nome {
+    font-family: var(--fonte-titulo);
+    font-size: var(--passo-2);
+    font-weight: var(--peso-titulo);
+    font-stretch: var(--largura-titulo);
+    letter-spacing: var(--espaco-letras-titulo);
+    line-height: 1.15;
+  }
+  .lista-frentes a:hover .lista-frentes__nome {
+    text-decoration: underline;
+    text-decoration-color: var(--ciano);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.16em;
+  }
+  @media (min-width: 48rem) {
+    .historia__foto {
+      grid-column: 1 / 5;
+    }
+    .historia__texto {
+      grid-column: 5 / 12;
+    }
+    .historia__texto p {
+      max-width: 44ch;
+    }
+  }
+</style>

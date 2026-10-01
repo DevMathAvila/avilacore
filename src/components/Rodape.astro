@@ -1,0 +1,125 @@
+---
+/** Rodapé montado só com o que existe: páginas, canais reais, cidade e páginas legais. */
+import Logo from '../brand/logo-avilacore-clara.svg';
+import { site, menu, linkWhatsapp } from '../config/site';
+import { guiasPublicados } from '../lib/conteudo';
+
+const temGuias = (await guiasPublicados()).length > 0;
+const paginas = [...menu, ...(temGuias ? [{ rotulo: 'Guias', href: '/guias' }] : []), { rotulo: 'Contato', href: '/contato' }];
+const ano = new Date().getFullYear();
+---
+
+<footer class="rodape">
+  <div class="grade">
+    <div class="rodape__marca">
+      <a href="/" class="rodape__logo">
+        <Logo />
+        <span class="so-leitor">Página inicial</span>
+      </a>
+      <p class="rodape__frase">{site.frase}</p>
+    </div>
+
+    <nav class="rodape__bloco rodape__paginas" aria-label="Páginas">
+      <ul role="list">
+        {paginas.map((p) => <li><a href={p.href}>{p.rotulo}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="rodape__bloco rodape__contato">
+      <ul role="list">
+        <li><a href={linkWhatsapp()} rel="noopener">WhatsApp <span class="numeros">{site.whatsapp.exibicao}</span></a></li>
+        <li><a href={site.instagram.url} rel="noopener me">Instagram @{site.instagram.usuario}</a></li>
+        {site.email && <li><a href={`mailto:${site.email}`}>{site.email}</a></li>}
+      </ul>
+      <p class="apoio pequeno numeros rodape__lugar">
+        {site.cidade}, {site.uf}<br />
+        {site.coordenadas.lat}, {site.coordenadas.lon}
+      </p>
+    </div>
+
+    <div class="rodape__fim pequeno apoio">
+      <p>© {ano} {site.nome}, de {site.pessoa}</p>
+      <ul role="list">
+        <li><a href="/politica-de-privacidade">Política de privacidade</a></li>
+        <li><a href="/termos">Termos de uso</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    border-top: var(--traco) solid var(--linha);
+    padding-block: var(--espaco-xl) calc(var(--espaco-l) + env(safe-area-inset-bottom, 0px));
+  }
+  .rodape .grade {
+    row-gap: var(--espaco-l);
+  }
+  .rodape__logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--toque);
+  }
+  .rodape__logo :global(svg) {
+    width: auto;
+    height: 1.5rem;
+  }
+  .rodape__frase {
+    margin-top: var(--espaco-2xs);
+    font-size: var(--passo-1);
+    font-weight: 700;
+    font-stretch: var(--largura-titulo);
+    letter-spacing: var(--espaco-letras-titulo);
+    line-height: 1.2;
+    max-width: 14ch;
+  }
+  .rodape a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--toque);
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .rodape a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--ciano);
+    text-underline-offset: 0.3em;
+  }
+  .rodape__paginas ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    column-gap: var(--espaco-l);
+  }
+  .rodape__lugar {
+    margin-top: var(--espaco-xs);
+  }
+  .rodape__fim {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 var(--espaco-m);
+    padding-top: var(--espaco-s);
+    border-top: var(--traco) solid var(--linha);
+  }
+  .rodape__fim ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--espaco-m);
+  }
+  .rodape__fim a {
+    color: var(--texto-apoio);
+  }
+
+  @media (min-width: 48rem) {
+    .rodape__marca {
+      grid-column: 1 / 6;
+    }
+    .rodape__paginas {
+      grid-column: 6 / 9;
+    }
+    .rodape__contato {
+      grid-column: 9 / 13;
+    }
+  }
+</style>

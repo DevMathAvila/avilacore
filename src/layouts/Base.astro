@@ -1,45 +1,119 @@
 ---
+/**
+ * Layout base: <head> completo (SEO, Open Graph, dados estruturados, ícones),
+ * cabeçalho, conteúdo e rodapé. Toda página passa por aqui.
+ */
 import '../styles/global.css';
-import WhatsappFab from '../components/WhatsappFab.astro';
+import Cabecalho from '../components/Cabecalho.astro';
+import Rodape from '../components/Rodape.astro';
+import { site } from '../config/site';
+import { absoluta, grafo, organizacao, pessoa, webSite, webPage, type Migalha } from '../lib/schema';
 
 interface Props {
-  title?: string;
-  description?: string;
+  titulo: string;
+  descricao: string;
+  /** nome do arquivo em /og, sem extensão (padrão: derivado do caminho) */
+  og?: string;
+  noindex?: boolean;
+  /** AAAA-MM-DD da última alteração de conteúdo */
+  atualizado?: string;
+  migalhas?: Migalha[];
+  /** nós extras do JSON-LD (Service, FAQPage, CreativeWork...) */
+  schema?: unknown[];
+  tipoPagina?: string;
 }
 
 const {
-  title = 'Matheus Ávila · Ávila Core',
-  description = 'Criação de sites, filmagens com drone e suporte técnico. Trabalho feito com cuidado por Matheus Ávila — Ávila Core.',
+  titulo,
+  descricao,
+  og,
+  noindex = false,
+  atualizado = site.revisadoEm,
+  migalhas = [],
+  schema = [],
+  tipoPagina,
 } = Astro.props;
 
-const url = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : Astro.url.pathname;
+const caminho = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const canonical = absoluta(caminho);
+const ogSlug = og ?? (caminho === '/' ? 'home' : caminho.slice(1).replace(/\//g, '-'));
+const ogImagem = `${site.url}/og/${ogSlug}.png`;
+
+const jsonLd = grafo([
+  organizacao(),
+  pessoa(),
+  webSite(),
+  webPage({ caminho, titulo, descricao, atualizado, migalhas, tipo: tipoPagina }),
+  ...schema,
+]);
+
+const analytics = import.meta.env.PUBLIC_ANALYTICS === 'vercel';
 ---
 
 <!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="theme-color" content="#f7f4ef" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={url} />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titulo}</title>
+    <meta name="description" content={descricao} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#0e1624" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="author" content={site.pessoa} />
 
-    <!-- Preload das fontes principais (peso da dobra) -->
-    <link rel="preload" href="/fonts/satoshi-300.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/archivo-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.nome} />
     <meta property="og:locale" content="pt_BR" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={url} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImagem} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${titulo}, em letras claras sobre fundo azul-noite com o símbolo da AvilaCore`} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descricao} />
+    <meta name="twitter:image" content={ogImagem} />
+
+    <script type="application/ld+json" is:inline set:html={jsonLd} />
+    {analytics && <script is:inline defer src="/_vercel/insights/script.js" />}
   </head>
   <body>
-    <slot />
-    <WhatsappFab />
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+    <Cabecalho />
+    <main id="conteudo" tabindex="-1">
+      <slot />
+    </main>
+    <Rodape />
   </body>
 </html>
+
+<style>
+  .pular {
+    position: absolute;
+    left: var(--margem);
+    top: 0.5rem;
+    z-index: 200;
+    padding: 0.75rem 1rem;
+    background: var(--papel);
+    color: var(--noite);
+    font-weight: var(--peso-forte);
+    border-radius: var(--raio-1);
+    transform: translateY(-200%);
+  }
+  .pular:focus {
+    transform: none;
+  }
+  main:focus {
+    outline: none;
+  }
+</style>

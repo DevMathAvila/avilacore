@@ -1,0 +1,22 @@
+---
+/** Página de confirmação para quem envia o formulário sem JavaScript. */
+import Base from '../../layouts/Base.astro';
+import TopoPagina from '../../components/TopoPagina.astro';
+import { linkWhatsapp } from '../../config/site';
+
+const migalhas = [
+  { nome: 'Contato', caminho: '/contato' },
+  { nome: 'Mensagem enviada', caminho: '/contato/enviada' },
+];
+---
+
+<Base titulo="Mensagem enviada · AvilaCore" descricao="Sua mensagem foi enviada para a AvilaCore." migalhas={migalhas} noindex og="contato">
+  <TopoPagina
+    titulo="Mensagem enviada."
+    lead="Eu respondo pelo contato que você deixou. Se for urgente, me chame no WhatsApp."
+    migalhas={migalhas}
+  >
+    <a class="botao botao--acao" href={linkWhatsapp()} rel="noopener">Falar no WhatsApp</a>
+    <a class="link" href="/">Voltar ao início</a>
+  </TopoPagina>
+</Base>

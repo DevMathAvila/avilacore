@@ -1,179 +1,414 @@
-/* ============================================================
-   Fontes self-hosted (Fontshare) — Clash Display + Satoshi
-   ============================================================ */
-@font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/satoshi-300.woff2') format('woff2');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/satoshi-400.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/satoshi-500.woff2') format('woff2');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/satoshi-700.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* Base do site: reset, tipografia, grade e peças pequenas reutilizadas. */
+@import './tokens.css';
 
-/* ============================================================
-   Design tokens — Cinema escuro + âmbar
-   ============================================================ */
-:root {
-  --bg: #1a1613;
-  --bg-soft: #211c18;
-  --card: #26201b;
-  --line: #362e27;
-  --text: #efe7dc;
-  --muted: #a89d8e;
-  --accent: #d8794a;
-  --accent-soft: rgba(216, 121, 74, 0.14);
-  --accent-strong: #e58e63;
-  --on-accent: #1a1613;
-  --whatsapp: #25d366;
-
-  --font-display: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Satoshi', ui-sans-serif, system-ui, -apple-system, sans-serif;
-
-  --maxw: 1180px;
-  --radius: 16px;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* ============================================================
-   Reset enxuto
-   ============================================================ */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+* {
   margin: 0;
-  padding: 0;
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--cabecalho) + 1rem);
+  scrollbar-color: var(--borda) var(--noite);
+  background: var(--fundo);
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.075rem);
-  line-height: 1.6;
-  font-weight: 400;
+  min-height: 100svh;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: var(--fonte);
+  font-size: var(--passo-0);
+  font-weight: var(--peso-texto);
+  font-stretch: 100%;
+  line-height: var(--altura-texto);
+  font-kerning: normal;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  accent-color: var(--ciano);
+  caret-color: var(--ciano);
+  overflow-wrap: break-word;
 }
 
-/* Textura de grão discreta — dá um ar cinematográfico e tira o "flat" de template */
+/* Grão de filme: textura leve por cima de tudo, sem pegar clique */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 100;
   pointer-events: none;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  background-image: url('/grao.svg');
+}
+
+::selection {
+  background: var(--ciano);
+  color: var(--noite);
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
 }
 
 img,
 video {
-  max-width: 100%;
-  display: block;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
+  height: auto;
 }
 
 h1,
 h2,
+h3,
+h4 {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-stretch: var(--largura-titulo);
+  line-height: var(--altura-titulo);
+  letter-spacing: var(--espaco-letras-titulo);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--passo-4);
+  font-stretch: var(--largura-display);
+  line-height: 1.04;
+}
+h2 {
+  font-size: var(--passo-3);
+}
 h3 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-}
-
-::selection {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-
-/* ============================================================
-   Utilitários
-   ============================================================ */
-.container {
-  width: 100%;
-  max-width: var(--maxw);
-  margin-inline: auto;
-  padding-inline: clamp(1.25rem, 5vw, 2.5rem);
-}
-
-.eyebrow {
-  font-size: 0.8rem;
+  font-size: var(--passo-1);
   font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent);
 }
 
-.btn {
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+
+p {
+  max-width: var(--medida);
+}
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+strong,
+b {
+  font-weight: var(--peso-forte);
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: var(--traco-foco) solid var(--foco);
+  outline-offset: 3px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- Grade: 4 colunas no celular, 12 no desktop ---------- */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--calha);
+  width: 100%;
+  max-width: calc(var(--largura-max) + 2 * var(--margem));
+  margin-inline: auto;
+  padding-inline: var(--margem);
+}
+.grade > * {
+  grid-column: 1 / -1;
+}
+/* eixo B: começa na segunda coluna */
+.grade > .eixo-b {
+  grid-column: 2 / -1;
+}
+
+@media (min-width: 48rem) {
+  .grade {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+  .grade > .eixo-b {
+    grid-column: 5 / 12;
+  }
+}
+
+.secao {
+  padding-block: var(--espaco-2xl);
+}
+.secao + .secao {
+  border-top: var(--traco) solid var(--linha);
+}
+
+.apoio {
+  color: var(--texto-apoio);
+}
+.pequeno {
+  font-size: var(--passo--1);
+}
+.numeros {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Link de texto com área de toque de 48 px */
+.link {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  font-weight: 500;
-  font-size: 0.98rem;
-  padding: 0.8rem 1.4rem;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: background 0.25s var(--ease), border-color 0.25s var(--ease),
-    color 0.25s var(--ease);
+  min-height: var(--toque);
+  color: var(--texto);
+  text-decoration: underline;
+  text-decoration-color: var(--borda);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color var(--dur-1) var(--curva);
 }
-.btn--primary {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-.btn--primary:hover {
-  background: var(--accent-strong);
-}
-.btn--ghost {
-  background: transparent;
-  border-color: var(--line);
-  color: var(--text);
-}
-.btn--ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+.link:hover {
+  text-decoration-color: var(--ciano);
+  text-decoration-thickness: 1px;
 }
 
-/* Acessibilidade: respeita quem prefere menos movimento */
+/* ---------- Texto corrido (markdown das coleções, páginas legais, guias) ---------- */
+.prosa > * + * {
+  margin-top: var(--espaco-s);
+}
+.prosa h2 {
+  font-size: var(--passo-2);
+  margin-top: var(--espaco-xl);
+}
+.prosa h3 {
+  margin-top: var(--espaco-l);
+}
+.prosa ul,
+.prosa ol {
+  padding-left: 1.2em;
+  max-width: var(--medida);
+}
+.prosa li + li {
+  margin-top: var(--espaco-2xs);
+}
+.prosa li::marker {
+  color: var(--nevoa);
+}
+
+/* ---------- Transição entre páginas (nativa, sem JavaScript) ---------- */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-2);
+  animation-timing-function: var(--curva);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+@media print {
+  body::after {
+    display: none;
+  }
+}
+
+/* ---------- Botões ---------- */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.7rem 1.5rem;
+  border: var(--traco) solid transparent;
+  border-radius: var(--raio-1);
+  font-weight: var(--peso-forte);
+  font-size: var(--passo-0);
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-1) var(--curva),
+    border-color var(--dur-1) var(--curva),
+    transform var(--dur-1) var(--curva);
+}
+.botao:active {
+  transform: translateY(1px);
+}
+.botao--acao {
+  background: var(--acao);
+  color: var(--sobre-acao);
+}
+.botao--acao:hover {
+  background: var(--acao-hover);
+  text-decoration: none;
+}
+.botao--contorno {
+  background: transparent;
+  border-color: var(--borda);
+  color: var(--texto);
+}
+.botao--contorno:hover {
+  border-color: var(--papel);
+  text-decoration: none;
+}
+.botao--compacto {
+  min-height: var(--toque);
+  padding: 0.5rem 1.1rem;
+  font-size: var(--passo--1);
+}
+.botao[aria-disabled='true'],
+.botao:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Grupo de ações: botão + link, empilhados no celular */
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-2xs) var(--espaco-m);
+}
+
+/* ---------- Moldura: os dois cantos do Foco (superior esquerdo e inferior direito) ---------- */
+.moldura {
+  position: relative;
+}
+.moldura::before,
+.moldura::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  width: var(--canto, clamp(1.1rem, 2.6vw, 1.9rem));
+  height: var(--canto, clamp(1.1rem, 2.6vw, 1.9rem));
+  border: 0 solid var(--papel);
+  pointer-events: none;
+}
+.moldura::before {
+  top: var(--recuo, 0.75rem);
+  left: var(--recuo, 0.75rem);
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+.moldura::after {
+  right: var(--recuo, 0.75rem);
+  bottom: var(--recuo, 0.75rem);
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+}
+
+/* Etiqueta discreta (ex.: "Estudo autoral") */
+.etiqueta {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border: var(--traco) solid var(--borda);
+  border-radius: var(--raio-1);
+  color: var(--texto);
+  font-size: var(--passo--1);
+  line-height: 1.4;
+}
+
+/* Cabeçalho de página interna: migalhas, H1 e apoio */
+.topo-pagina {
+  padding-block: var(--espaco-xl) var(--espaco-2xl);
+}
+.migalhas {
+  font-size: var(--passo--1);
+  color: var(--texto-apoio);
+  margin-bottom: var(--espaco-s);
+}
+.migalhas ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5ch;
+  list-style: none;
+  padding: 0;
+}
+.migalhas li + li::before {
+  content: '/';
+  margin-right: 0.5ch;
+  color: var(--borda);
+}
+.migalhas a {
+  color: inherit;
+}
+
+/* ---------- Bloco de página: título à esquerda, conteúdo à direita no desktop ---------- */
+.bloco > h2 {
+  margin-bottom: var(--espaco-m);
+}
+.bloco > .bloco__corpo {
+  grid-column: 1 / -1;
+}
+@media (min-width: 60rem) {
+  .bloco > h2 {
+    grid-column: 1 / 5;
+    margin-bottom: 0;
+    font-size: var(--passo-3);
+  }
+  .bloco > .bloco__corpo {
+    grid-column: 5 / 13;
+  }
+}
+
+/* Lista simples com filetes (para quem, o que o site tem) */
+.lista-linhas {
+  list-style: none;
+  padding: 0;
+  border-top: var(--traco) solid var(--linha);
+}
+.lista-linhas li {
+  padding-block: var(--espaco-xs);
+  border-bottom: var(--traco) solid var(--linha);
+  max-width: none;
 }

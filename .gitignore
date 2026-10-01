@@ -1,15 +1,19 @@
 # build output
 dist/
+.vercel/
 # dependencies
 node_modules/
 # generated types
 .astro/
 # environment
 .env
-.env.production
+.env.*
+!.env.example
 # macos/editor
 .DS_Store
 # marketing / social media (documentos internos, não vão pro site nem pro repo público)
 marketing/
+# material bruto e fichas com dados de clientes (o repositório é público)
+_conteudo/
 # pacote de skills (repositório próprio, não faz parte do site)
 claude-ig/

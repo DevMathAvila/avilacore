@@ -1,0 +1,127 @@
+---
+/**
+ * Página de um guia. Rascunhos (`publicado: false`) são gerados com noindex,
+ * ficam fora do menu e do sitemap e mostram um aviso no topo.
+ */
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Migalhas from '../../components/Migalhas.astro';
+import Fechamento from '../../components/Fechamento.astro';
+import { site, frentes } from '../../config/site';
+import { dataISO, type Guia } from '../../lib/conteudo';
+import { absoluta } from '../../lib/schema';
+
+export async function getStaticPaths() {
+  return (await getCollection('guias')).map((g) => ({ params: { slug: g.id }, props: { guia: g } }));
+}
+
+interface Props {
+  guia: Guia;
+}
+const { guia } = Astro.props;
+const { data, id } = guia;
+const { Content } = await render(guia);
+const frente = frentes[data.frente];
+const url = absoluta(`/guias/${id}`);
+const migalhas = [
+  { nome: 'Guias', caminho: '/guias' },
+  { nome: data.titulo, caminho: `/guias/${id}` },
+];
+const titulo = data.titulo.length > 44 ? data.titulo : `${data.titulo} · AvilaCore`;
+const dataLonga = data.atualizado.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<Base
+  titulo={titulo}
+  descricao={data.description}
+  atualizado={dataISO(data.atualizado)}
+  migalhas={migalhas}
+  noindex={!data.publicado}
+  og={`guias-${id}`}
+  schema={[
+    {
+      '@type': 'Article',
+      '@id': `${url}#artigo`,
+      headline: data.titulo,
+      description: data.description,
+      inLanguage: 'pt-BR',
+      mainEntityOfPage: { '@id': `${url}#pagina` },
+      author: { '@id': `${site.url}/#matheus-avila` },
+      publisher: { '@id': `${site.url}/#organizacao` },
+      dateModified: dataISO(data.atualizado),
+      datePublished: dataISO(data.atualizado),
+      image: `${site.url}/og/guias-${id}.png`,
+    },
+  ]}
+>
+  <article class="guia">
+    <header class="topo-pagina">
+      <div class="grade">
+        <Migalhas itens={migalhas} />
+        {!data.publicado && <p class="rascunho pequeno"><span class="etiqueta">Rascunho em revisão</span></p>}
+        <h1>{data.titulo}</h1>
+        <p class="eixo-b apoio pequeno guia__meta">
+          Por {site.pessoa}. Atualizado em {dataLonga}.
+        </p>
+      </div>
+    </header>
+
+    <div class="grade">
+      <div class="prosa guia__texto">
+        <Content />
+
+        {
+          data.fontes.length > 0 && (
+            <>
+              <h2>Fontes oficiais</h2>
+              <ul>
+                {data.fontes.map((f) => (
+                  <li>
+                    <a href={f.url} rel="noopener">{f.nome}</a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+      </div>
+    </div>
+  </article>
+
+  <Fechamento
+    titulo={`Precisa de ajuda com ${data.frente === 'sites' ? 'o seu site' : data.frente === 'drone' ? 'uma filmagem com drone' : 'os seus vídeos'}?`}
+    mensagem={frente.whatsapp}
+  />
+  <p class="grade guia__servico">
+    <a class="link" href={frente.href}>Ver o serviço: {frente.nome.toLowerCase()}</a>
+  </p>
+</Base>
+
+<style>
+  .rascunho {
+    margin-bottom: var(--espaco-xs);
+  }
+  .guia__meta {
+    margin-top: var(--espaco-s);
+    max-width: none;
+  }
+  .guia__texto {
+    padding-bottom: var(--espaco-2xl);
+  }
+  .guia__texto :global(p),
+  .guia__texto :global(ul),
+  .guia__texto :global(ol) {
+    max-width: 62ch;
+  }
+  .guia__servico {
+    padding-bottom: var(--espaco-xl);
+  }
+  @media (min-width: 48rem) {
+    .guia h1 {
+      grid-column: 1 / 11;
+    }
+    .guia__texto {
+      grid-column: 3 / 11;
+    }
+  }
+</style>

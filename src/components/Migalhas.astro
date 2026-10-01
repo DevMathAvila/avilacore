@@ -1,0 +1,25 @@
+---
+/** Trilha de navegação. O JSON-LD correspondente (BreadcrumbList) sai do layout. */
+import type { Migalha } from '../lib/schema';
+interface Props {
+  itens: Migalha[];
+}
+const { itens } = Astro.props;
+---
+
+<nav class="migalhas" aria-label="Você está em">
+  <ol>
+    <li><a href="/">Início</a></li>
+    {
+      itens.map((m, i) =>
+        i === itens.length - 1 ? (
+          <li aria-current="page">{m.nome}</li>
+        ) : (
+          <li>
+            <a href={m.caminho}>{m.nome}</a>
+          </li>
+        ),
+      )
+    }
+  </ol>
+</nav>

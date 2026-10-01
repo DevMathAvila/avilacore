@@ -1,0 +1,48 @@
+---
+/** Abertura das páginas internas: trilha, H1, frase de apoio e, se houver, as ações. */
+import Migalhas from './Migalhas.astro';
+import type { Migalha } from '../lib/schema';
+
+interface Props {
+  titulo: string;
+  lead?: string;
+  migalhas: Migalha[];
+}
+const { titulo, lead, migalhas } = Astro.props;
+---
+
+<header class="topo-pagina">
+  <div class="grade">
+    <Migalhas itens={migalhas} />
+    <h1>{titulo}</h1>
+    {lead && <p class="eixo-b topo__lead">{lead}</p>}
+    {
+      Astro.slots.has('default') && (
+        <div class="eixo-b acoes topo__acoes">
+          <slot />
+        </div>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  .topo__lead {
+    margin-top: var(--espaco-m);
+    font-size: var(--passo-1);
+    line-height: 1.4;
+    color: var(--texto-apoio);
+    max-width: 30ch;
+  }
+  .topo__acoes {
+    margin-top: var(--espaco-m);
+  }
+  @media (min-width: 48rem) {
+    h1 {
+      grid-column: 1 / 11;
+    }
+    .topo__lead {
+      max-width: 40ch;
+    }
+  }
+</style>

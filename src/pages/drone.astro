@@ -1,0 +1,178 @@
+---
+/**
+ * Drone: a página abre com a vista de cima (moldura 16:9 de ponta a ponta)
+ * e fala de lugar, luz e regras. Nada aqui afirma cadastro, seguro ou licença:
+ * esses dados só aparecem quando preenchidos em src/config/site.ts.
+ */
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TopoPagina from '../components/TopoPagina.astro';
+import Quadro from '../components/Quadro.astro';
+import ArteFrente from '../components/ArteFrente.astro';
+import ListaItens from '../components/ListaItens.astro';
+import Processo from '../components/Processo.astro';
+import Duvidas from '../components/Duvidas.astro';
+import CartaoTrabalho from '../components/CartaoTrabalho.astro';
+import Fechamento from '../components/Fechamento.astro';
+import { site, frentes, linkWhatsapp } from '../config/site';
+import { servicoDa, trabalhosPublicados, guiasPublicados, dataISO } from '../lib/conteudo';
+import { servico as schemaServico, faq } from '../lib/schema';
+
+const s = await servicoDa('drone');
+const { Content } = await render(s);
+const d = s.data;
+const trabalhos = await trabalhosPublicados('drone');
+const guia = (await guiasPublicados()).find((g) => g.data.frente === 'drone');
+const migalhas = [{ nome: d.nome, caminho: '/drone' }];
+const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
+---
+
+<Base
+  titulo={d.seo.title}
+  descricao={d.seo.description}
+  atualizado={dataISO(d.atualizado)}
+  migalhas={migalhas}
+  schema={[
+    schemaServico({ frente: 'drone', tipo: d.tipoServico, descricao: d.seo.description, itens: confirmados }),
+    faq('/drone', d.duvidas),
+  ]}
+>
+  <TopoPagina titulo={d.titulo} lead={d.lead} migalhas={migalhas}>
+    <a class="botao botao--acao" href={linkWhatsapp(frentes.drone.whatsapp)} rel="noopener">Falar no WhatsApp</a>
+    <a class="link" href="/contato?tipo=drone">Escrever pelo formulário</a>
+  </TopoPagina>
+
+  <div class="vista">
+    <Quadro proporcao="16:9">
+      <ArteFrente frente="drone" />
+    </Quadro>
+    <p class="vista__coord pequeno numeros apoio">
+      {site.coordenadas.lat}, {site.coordenadas.lon}. {site.cidade}, {site.uf}
+    </p>
+  </div>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>O que a vista de cima mostra</h2>
+      <div class="bloco__corpo prosa"><Content /></div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>O que eu faço</h2>
+      <div class="bloco__corpo"><ListaItens itens={d.itens} /></div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Para quem</h2>
+      <ul class="bloco__corpo lista-linhas">
+        {d.paraQuem.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade">
+      <h2>Como funciona com drone</h2>
+      <div class="passos-pagina"><Processo passos={d.processo} /></div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Dúvidas</h2>
+      <div class="bloco__corpo">
+        <Duvidas itens={d.duvidas} />
+        <p class="pequeno apoio fontes">
+          Fontes oficiais:
+          <a href="https://pergamum.anac.gov.br/pergamum/vinculos/RBAC100EMD00.pdf" rel="noopener">RBAC nº 100, da ANAC (PDF)</a>
+          e
+          <a href="https://www.decea.mil.br/drone/" rel="noopener">página de drones do DECEA</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {
+    site.drone.mostrar && site.drone.modelo && (
+      <section class="secao">
+        <div class="grade bloco">
+          <h2>Equipamento e cadastro</h2>
+          <dl class="bloco__corpo dados-drone">
+            <div><dt>Drone</dt><dd>{site.drone.modelo}</dd></div>
+            {site.drone.cadastro && <div><dt>Cadastro</dt><dd>{site.drone.cadastro}</dd></div>}
+            {site.drone.seguro && <div><dt>Seguro</dt><dd>{site.drone.seguro}</dd></div>}
+          </dl>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    trabalhos.length > 0 && (
+      <section class="secao">
+        <div class="grade">
+          <h2>Trabalhos com drone</h2>
+          <div class="trabalhos-frente">
+            {trabalhos.map((t) => <CartaoTrabalho trabalho={t} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Fechamento titulo={d.fechamento} mensagem={frentes.drone.whatsapp} tipo="drone" />
+
+  {
+    guia && (
+      <p class="grade guia-relacionado">
+        <a class="link" href={`/guias/${guia.id}`}>Guia: {guia.data.titulo}</a>
+      </p>
+    )
+  }
+</Base>
+
+<style>
+  .vista {
+    padding-inline: clamp(0.5rem, 1.6vw, 1.25rem);
+  }
+  .vista__coord {
+    max-width: none;
+    margin-top: var(--espaco-2xs);
+    padding-inline: calc(var(--margem) - clamp(0.5rem, 1.6vw, 1.25rem));
+    text-align: right;
+  }
+  .passos-pagina {
+    margin-top: var(--espaco-l);
+  }
+  .fontes {
+    margin-top: var(--espaco-s);
+    max-width: 60ch;
+  }
+  .dados-drone div {
+    display: flex;
+    gap: var(--espaco-s);
+    padding-block: var(--espaco-xs);
+    border-bottom: var(--traco) solid var(--linha);
+  }
+  .dados-drone dt {
+    min-width: 8rem;
+    color: var(--texto-apoio);
+  }
+  .trabalhos-frente {
+    display: grid;
+    gap: var(--espaco-xl) var(--calha);
+    margin-top: var(--espaco-l);
+  }
+  .guia-relacionado {
+    padding-bottom: var(--espaco-xl);
+  }
+  @media (min-width: 60rem) {
+    .trabalhos-frente {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

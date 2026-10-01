@@ -1,0 +1,96 @@
+---
+/**
+ * Arte da linguagem gráfica para as molduras que ainda não têm mídia real.
+ * Não é imagem de trabalho: são linhas de enquadramento, trajetória e linha do tempo.
+ * Quando houver vídeo ou foto em um trabalho publicado, a moldura mostra o material.
+ */
+interface Props {
+  frente: 'audiovisual' | 'audiovisual-horizontal' | 'drone' | 'sites';
+}
+const { frente } = Astro.props;
+---
+
+{
+  frente === 'audiovisual' && (
+    <svg viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class="arte">
+      <path class="arte__linha" d="M30 0V160M60 0V160M0 53.3H90M0 106.7H90" />
+      {/* linha do tempo de edição: três trechos e o cursor */}
+      <path class="arte__clipe" d="M10 132H38M41 132H62M65 132H80" />
+      <path class="arte__clipe arte__clipe--b" d="M10 139H26M29 139H70" />
+      <path class="arte__cursor" d="M47 124V146" />
+      <rect class="arte__ponto" x="44.5" y="119" width="5" height="5" />
+    </svg>
+  )
+}
+{
+  frente === 'audiovisual-horizontal' && (
+    <svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class="arte">
+      <path class="arte__linha" d="M53.3 0V90M106.7 0V90M0 30H160M0 60H160" />
+      <path class="arte__clipe" d="M14 72H52M55 72H96M99 72H124M127 72H146" />
+      <path class="arte__clipe arte__clipe--b" d="M14 78.5H40M43 78.5H110" />
+      <path class="arte__cursor" d="M88 65V85" />
+      <rect class="arte__ponto" x="85.5" y="60" width="5" height="5" />
+    </svg>
+  )
+}
+{
+  frente === 'drone' && (
+    <svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class="arte">
+      {/* vista de cima: ruas e lotes */}
+      <path class="arte__linha" d="M0 62H160M0 30L160 18M52 0V90M112 0L104 90" />
+      <path class="arte__lote" d="M60 36H76V54H60ZM80 35H98V54H80ZM20 38H44V55H20ZM118 30H140V52H118Z" />
+      <path class="arte__rota" d="M8 82C40 78 58 66 76 52S118 30 138 16" />
+      <rect class="arte__passagem" x="74" y="50" width="3.5" height="3.5" />
+      <rect class="arte__ponto" x="135.5" y="13.5" width="5" height="5" />
+    </svg>
+  )
+}
+{
+  frente === 'sites' && (
+    <svg viewBox="0 0 160 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true" class="arte">
+      <path class="arte__linha" d="M0 14H160M40 14V100" />
+      <path class="arte__rota" d="M52 34H128M52 44H112" />
+      <rect class="arte__ponto" x="52" y="60" width="5" height="5" />
+    </svg>
+  )
+}
+
+<style>
+  .arte__linha {
+    fill: none;
+    stroke: var(--linha);
+    stroke-width: 0.6;
+  }
+  .arte__lote {
+    fill: none;
+    stroke: var(--borda);
+    stroke-width: 0.5;
+    opacity: 0.7;
+  }
+  .arte__rota {
+    fill: none;
+    stroke: var(--ciano);
+    stroke-width: 0.7;
+    stroke-dasharray: 2.2 2.8;
+    opacity: 0.8;
+  }
+  .arte__clipe {
+    fill: none;
+    stroke: var(--borda);
+    stroke-width: 3.2;
+  }
+  .arte__clipe--b {
+    opacity: 0.55;
+  }
+  .arte__cursor {
+    stroke: var(--ciano);
+    stroke-width: 0.7;
+  }
+  .arte__ponto {
+    fill: var(--ciano);
+  }
+  .arte__passagem {
+    fill: var(--papel);
+    opacity: 0.75;
+  }
+</style>

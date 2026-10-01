@@ -1,0 +1,50 @@
+---
+/** Bloco final de cada página: uma pergunta, o WhatsApp com mensagem pronta e o link do formulário. */
+import { linkWhatsapp, mensagemPadrao } from '../config/site';
+
+interface Props {
+  titulo: string;
+  texto?: string;
+  mensagem?: string;
+  /** valor de ?tipo= para já marcar o tipo de projeto no formulário */
+  tipo?: 'audiovisual' | 'drone' | 'site' | 'outro';
+}
+const {
+  titulo,
+  texto = 'Você fala direto comigo, do primeiro contato até a entrega.',
+  mensagem = mensagemPadrao,
+  tipo,
+} = Astro.props;
+const formulario = tipo ? `/contato?tipo=${tipo}` : '/contato';
+---
+
+<section class="fechamento secao">
+  <div class="grade">
+    <h2>{titulo}</h2>
+    <div class="eixo-b fechamento__corpo">
+      <p class="apoio">{texto}</p>
+      <div class="acoes">
+        <a class="botao botao--acao" href={linkWhatsapp(mensagem)} rel="noopener">Falar no WhatsApp</a>
+        <a class="link" href={formulario}>Escrever pelo formulário</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fechamento h2 {
+    font-size: var(--passo-4);
+    font-stretch: var(--largura-display);
+    line-height: 1.04;
+  }
+  .fechamento__corpo {
+    display: grid;
+    gap: var(--espaco-m);
+    margin-top: var(--espaco-m);
+  }
+  @media (min-width: 48rem) {
+    .fechamento h2 {
+      grid-column: 1 / 9;
+    }
+  }
+</style>

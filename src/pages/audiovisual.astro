@@ -1,0 +1,224 @@
+---
+/**
+ * Audiovisual: a página se organiza pelo formato do vídeo (vertical e horizontal),
+ * que é a primeira decisão de qualquer gravação.
+ */
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TopoPagina from '../components/TopoPagina.astro';
+import Quadro from '../components/Quadro.astro';
+import ArteFrente from '../components/ArteFrente.astro';
+import ListaItens from '../components/ListaItens.astro';
+import Processo from '../components/Processo.astro';
+import Duvidas from '../components/Duvidas.astro';
+import CartaoTrabalho from '../components/CartaoTrabalho.astro';
+import Fechamento from '../components/Fechamento.astro';
+import { frentes, linkWhatsapp } from '../config/site';
+import { servicoDa, trabalhosPublicados, guiasPublicados, dataISO } from '../lib/conteudo';
+import { servico as schemaServico, faq } from '../lib/schema';
+
+const s = await servicoDa('audiovisual');
+const { Content } = await render(s);
+const d = s.data;
+const trabalhos = await trabalhosPublicados('audiovisual');
+const guia = (await guiasPublicados()).find((g) => g.data.frente === 'audiovisual');
+const migalhas = [{ nome: d.nome, caminho: '/audiovisual' }];
+const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
+
+const formatos = [
+  {
+    proporcao: '9:16',
+    nome: 'Vertical',
+    uso: 'Reels, Stories, Shorts e TikTok. É o formato de quem assiste com o celular em pé.',
+  },
+  {
+    proporcao: '16:9',
+    nome: 'Horizontal',
+    uso: 'YouTube, site e apresentações. Mostra mais do ambiente e funciona bem em tela grande.',
+  },
+];
+---
+
+<Base
+  titulo={d.seo.title}
+  descricao={d.seo.description}
+  atualizado={dataISO(d.atualizado)}
+  migalhas={migalhas}
+  schema={[
+    schemaServico({ frente: 'audiovisual', tipo: d.tipoServico, descricao: d.seo.description, itens: confirmados }),
+    faq('/audiovisual', d.duvidas),
+  ]}
+>
+  <TopoPagina titulo={d.titulo} lead={d.lead} migalhas={migalhas}>
+    <a class="botao botao--acao" href={linkWhatsapp(frentes.audiovisual.whatsapp)} rel="noopener">Falar no WhatsApp</a>
+    <a class="link" href="/contato?tipo=audiovisual">Escrever pelo formulário</a>
+  </TopoPagina>
+
+  <section class="formatos" aria-labelledby="t-formatos">
+    <div class="grade">
+      <h2 id="t-formatos" class="so-leitor">Os dois formatos</h2>
+      {
+        formatos.map((f) => (
+          <figure class={`formato formato--${f.nome.toLowerCase()}`}>
+            <Quadro proporcao={f.proporcao}>
+              {f.proporcao === '9:16' ? <ArteFrente frente="audiovisual" /> : <ArteFrente frente="audiovisual-horizontal" />}
+            </Quadro>
+            <figcaption>
+              <strong>{f.nome}</strong>
+              <span class="apoio">{f.uso}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Da gravação ao vídeo pronto</h2>
+      <div class="bloco__corpo prosa"><Content /></div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>O que entra no trabalho</h2>
+      <div class="bloco__corpo"><ListaItens itens={d.itens} /></div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Para quem</h2>
+      <ul class="bloco__corpo lista-linhas">
+        {d.paraQuem.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade">
+      <h2>Como funciona um vídeo</h2>
+      <div class="passos-pagina"><Processo passos={d.processo} /></div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Dúvidas</h2>
+      <div class="bloco__corpo"><Duvidas itens={d.duvidas} /></div>
+    </div>
+  </section>
+
+  {
+    trabalhos.length > 0 && (
+      <section class="secao">
+        <div class="grade">
+          <h2>Vídeos</h2>
+          <div class="trabalhos-frente">
+            {trabalhos.map((t) => <CartaoTrabalho trabalho={t} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Fechamento titulo={d.fechamento} mensagem={frentes.audiovisual.whatsapp} tipo="audiovisual" />
+
+  {
+    guia && (
+      <p class="grade guia-relacionado">
+        <a class="link" href={`/guias/${guia.id}`}>Guia: {guia.data.titulo}</a>
+      </p>
+    )
+  }
+</Base>
+
+<style>
+  .formatos {
+    padding-bottom: var(--espaco-xl);
+  }
+  .formatos .grade {
+    row-gap: var(--espaco-l);
+    align-items: end;
+  }
+  .formato {
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: var(--espaco-xs);
+  }
+  .formato figcaption {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .formato strong {
+    font-family: var(--fonte-titulo);
+    font-size: var(--passo-1);
+    font-weight: 700;
+    font-stretch: var(--largura-titulo);
+  }
+  .formato span {
+    max-width: 34ch;
+  }
+  /* celular: a moldura vertical ocupa meia largura, com a legenda ao lado */
+  .formato--vertical > :global(.quadro) {
+    grid-column: 1 / 3;
+  }
+  .formato--vertical figcaption {
+    grid-column: 3 / -1;
+    align-self: end;
+  }
+  .formato--horizontal > :global(.quadro) {
+    grid-column: 1 / -1;
+  }
+  .formato--horizontal figcaption {
+    grid-column: 2 / -1;
+  }
+  .passos-pagina {
+    margin-top: var(--espaco-l);
+  }
+  .trabalhos-frente {
+    display: grid;
+    gap: var(--espaco-xl) var(--calha);
+    margin-top: var(--espaco-l);
+  }
+  .guia-relacionado {
+    padding-bottom: var(--espaco-xl);
+  }
+
+  @media (min-width: 48rem) {
+    .formatos .grade {
+      grid-template-rows: auto auto;
+      row-gap: var(--espaco-xs);
+    }
+    .formato {
+      grid-row: 1 / span 2;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: subgrid;
+    }
+    .formato > :global(.quadro),
+    .formato figcaption {
+      grid-column: 1;
+    }
+    .formato > :global(.quadro) {
+      align-self: end;
+    }
+    .formato figcaption {
+      align-self: start;
+    }
+    .formatos .grade > .formato--vertical {
+      grid-column: 1 / 5;
+    }
+    .formatos .grade > .formato--horizontal {
+      grid-column: 5 / 13;
+    }
+    .trabalhos-frente {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 60rem) {
+    .formatos .grade > .formato--vertical {
+      grid-column: 2 / 5;
+    }
+  }
+</style>

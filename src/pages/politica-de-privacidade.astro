@@ -1,0 +1,133 @@
+---
+/**
+ * Política de privacidade (LGPD). O texto acompanha o que o site realmente faz:
+ * os trechos sobre e-mail e métricas só aparecem quando esses recursos estão ligados.
+ */
+import Base from '../layouts/Base.astro';
+import TopoPagina from '../components/TopoPagina.astro';
+import { site, linkWhatsapp } from '../config/site';
+
+const porEmail = Boolean(import.meta.env.RESEND_API_KEY && import.meta.env.CONTATO_PARA);
+const comMetricas = import.meta.env.PUBLIC_ANALYTICS === 'vercel';
+const atualizado = '2026-10-01';
+const migalhas = [{ nome: 'Política de privacidade', caminho: '/politica-de-privacidade' }];
+---
+
+<Base
+  titulo="Política de privacidade · AvilaCore"
+  descricao="Quais dados o site da AvilaCore recebe, para que servem e como pedir acesso, correção ou exclusão."
+  migalhas={migalhas}
+  atualizado={atualizado}
+>
+  <TopoPagina
+    titulo="Política de privacidade"
+    lead="Quais dados este site recebe, para que servem e como você pede para ver, corrigir ou apagar."
+    migalhas={migalhas}
+  />
+
+  <section class="legal">
+    <div class="grade">
+      <div class="prosa legal__texto">
+        <p class="apoio pequeno">Atualizada em 1º de outubro de 2026.</p>
+
+        <h2>Quem responde por este site</h2>
+        <p>
+          {site.pessoa}, que trabalha sob a marca {site.nome}, em {site.cidade}, {site.uf}. Para
+          qualquer pedido sobre os seus dados, fale comigo pelo
+          <a href={linkWhatsapp('Olá, Matheus! Tenho um pedido sobre os meus dados pessoais.')} rel="noopener">WhatsApp {site.whatsapp.exibicao}</a>{site.email && <> ou pelo e-mail <a href={`mailto:${site.email}`}>{site.email}</a></>}.
+        </p>
+
+        <h2>Quais dados eu recebo</h2>
+        <p>
+          Só o que você escreve no formulário de contato: nome, e-mail ou número de WhatsApp, tipo de
+          projeto e a mensagem.
+        </p>
+        {
+          porEmail ? (
+            <p>
+              Ao enviar, a mensagem chega à minha caixa de e-mail por meio do serviço Resend, que
+              faz a entrega. O site não mantém um banco de dados com as mensagens.
+            </p>
+          ) : (
+            <p>
+              O formulário só monta a mensagem e abre o WhatsApp para você conferir e enviar. O site
+              não guarda o que você escreveu.
+            </p>
+          )
+        }
+        <p>
+          Quando você me chama pelo WhatsApp ou pelo Instagram, a conversa fica nesses aplicativos e
+          segue as políticas de privacidade deles.
+        </p>
+
+        <h2>Para que eu uso</h2>
+        <p>
+          Para responder ao seu contato, preparar um orçamento e, se fecharmos um trabalho, executá-lo.
+          A base legal é a do artigo 7º, inciso V, da Lei Geral de Proteção de Dados: procedimentos
+          preliminares a um contrato, feitos a seu pedido.
+        </p>
+        <p>Não uso os seus dados para enviar propaganda e não vendo nem cedo para terceiros.</p>
+
+        <h2>Dados técnicos de acesso</h2>
+        <p>
+          O site é hospedado na Vercel. Como em qualquer site, o servidor registra dados técnicos de
+          cada acesso, como endereço IP, navegador e página visitada, para manter o serviço no ar e
+          protegido.
+        </p>
+        {
+          comMetricas ? (
+            <p>
+              Uso o Vercel Web Analytics para saber quantas pessoas visitam cada página. Ele não usa
+              cookies e não identifica você: os números são agregados.
+            </p>
+          ) : (
+            <p>Este site não usa ferramenta de métricas de visitas.</p>
+          )
+        }
+        <p>Este site não usa cookies de rastreamento nem pixels de anúncio.</p>
+
+        <h2>Vídeos de outros serviços</h2>
+        <p>
+          Quando uma página tem vídeo do YouTube ou do Vimeo, o player só é carregado depois que você
+          clica para assistir. A partir desse clique, valem as políticas desses serviços.
+        </p>
+
+        <h2>Por quanto tempo eu guardo</h2>
+        <p>
+          Pelo tempo da conversa e do trabalho e, depois, pelo prazo que a lei exigir para documentos
+          fiscais e contratuais. Se a conversa não virar trabalho, você pode pedir que eu apague a
+          mensagem.
+        </p>
+
+        <h2>Seus direitos</h2>
+        <p>
+          Pela LGPD, você pode pedir para confirmar se eu tenho dados seus, ver quais são, corrigir,
+          apagar, levar para outro serviço e retirar um consentimento que tenha dado. Peça pelos
+          contatos do início desta página. Você também pode procurar a
+          <a href="https://www.gov.br/anpd/pt-br" rel="noopener">Autoridade Nacional de Proteção de Dados</a>.
+        </p>
+        <p>
+          O texto da lei está no
+          <a href="https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm" rel="noopener">site do Planalto (Lei nº 13.709/2018)</a>.
+        </p>
+
+        <h2>Mudanças nesta política</h2>
+        <p>Se o site passar a tratar dados de outra forma, este texto muda e a data do início também.</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .legal {
+    padding-bottom: var(--espaco-3xl);
+  }
+  .legal__texto :global(h2) {
+    font-size: var(--passo-2);
+  }
+  @media (min-width: 48rem) {
+    .legal__texto {
+      grid-column: 3 / 11;
+    }
+  }
+</style>

@@ -1,0 +1,129 @@
+---
+/**
+ * Portfólio em crescimento. Mostra só o que tem `publicado: true`.
+ * Frente sem trabalho publicado não ganha seção vazia nem placeholder:
+ * o texto explica a situação e convida para conversar.
+ */
+import Base from '../../layouts/Base.astro';
+import TopoPagina from '../../components/TopoPagina.astro';
+import CartaoTrabalho from '../../components/CartaoTrabalho.astro';
+import Fechamento from '../../components/Fechamento.astro';
+import { frentes, type Frente } from '../../config/site';
+import { trabalhosPublicados } from '../../lib/conteudo';
+import { absoluta } from '../../lib/schema';
+
+const trabalhos = await trabalhosPublicados();
+const ordem: Frente[] = ['audiovisual', 'drone', 'sites'];
+const grupos = ordem
+  .map((f) => ({ frente: f, itens: trabalhos.filter((t) => t.data.frente === f) }))
+  .filter((g) => g.itens.length > 0);
+const semTrabalho = ordem.filter((f) => !grupos.some((g) => g.frente === f));
+const soEstudos = trabalhos.length > 0 && trabalhos.every((t) => t.data.tipo === 'estudo');
+
+const titulo = 'Trabalhos e estudos · AvilaCore';
+const descricao =
+  'Vídeos, imagens aéreas e sites da AvilaCore. Estudos autorais aparecem identificados como estudo.';
+const migalhas = [{ nome: 'Trabalhos', caminho: '/trabalhos' }];
+
+const nomes = (lista: Frente[]) => {
+  const n = lista.map((f) => (f === 'sites' ? 'sites' : f === 'drone' ? 'drone' : 'vídeo'));
+  return n.length > 1 ? `${n.slice(0, -1).join(', ')} e ${n[n.length - 1]}` : n[0];
+};
+
+const lead =
+  trabalhos.length === 0
+    ? 'O portfólio está crescendo. Os trabalhos entram aqui conforme forem publicados, com crédito e contexto.'
+    : soEstudos
+      ? 'O portfólio está crescendo. Por enquanto, estes são estudos autorais: projetos que eu criei para marcas fictícias.'
+      : 'Trabalhos para clientes e estudos autorais, cada um identificado.';
+---
+
+<Base
+  titulo={titulo}
+  descricao={descricao}
+  migalhas={migalhas}
+  tipoPagina="CollectionPage"
+  schema={
+    trabalhos.length
+      ? [
+          {
+            '@type': 'ItemList',
+            '@id': `${absoluta('/trabalhos')}#lista`,
+            itemListElement: trabalhos.map((t, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: t.data.titulo,
+              url: absoluta(`/trabalhos/${t.id}`),
+            })),
+          },
+        ]
+      : []
+  }
+>
+  <TopoPagina titulo="Trabalhos e estudos" lead={lead} migalhas={migalhas} />
+
+  {
+    grupos.map((g) => (
+      <section class="grupo" aria-labelledby={`g-${g.frente}`}>
+        <div class="grade">
+          <h2 id={`g-${g.frente}`}>{frentes[g.frente].nome}</h2>
+        </div>
+        <div class="grade grupo__lista">
+          {g.itens.map((t, i) => (
+            <CartaoTrabalho trabalho={t} nivel="h3" prioridade={i === 0} sizes="(min-width: 60rem) 45vw, 92vw" />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  {
+    semTrabalho.length > 0 && (
+      <section class="secao">
+        <div class="grade bloco">
+          <h2>O que ainda vem</h2>
+          <div class="bloco__corpo prosa">
+            <p>
+              Ainda não há trabalhos de {nomes(semTrabalho)} publicados aqui. Eles entram quando houver
+              material meu para mostrar, com a autorização de quem aparece. Não uso imagem de banco
+              para preencher esse espaço.
+            </p>
+            <p>
+              Se você tem um projeto em mente, me conte. Eu explico como faria o seu.
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Fechamento titulo="Vamos conversar sobre a sua ideia." />
+</Base>
+
+<style>
+  .grupo {
+    padding-bottom: var(--espaco-2xl);
+  }
+  .grupo h2 {
+    font-size: var(--passo-2);
+  }
+  .grupo__lista {
+    margin-top: var(--espaco-m);
+    row-gap: var(--espaco-xl);
+  }
+  @media (min-width: 60rem) {
+    .grupo__lista > :global(.trabalho:nth-child(4n + 1)) {
+      grid-column: 1 / 8;
+    }
+    .grupo__lista > :global(.trabalho:nth-child(4n + 2)) {
+      grid-column: 8 / 13;
+      align-self: end;
+    }
+    .grupo__lista > :global(.trabalho:nth-child(4n + 3)) {
+      grid-column: 1 / 6;
+    }
+    .grupo__lista > :global(.trabalho:nth-child(4n + 4)) {
+      grid-column: 6 / 13;
+    }
+  }
+</style>

@@ -1,0 +1,344 @@
+---
+/**
+ * Formulário curto de contato.
+ *
+ * - Com RESEND_API_KEY e CONTATO_PARA definidos, envia para /api/contato.
+ * - Sem as chaves, o mesmo formulário monta a mensagem e abre o WhatsApp
+ *   (modo "whatsapp"), em vez de falhar.
+ * - Anti-spam: campo-isca escondido e tempo mínimo de preenchimento.
+ * - Erros aparecem junto de cada campo e são anunciados para leitores de tela.
+ */
+import { site, linkWhatsapp } from '../config/site';
+
+const porEmail = Boolean(import.meta.env.RESEND_API_KEY && import.meta.env.CONTATO_PARA);
+const tipos = [
+  { valor: 'audiovisual', rotulo: 'Vídeo' },
+  { valor: 'drone', rotulo: 'Drone' },
+  { valor: 'site', rotulo: 'Site' },
+  { valor: 'outro', rotulo: 'Outro' },
+];
+---
+
+<form
+  id="formulario"
+  class="form"
+  action="/api/contato"
+  method="post"
+  novalidate
+  data-form
+  data-modo={porEmail ? 'email' : 'whatsapp'}
+  data-whatsapp={site.whatsapp.numero}
+>
+  <div class="campo">
+    <label for="f-nome">Nome</label>
+    <input id="f-nome" name="nome" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-describedby="e-nome" />
+    <p class="erro" id="e-nome" data-erro="nome" hidden></p>
+  </div>
+
+  <div class="campo">
+    <label for="f-contato">E-mail ou WhatsApp</label>
+    <input id="f-contato" name="contato" type="text" inputmode="email" autocomplete="email" required maxlength="120" aria-describedby="d-contato e-contato" />
+    <p class="dica pequeno apoio" id="d-contato">É por onde eu vou responder.</p>
+    <p class="erro" id="e-contato" data-erro="contato" hidden></p>
+  </div>
+
+  <fieldset class="campo tipos" aria-describedby="e-tipo">
+    <legend>Tipo de projeto</legend>
+    <div class="tipos__lista">
+      {
+        tipos.map((t) => (
+          <label class="tipo">
+            <input type="radio" name="tipo" value={t.valor} required />
+            <span>{t.rotulo}</span>
+          </label>
+        ))
+      }
+    </div>
+    <p class="erro" id="e-tipo" data-erro="tipo" hidden></p>
+  </fieldset>
+
+  <div class="campo">
+    <label for="f-mensagem">Mensagem</label>
+    <textarea id="f-mensagem" name="mensagem" rows="5" required minlength="10" maxlength="2000" aria-describedby="d-mensagem e-mensagem"></textarea>
+    <p class="dica pequeno apoio" id="d-mensagem">O que você precisa, onde e para quando, se já souber.</p>
+    <p class="erro" id="e-mensagem" data-erro="mensagem" hidden></p>
+  </div>
+
+  {/* campo-isca: pessoas não veem nem alcançam pelo teclado; robôs preenchem */}
+  <div class="isca" aria-hidden="true">
+    <label for="f-empresa">Não preencha este campo</label>
+    <input id="f-empresa" name="empresa" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+  <input type="hidden" name="aberto" value="" data-aberto />
+
+  <div class="form__fim">
+    <button class="botao botao--acao" type="submit" data-enviar>
+      {porEmail ? 'Enviar mensagem' : 'Continuar no WhatsApp'}
+    </button>
+    <p class="pequeno apoio">
+      {
+        porEmail
+          ? 'Ao enviar, você concorda com a '
+          : 'A mensagem abre no WhatsApp já escrita, para você conferir e enviar. Veja a '
+      }
+      <a href="/politica-de-privacidade">política de privacidade</a>.
+    </p>
+  </div>
+
+  <div class="aviso aviso--erro" role="alert" data-falha hidden>
+    <p><strong>Não foi possível enviar agora.</strong> <span data-falha-texto></span></p>
+    <p>
+      Sua mensagem não se perdeu:
+      <a href={linkWhatsapp()} data-falha-link rel="noopener">envie pelo WhatsApp com o texto já escrito</a>.
+    </p>
+  </div>
+</form>
+
+<div class="aviso aviso--ok" role="status" data-sucesso tabindex="-1" hidden>
+  <h2>Mensagem enviada.</h2>
+  <p>Eu respondo pelo contato que você deixou. Se for urgente, me chame no WhatsApp.</p>
+  <p><a class="link" href={linkWhatsapp()} rel="noopener">Falar no WhatsApp</a></p>
+</div>
+
+<noscript>
+  <p class="aviso">
+    O formulário precisa de JavaScript para conferir os campos. Se preferir, fale direto pelo
+    <a href={linkWhatsapp()} rel="noopener">WhatsApp {site.whatsapp.exibicao}</a>.
+  </p>
+</noscript>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  if (form) {
+    const modo = form.dataset.modo;
+    const botao = form.querySelector<HTMLButtonElement>('[data-enviar]')!;
+    const rotuloBotao = botao.textContent ?? '';
+    const falha = form.querySelector<HTMLElement>('[data-falha]')!;
+    const sucesso = document.querySelector<HTMLElement>('[data-sucesso]')!;
+    const ROTULOS: Record<string, string> = { audiovisual: 'Vídeo', drone: 'Drone', site: 'Site', outro: 'Outro' };
+
+    form.querySelector<HTMLInputElement>('[data-aberto]')!.value = String(Date.now());
+
+    // /contato?tipo=drone já marca o tipo de projeto
+    const tipoUrl = new URLSearchParams(location.search).get('tipo');
+    if (tipoUrl) form.querySelector<HTMLInputElement>(`input[name="tipo"][value="${CSS.escape(tipoUrl)}"]`)?.click();
+
+    const valores = () => {
+      const d = new FormData(form);
+      return {
+        nome: String(d.get('nome') ?? '').trim(),
+        contato: String(d.get('contato') ?? '').trim(),
+        tipo: String(d.get('tipo') ?? ''),
+        mensagem: String(d.get('mensagem') ?? '').trim(),
+        empresa: String(d.get('empresa') ?? ''),
+        aberto: String(d.get('aberto') ?? ''),
+      };
+    };
+
+    const validar = (v: ReturnType<typeof valores>) => {
+      const erros: Record<string, string> = {};
+      const email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.contato);
+      const telefone = v.contato.replace(/\D/g, '').length >= 10;
+      if (v.nome.length < 2) erros.nome = 'Escreva o seu nome.';
+      if (!email && !telefone) erros.contato = 'Deixe um e-mail ou um WhatsApp com DDD para eu responder.';
+      if (!v.tipo) erros.tipo = 'Escolha o tipo de projeto.';
+      if (v.mensagem.length < 10) erros.mensagem = 'Conte um pouco mais: pelo menos uma frase sobre o projeto.';
+      return erros;
+    };
+
+    const mostrarErros = (erros: Record<string, string>) => {
+      form.querySelectorAll<HTMLElement>('[data-erro]').forEach((p) => {
+        const campo = p.dataset.erro!;
+        const texto = erros[campo];
+        p.textContent = texto ?? '';
+        p.hidden = !texto;
+        form.querySelectorAll<HTMLElement>(`[name="${campo}"]`).forEach((el) => {
+          if (texto) el.setAttribute('aria-invalid', 'true');
+          else el.removeAttribute('aria-invalid');
+        });
+      });
+      const primeiro = Object.keys(erros)[0];
+      if (primeiro) form.querySelector<HTMLElement>(`[name="${primeiro}"]`)?.focus();
+    };
+
+    const linkZap = (v: ReturnType<typeof valores>) => {
+      const texto = [
+        `Olá, Matheus! Meu nome é ${v.nome}.`,
+        `Tipo de projeto: ${ROTULOS[v.tipo] ?? v.tipo}`,
+        `Meu contato: ${v.contato}`,
+        '',
+        v.mensagem,
+      ].join('\n');
+      return `https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(texto)}`;
+    };
+
+    // some com o erro do campo assim que a pessoa corrige
+    form.addEventListener('input', (e) => {
+      const nome = (e.target as HTMLInputElement).name;
+      const p = form.querySelector<HTMLElement>(`[data-erro="${nome}"]`);
+      if (p && !p.hidden && !validar(valores())[nome]) {
+        p.hidden = true;
+        form.querySelectorAll(`[name="${nome}"]`).forEach((el) => el.removeAttribute('aria-invalid'));
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      falha.hidden = true;
+      const v = valores();
+      const erros = validar(v);
+      mostrarErros(erros);
+      if (Object.keys(erros).length) return;
+
+      if (modo === 'whatsapp') {
+        window.open(linkZap(v), '_blank', 'noopener');
+        return;
+      }
+
+      botao.disabled = true;
+      botao.textContent = 'Enviando…';
+      try {
+        const r = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(v),
+        });
+        const corpo = await r.json().catch(() => ({ ok: false }));
+        if (!r.ok || !corpo.ok) throw new Error(corpo.erro || '');
+        form.hidden = true;
+        sucesso.hidden = false;
+        sucesso.focus();
+      } catch (erro) {
+        falha.querySelector('[data-falha-texto]')!.textContent = (erro as Error).message;
+        falha.querySelector<HTMLAnchorElement>('[data-falha-link]')!.href = linkZap(v);
+        falha.hidden = false;
+      } finally {
+        botao.disabled = false;
+        botao.textContent = rotuloBotao;
+      }
+    });
+  }
+</script>
+
+<style>
+  .form {
+    display: grid;
+    gap: var(--espaco-m);
+  }
+  .campo {
+    display: grid;
+    gap: 0.4rem;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+  label,
+  legend {
+    font-weight: var(--peso-forte);
+  }
+  legend {
+    padding: 0;
+    margin-bottom: 0.4rem;
+  }
+  input[type='text'],
+  textarea {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.8rem 0.9rem;
+    background: var(--superficie);
+    border: var(--traco) solid var(--borda);
+    border-radius: var(--raio-1);
+    transition: border-color var(--dur-1) var(--curva);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 8.5rem;
+    line-height: 1.5;
+  }
+  input[type='text']:hover,
+  textarea:hover {
+    border-color: var(--papel);
+  }
+  input[aria-invalid='true'],
+  textarea[aria-invalid='true'] {
+    border-color: var(--erro);
+  }
+  .tipos__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tipo {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+  }
+  .tipo input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .tipo span {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--toque);
+    padding: 0 1.1rem;
+    border: var(--traco) solid var(--borda);
+    border-radius: var(--raio-1);
+    font-weight: 520;
+    transition:
+      background-color var(--dur-1) var(--curva),
+      border-color var(--dur-1) var(--curva);
+  }
+  .tipo:hover span {
+    border-color: var(--papel);
+  }
+  .tipo input:checked + span {
+    background: var(--papel);
+    border-color: var(--papel);
+    color: var(--noite);
+  }
+  .tipo input:focus-visible + span {
+    outline: var(--traco-foco) solid var(--foco);
+    outline-offset: 3px;
+  }
+  .erro {
+    color: var(--erro);
+    font-size: var(--passo--1);
+    font-weight: 520;
+  }
+  .isca {
+    position: absolute;
+    left: -100vw;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .form__fim {
+    display: grid;
+    gap: var(--espaco-xs);
+    justify-items: start;
+  }
+  .form__fim p {
+    max-width: 44ch;
+  }
+  .aviso {
+    padding: var(--espaco-s);
+    border: var(--traco) solid var(--borda);
+    border-radius: var(--raio-1);
+  }
+  .aviso p + p {
+    margin-top: var(--espaco-2xs);
+  }
+  .aviso--erro {
+    border-color: var(--erro);
+  }
+  .aviso--ok h2 {
+    font-size: var(--passo-2);
+    margin-bottom: var(--espaco-2xs);
+  }
+  .aviso--ok:focus {
+    outline: none;
+  }
+</style>

@@ -1,0 +1,93 @@
+---
+/**
+ * Prévia silenciosa: toca em loop, sem som, só enquanto está visível.
+ * Mostra o poster até carregar, tem botão de pausa (WCAG 2.2.2) e,
+ * com prefers-reduced-motion, fica parada no poster até a pessoa tocar.
+ */
+interface Props {
+  /** caminho do vídeo em /public (mp4/webm curto e leve) */
+  src: string;
+  /** URL do poster já processado (use getImage) */
+  poster: string;
+  /** descrição do que o vídeo mostra */
+  alt: string;
+}
+const { src, poster, alt } = Astro.props;
+---
+
+<div class="previa" data-previa>
+  <video muted loop playsinline preload="none" poster={poster} aria-label={alt} disablepictureinpicture>
+    <source src={src} type={src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+  </video>
+  <button type="button" class="previa__botao" data-previa-botao aria-pressed="false">Pausar</button>
+</div>
+
+<script>
+  const semMovimento = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLElement>('[data-previa]').forEach((caixa) => {
+    const video = caixa.querySelector('video');
+    const botao = caixa.querySelector<HTMLButtonElement>('[data-previa-botao]');
+    if (!video || !botao) return;
+    let pausadoPelaPessoa = semMovimento.matches;
+
+    const atualizar = () => {
+      botao.textContent = video.paused ? 'Tocar' : 'Pausar';
+      botao.setAttribute('aria-pressed', String(video.paused));
+    };
+    const tocar = () => video.play().then(atualizar, atualizar);
+    atualizar();
+
+    new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !pausadoPelaPessoa) tocar();
+        else {
+          video.pause();
+          atualizar();
+        }
+      },
+      { threshold: 0.5 },
+    ).observe(caixa);
+
+    botao.addEventListener('click', () => {
+      if (video.paused) {
+        pausadoPelaPessoa = false;
+        tocar();
+      } else {
+        pausadoPelaPessoa = true;
+        video.pause();
+        atualizar();
+      }
+    });
+  });
+</script>
+
+<style>
+  .previa {
+    position: absolute;
+    inset: 0;
+  }
+  .previa video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .previa__botao {
+    position: absolute;
+    right: 0.75rem;
+    top: 0.75rem;
+    z-index: 3;
+    min-width: var(--toque);
+    min-height: var(--toque);
+    padding: 0 0.9rem;
+    background: var(--noite);
+    border: var(--traco) solid var(--borda);
+    border-radius: var(--raio-1);
+    font-size: var(--passo--1);
+    font-weight: var(--peso-forte);
+    cursor: pointer;
+  }
+  .previa__botao:hover {
+    border-color: var(--papel);
+  }
+</style>

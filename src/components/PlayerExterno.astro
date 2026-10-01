@@ -1,0 +1,75 @@
+---
+/**
+ * Player grande de YouTube ou Vimeo com fachada: mostra só o poster e um botão.
+ * O iframe (e os scripts do provedor) só carrega quando a pessoa clica.
+ */
+interface Props {
+  provedor: 'youtube' | 'vimeo';
+  id: string;
+  poster: string;
+  titulo: string;
+}
+const { provedor, id, poster, titulo } = Astro.props;
+const src =
+  provedor === 'youtube'
+    ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`
+    : `https://player.vimeo.com/video/${id}?autoplay=1&dnt=1`;
+---
+
+<div class="player" data-player data-src={src} data-titulo={titulo}>
+  <img src={poster} alt="" loading="lazy" decoding="async" />
+  <button type="button" class="player__botao">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 4.5v15l12-7.5z" fill="currentColor"></path></svg>
+    <span>Assistir a {titulo}</span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-player]').forEach((caixa) => {
+    caixa.querySelector('button')?.addEventListener('click', () => {
+      const quadro = document.createElement('iframe');
+      quadro.src = caixa.dataset.src ?? '';
+      quadro.title = caixa.dataset.titulo ?? 'Vídeo';
+      quadro.allow = 'autoplay; fullscreen; picture-in-picture';
+      quadro.allowFullscreen = true;
+      caixa.replaceChildren(quadro);
+      quadro.focus();
+    });
+  });
+</script>
+
+<style>
+  .player {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .player img,
+  .player :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+  }
+  .player__botao {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 3.5rem;
+    padding: 0.6rem 1.4rem;
+    background: var(--acao);
+    color: var(--sobre-acao);
+    border: 0;
+    border-radius: var(--raio-1);
+    font-weight: var(--peso-forte);
+    cursor: pointer;
+  }
+  .player__botao:hover {
+    background: var(--acao-hover);
+  }
+</style>

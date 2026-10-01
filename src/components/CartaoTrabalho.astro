@@ -1,0 +1,79 @@
+---
+/** Item de trabalho nas listas: mídia na proporção real, selo de estudo ou trabalho real, título e resumo. */
+import { Picture } from 'astro:assets';
+import Quadro from './Quadro.astro';
+import type { Trabalho } from '../lib/conteudo';
+
+interface Props {
+  trabalho: Trabalho;
+  /** atributo sizes da imagem, conforme o lugar em que o item aparece */
+  sizes?: string;
+  /** nível do título (h2 nas listas, h3 dentro de seções) */
+  nivel?: 'h2' | 'h3';
+  prioridade?: boolean;
+}
+const { trabalho, sizes = '(min-width: 60rem) 50vw, 100vw', nivel: Titulo = 'h3', prioridade = false } = Astro.props;
+const { data, id } = trabalho;
+const imagem = data.midia.formato === 'imagem' ? data.midia.src : data.midia.poster;
+---
+
+<article class="trabalho">
+  <a class="trabalho__link" href={`/trabalhos/${id}`}>
+    <Quadro proporcao={data.midia.proporcao}>
+      <Picture
+        src={imagem}
+        alt={data.midia.alt}
+        formats={['avif', 'webp']}
+        widths={[480, 800, 1200, 1600]}
+        sizes={sizes}
+        loading={prioridade ? 'eager' : 'lazy'}
+        fetchpriority={prioridade ? 'high' : 'auto'}
+        decoding="async"
+      />
+    </Quadro>
+    <div class="trabalho__texto">
+      <p class="trabalho__meta pequeno">
+        <span class="etiqueta">{data.tipo === 'estudo' ? 'Estudo autoral' : 'Trabalho para cliente'}</span>
+        <span class="apoio">{data.categoria}</span>
+      </p>
+      <Titulo class="trabalho__titulo">{data.titulo}</Titulo>
+      <p class="apoio">{data.resumo}</p>
+    </div>
+  </a>
+</article>
+
+<style>
+  .trabalho__link {
+    display: grid;
+    gap: var(--espaco-s);
+    color: var(--texto);
+    text-decoration: none;
+  }
+  .trabalho__link :global(.quadro) {
+    transition: border-color var(--dur-2) var(--curva);
+  }
+  .trabalho__link:hover :global(.quadro),
+  .trabalho__link:focus-visible :global(.quadro) {
+    border-color: var(--borda);
+  }
+  .trabalho__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.75rem;
+  }
+  .trabalho__titulo {
+    margin-top: var(--espaco-2xs);
+    font-size: var(--passo-2);
+  }
+  .trabalho__link:hover .trabalho__titulo {
+    text-decoration: underline;
+    text-decoration-color: var(--ciano);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+  }
+  .trabalho__texto p:last-child {
+    margin-top: var(--espaco-2xs);
+    max-width: 46ch;
+  }
+</style>

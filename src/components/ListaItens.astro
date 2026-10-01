@@ -1,0 +1,52 @@
+---
+/**
+ * Serviços de uma frente, em linhas. Só entram os itens com `confirmado: true`
+ * em src/content/servicos; os outros ficam fora do site até serem validados.
+ */
+interface Props {
+  itens: { nome: string; descricao: string; confirmado: boolean }[];
+}
+const confirmados = Astro.props.itens.filter((i) => i.confirmado);
+---
+
+{
+  confirmados.length > 0 && (
+    <dl class="itens">
+      {confirmados.map((i) => (
+        <div>
+          <dt>{i.nome}</dt>
+          <dd class="apoio">{i.descricao}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+<style>
+  .itens {
+    border-top: var(--traco) solid var(--linha);
+  }
+  .itens > div {
+    display: grid;
+    gap: var(--espaco-2xs) var(--calha);
+    padding-block: var(--espaco-s);
+    border-bottom: var(--traco) solid var(--linha);
+  }
+  dt {
+    font-family: var(--fonte-titulo);
+    font-size: var(--passo-1);
+    font-weight: 700;
+    font-stretch: var(--largura-titulo);
+    letter-spacing: var(--espaco-letras-titulo);
+    line-height: 1.2;
+  }
+  dd {
+    max-width: 44ch;
+  }
+  @media (min-width: 48rem) {
+    .itens > div {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: baseline;
+    }
+  }
+</style>

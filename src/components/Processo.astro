@@ -1,0 +1,93 @@
+---
+/**
+ * Os passos do processo como uma trajetória: pontos de passagem quadrados ligados
+ * por uma linha tracejada. Vertical no celular, horizontal no desktop.
+ * A numeração existe porque a ordem é informação.
+ */
+interface Props {
+  passos: { titulo: string; texto: string }[];
+}
+const { passos } = Astro.props;
+---
+
+<ol class="passos" role="list">
+  {
+    passos.map((p, i) => (
+      <li>
+        <h3>
+          <span class="passos__n numeros" aria-hidden="true">{i + 1}</span>
+          {p.titulo}
+        </h3>
+        <p class="apoio">{p.texto}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .passos {
+    --ponto: 0.7rem;
+    display: grid;
+    gap: var(--espaco-m);
+  }
+  .passos li {
+    position: relative;
+    padding-left: 2.1rem;
+  }
+  /* ponto de passagem */
+  .passos li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.42em;
+    width: var(--ponto);
+    height: var(--ponto);
+    background: var(--papel);
+  }
+  .passos li:last-child::before {
+    background: var(--ciano);
+  }
+  /* trecho da trajetória até o próximo ponto */
+  .passos li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--ponto) / 2 - 0.5px);
+    top: calc(0.42em + var(--ponto) + 0.35rem);
+    bottom: calc(-1 * var(--espaco-m) - 0.1rem);
+    border-left: 1px dashed var(--borda);
+  }
+  .passos h3 {
+    font-size: var(--passo-1);
+  }
+  .passos__n {
+    display: inline-block;
+    min-width: 1.1em;
+    color: var(--texto-apoio);
+    font-weight: 500;
+  }
+  .passos p {
+    margin-top: var(--espaco-2xs);
+    max-width: 34ch;
+  }
+
+  @media (min-width: 60rem) {
+    .passos {
+      grid-template-columns: repeat(var(--colunas, 5), minmax(0, 1fr));
+      gap: var(--calha);
+    }
+    .passos li {
+      padding: 2rem 0 0;
+    }
+    .passos li::before {
+      top: 0;
+    }
+    .passos li:not(:last-child)::after {
+      left: calc(var(--ponto) + 0.5rem);
+      right: calc(-1 * var(--calha) + 0.5rem);
+      top: calc(var(--ponto) / 2 - 0.5px);
+      bottom: auto;
+      border-left: 0;
+      border-top: 1px dashed var(--borda);
+    }
+  }
+</style>
