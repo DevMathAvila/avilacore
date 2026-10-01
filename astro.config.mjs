@@ -46,8 +46,9 @@ export default defineConfig({
   // CSS embutido no HTML: nenhuma folha de estilo bloqueando a primeira renderização
   build: { inlineStylesheets: 'always' },
   devToolbar: { enabled: false },
-  // Na Vercel usa o adaptador dela. Fora dela (build local, astro preview), o de Node:
-  // o empacotador da Vercel falha no Windows (EISDIR em readlink) e o de Node não.
+  // Na Vercel usa o adaptador dela. Fora dela (build local, astro preview), o de Node,
+  // que serve a rota /api/contato no computador. Para testar o adaptador da Vercel
+  // localmente: VERCEL=1 npm run build (em disco interno; no HD externo dá EISDIR).
   adapter: process.env.VERCEL ? vercel() : node({ mode: 'standalone' }),
   redirects: {
     '/filmagens': { status: 301, destination: '/drone' },

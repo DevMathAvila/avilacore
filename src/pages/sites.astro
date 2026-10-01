@@ -7,7 +7,6 @@ import { render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import TopoPagina from '../components/TopoPagina.astro';
-import ListaItens from '../components/ListaItens.astro';
 import Processo from '../components/Processo.astro';
 import Duvidas from '../components/Duvidas.astro';
 import CartaoTrabalho from '../components/CartaoTrabalho.astro';
@@ -80,18 +79,24 @@ const todoSite = [
   </section>
 
   <section class="secao">
-    <div class="grade bloco">
-      <h2>O que eu faço</h2>
-      <div class="bloco__corpo"><ListaItens itens={d.itens} /></div>
-    </div>
-  </section>
-
-  <section class="secao">
-    <div class="grade bloco">
-      <h2>O que todo site meu tem</h2>
-      <ul class="bloco__corpo lista-linhas">
-        {todoSite.map((p) => <li>{p}</li>)}
-      </ul>
+    <div class="grade par">
+      <div class="par__lado">
+        <h2>O que eu faço</h2>
+        <ul class="frases">
+          {d.itens.filter((i) => i.confirmado).map((i) => (
+            <li>
+              {i.nome}
+              <span class="apoio par__detalhe">{i.descricao}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="par__lado">
+        <h2>O que todo site meu tem</h2>
+        <ul class="lista-linhas par__lista">
+          {todoSite.map((p) => <li>{p}</li>)}
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -169,6 +174,32 @@ const todoSite = [
   }
   .passos-pagina {
     margin-top: var(--espaco-l);
+  }
+  .par {
+    row-gap: var(--espaco-xl);
+  }
+  .par h2 {
+    font-size: var(--passo-2);
+    margin-bottom: var(--espaco-m);
+  }
+  .par__detalhe {
+    display: block;
+    margin-top: 0.3rem;
+    font-family: var(--fonte);
+    font-size: var(--passo-0);
+    font-weight: var(--peso-texto);
+    font-stretch: 100%;
+    letter-spacing: 0;
+    line-height: var(--altura-texto);
+    text-wrap: pretty;
+  }
+  @media (min-width: 60rem) {
+    .par__lado:first-child {
+      grid-column: 1 / 7;
+    }
+    .par__lado:last-child {
+      grid-column: 8 / 13;
+    }
   }
   .depoimentos {
     display: grid;

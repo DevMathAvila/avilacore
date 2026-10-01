@@ -426,3 +426,36 @@ textarea {
   touch-action: manipulation;
   -webkit-tap-highlight-color: rgb(92 192 208 / 0.18);
 }
+
+/* ---------- Texto em duas colunas (desktop) ---------- */
+.duas-colunas > * + * {
+  margin-top: var(--espaco-s);
+}
+@media (min-width: 60rem) {
+  .duas-colunas {
+    columns: 2;
+    column-gap: calc(var(--calha) * 2);
+  }
+  .duas-colunas > p {
+    max-width: none;
+    break-inside: avoid;
+  }
+}
+
+/* ---------- Frases grandes em lista (situações, para quem) ---------- */
+.frases {
+  list-style: none;
+  padding: 0;
+  border-top: var(--traco) solid var(--linha);
+}
+.frases li {
+  padding-block: var(--espaco-s);
+  border-bottom: var(--traco) solid var(--linha);
+  font-family: var(--fonte-titulo);
+  font-size: var(--passo-2);
+  font-weight: 700;
+  font-stretch: var(--largura-titulo);
+  letter-spacing: var(--espaco-letras-titulo);
+  line-height: 1.15;
+  text-wrap: balance;
+}

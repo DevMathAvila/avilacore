@@ -37,6 +37,8 @@ with sync_playwright() as p:
             pg.on("response", lambda r, e=erros, c=caminho: e.append(f"HTTP {r.status}: {r.url}")
                   if r.status >= 400 and "nao-existe" not in c else None)
             pg.goto(base + caminho, wait_until="networkidle")
+            # as secoes fora da tela usam content-visibility: auto e nao seriam pintadas na captura inteira
+            pg.add_style_tag(content=".secao{content-visibility:visible!important}")
             pg.evaluate("""async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 40)); } window.scrollTo(0, 0); }""")
             pg.wait_for_timeout(400)
             sobra = pg.evaluate("document.documentElement.scrollWidth - window.innerWidth")

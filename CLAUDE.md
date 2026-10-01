@@ -12,7 +12,7 @@
 > Índice raiz: ../CLAUDE.md
 
 ## Stack
-Astro 7 (páginas estáticas + rota `/api/contato` no servidor), CSS próprio com tokens, fonte Archivo variável auto-hospedada. Adaptador da Vercel no deploy e de Node no build local (o empacotador da Vercel falha no Windows).
+Astro 7 (páginas estáticas + rota `/api/contato` no servidor), CSS próprio com tokens, fonte Archivo variável auto-hospedada. Adaptador da Vercel no deploy e de Node no build local. O projeto mora num HD externo lento: `npm ci` e builds rodam muito mais rápido numa cópia em disco interno.
 
 ## Comandos
 - `npm run dev` · `npm run build` · `npm run preview` · `npm run check`

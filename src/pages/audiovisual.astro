@@ -8,7 +8,6 @@ import Base from '../layouts/Base.astro';
 import TopoPagina from '../components/TopoPagina.astro';
 import Quadro from '../components/Quadro.astro';
 import ArteFrente from '../components/ArteFrente.astro';
-import ListaItens from '../components/ListaItens.astro';
 import Processo from '../components/Processo.astro';
 import Duvidas from '../components/Duvidas.astro';
 import CartaoTrabalho from '../components/CartaoTrabalho.astro';
@@ -23,7 +22,9 @@ const d = s.data;
 const trabalhos = await trabalhosPublicados('audiovisual');
 const guia = (await guiasPublicados()).find((g) => g.data.frente === 'audiovisual');
 const migalhas = [{ nome: d.nome, caminho: '/audiovisual' }];
-const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
+/** só os serviços confirmados; a ordem do arquivo é a ordem do trabalho */
+const etapas = d.itens.filter((i) => i.confirmado);
+const confirmados = etapas.map((i) => i.nome);
 
 const formatos = [
   {
@@ -73,17 +74,28 @@ const formatos = [
     </div>
   </section>
 
+  {
+    etapas.length > 0 && (
+      <section class="secao">
+        <div class="grade">
+          <h2>O que entra no trabalho</h2>
+          <ol class="trilha" role="list" style={`--etapas: ${etapas.length}`}>
+            {etapas.map((i) => (
+              <li>
+                <h3>{i.nome}</h3>
+                <p class="apoio">{i.descricao}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    )
+  }
+
   <section class="secao">
     <div class="grade bloco">
       <h2>Da gravação ao vídeo pronto</h2>
       <div class="bloco__corpo prosa"><Content /></div>
-    </div>
-  </section>
-
-  <section class="secao">
-    <div class="grade bloco">
-      <h2>O que entra no trabalho</h2>
-      <div class="bloco__corpo"><ListaItens itens={d.itens} /></div>
     </div>
   </section>
 
@@ -176,6 +188,38 @@ const formatos = [
   }
   .passos-pagina {
     margin-top: var(--espaco-l);
+  }
+  /* etapas como trechos de uma linha do tempo de edição: uma barra por etapa, a última em ciano */
+  .trilha {
+    display: grid;
+    gap: var(--espaco-m) 0.4rem;
+    margin-top: var(--espaco-l);
+  }
+  .trilha li {
+    padding-top: var(--espaco-s);
+    border-top: 0.5rem solid var(--borda);
+  }
+  .trilha li:last-child {
+    border-top-color: var(--ciano);
+  }
+  .trilha h3 {
+    font-size: var(--passo-1);
+  }
+  .trilha p {
+    margin-top: var(--espaco-2xs);
+    max-width: 34ch;
+  }
+  @media (min-width: 60rem) {
+    .trilha {
+      grid-template-columns: repeat(var(--etapas, 5), minmax(0, 1fr));
+    }
+    .trilha li {
+      padding-right: var(--espaco-s);
+    }
+    .trilha h3 {
+      font-size: clamp(1.05rem, 0.6rem + 0.75vw, 1.3rem);
+      font-stretch: 108%;
+    }
   }
   .trabalhos-frente {
     display: grid;

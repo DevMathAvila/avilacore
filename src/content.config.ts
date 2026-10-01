@@ -91,7 +91,7 @@ const trabalhos = defineCollection({
       creditos: z.array(z.object({ papel: z.string(), nome: z.string() })).default([]),
       /** aviso de honestidade (ex.: fotos de banco de imagem dentro de um estudo) */
       nota: z.string().optional(),
-      link: z.object({ rotulo: z.string(), url: z.string().url() }).optional(),
+      link: z.object({ rotulo: z.string(), url: z.url() }).optional(),
       ordem: z.number().int().default(100),
       publicado: z.boolean(),
       atualizado: z.coerce.date(),
@@ -105,7 +105,7 @@ const guias = defineCollection({
     description: z.string(),
     resumo: z.string(),
     frente,
-    fontes: z.array(z.object({ nome: z.string(), url: z.string().url() })).default([]),
+    fontes: z.array(z.object({ nome: z.string(), url: z.url() })).default([]),
     /** false = rascunho: fora do menu e do sitemap, com noindex */
     publicado: z.boolean(),
     atualizado: z.coerce.date(),

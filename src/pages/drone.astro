@@ -52,9 +52,18 @@ const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
   </div>
 
   <section class="secao">
-    <div class="grade bloco">
-      <h2>O que a vista de cima mostra</h2>
-      <div class="bloco__corpo prosa"><Content /></div>
+    <div class="grade">
+      <h2 class="titulo-largo">O que a vista de cima mostra</h2>
+      <div class="duas-colunas texto-vista"><Content /></div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade">
+      <h2>Para quem</h2>
+      <ul class="frases frases-drone">
+        {d.paraQuem.map((p) => <li>{p}</li>)}
+      </ul>
     </div>
   </section>
 
@@ -62,15 +71,6 @@ const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
     <div class="grade bloco">
       <h2>O que eu faço</h2>
       <div class="bloco__corpo"><ListaItens itens={d.itens} /></div>
-    </div>
-  </section>
-
-  <section class="secao">
-    <div class="grade bloco">
-      <h2>Para quem</h2>
-      <ul class="bloco__corpo lista-linhas">
-        {d.paraQuem.map((p) => <li>{p}</li>)}
-      </ul>
     </div>
   </section>
 
@@ -147,6 +147,21 @@ const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
   }
   .passos-pagina {
     margin-top: var(--espaco-l);
+  }
+  .texto-vista,
+  .frases-drone {
+    margin-top: var(--espaco-m);
+  }
+  @media (min-width: 60rem) {
+    .titulo-largo {
+      grid-column: 1 / 9;
+    }
+    .texto-vista {
+      grid-column: 1 / 12;
+    }
+    .frases-drone {
+      grid-column: 1 / 11;
+    }
   }
   .fontes {
     margin-top: var(--espaco-s);

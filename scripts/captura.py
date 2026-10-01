@@ -29,6 +29,7 @@ with sync_playwright() as p:
     pg.on("console", lambda m: erros.append(f"console.{m.type}: {m.text}") if m.type in ("error", "warning") else None)
     pg.on("response", lambda r: erros.append(f"HTTP {r.status}: {r.url}") if r.status >= 400 else None)
     pg.goto(url, wait_until="networkidle")
+    pg.add_style_tag(content=".secao{content-visibility:visible!important}")
     if "--visivel" not in flags:
         pg.evaluate("""async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } window.scrollTo(0, 0); }""")
     pg.wait_for_timeout(900)
