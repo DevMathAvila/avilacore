@@ -19,7 +19,7 @@ function lerColecao(pasta) {
   }
   return arquivos.map((f) => {
     const txt = readFileSync(new URL(f, base), 'utf8');
-    const campo = (nome) => (txt.match(new RegExp(`^${nome}:\s*(.+)$`, 'm')) || [])[1]?.trim();
+    const campo = (nome) => (txt.match(new RegExp('^' + nome + ':[ ]*(.+)$', 'm')) || [])[1]?.trim();
     return {
       slug: f.replace(/\.md$/, ''),
       publicado: campo('publicado') === 'true',

@@ -31,7 +31,7 @@ processo:
     texto: Você me conta o que faz, para quem e o que o site precisa resolver.
   - titulo: Conteúdo e estrutura
     texto: Definimos as páginas, o que você já tem de texto e imagem e o que falta.
-  - titulo: Design e desenvolvimento
+  - titulo: Desenho e código
     texto: Desenho e programo o site, e você acompanha por um link de prévia.
   - titulo: Revisão
     texto: Você navega, comenta, e eu ajusto o que foi combinado.

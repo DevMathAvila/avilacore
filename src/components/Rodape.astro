@@ -38,7 +38,7 @@ const ano = new Date().getFullYear();
     </div>
 
     <div class="rodape__fim pequeno apoio">
-      <p>© {ano} {site.nome}, de {site.pessoa}</p>
+      <p>© {ano} <span translate="no">{site.nome}</span>, de {site.pessoa}</p>
       <ul role="list">
         <li><a href="/politica-de-privacidade">Política de privacidade</a></li>
         <li><a href="/termos">Termos de uso</a></li>
@@ -76,6 +76,8 @@ const ano = new Date().getFullYear();
   .rodape a {
     display: inline-flex;
     align-items: center;
+    gap: 0.35em;
+    min-width: var(--toque);
     min-height: var(--toque);
     color: var(--texto);
     text-decoration: none;

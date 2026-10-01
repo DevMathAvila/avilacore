@@ -276,7 +276,7 @@ const situacoes = [
     row-gap: 0;
   }
   .hero h1 {
-    font-size: var(--passo-5);
+    font-size: clamp(2.05rem, 1.05rem + 5vw, 5.6rem);
     line-height: 0.98;
     letter-spacing: -0.02em;
     font-weight: 800;
@@ -290,6 +290,11 @@ const situacoes = [
     margin-top: var(--espaco-m);
   }
 
+  @media (min-width: 48rem) and (max-width: 59.99rem) {
+    .hero {
+      min-height: 0;
+    }
+  }
   @media (min-width: 60rem) {
     .hero {
       align-content: center;
@@ -428,6 +433,11 @@ const situacoes = [
   .frente h3 {
     font-size: var(--passo-2);
   }
+  /* ao lado da moldura vertical a coluna é estreita: o nome precisa caber sem quebrar */
+  .frente--audiovisual h3 {
+    font-size: clamp(1.15rem, 6vw, 1.55rem);
+    font-stretch: 100%;
+  }
   .frente__texto p {
     margin-top: var(--espaco-2xs);
   }
@@ -444,6 +454,10 @@ const situacoes = [
     }
     .frente--audiovisual .frente__texto {
       grid-column: 6 / 12;
+    }
+    .frente--audiovisual h3 {
+      font-size: var(--passo-2);
+      font-stretch: var(--largura-titulo);
     }
   }
   @media (min-width: 60rem) {

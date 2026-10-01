@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 
-Sitemap: https://avilacore.com.br/sitemap-index.xml
+Sitemap: https://www.avilacore.com.br/sitemap-index.xml

@@ -412,3 +412,14 @@ textarea {
   border-bottom: var(--traco) solid var(--linha);
   max-width: none;
 }
+
+/* ---------- Toque ---------- */
+a,
+button,
+summary,
+label,
+input,
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgb(92 192 208 / 0.18);
+}

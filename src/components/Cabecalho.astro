@@ -156,6 +156,7 @@ const ativo = (href: string) => atual === href || atual.startsWith(`${href}/`);
     background: var(--fundo);
     color: var(--texto);
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .menu[open] {
     display: flex;

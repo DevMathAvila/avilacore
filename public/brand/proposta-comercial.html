@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Proposta · AvilaCore</title>
+<style>
+  @font-face { font-family: 'Archivo'; src: url('../fonts/archivo-var.woff2') format('woff2'); font-weight: 400 800; font-stretch: 100% 125%; }
+  :root { --noite: #0E1624; --papel: #EDEBE6; --linha: #cfccc4; --apoio: #4a5263; --ciano: #0B6477; --coral: #B2412A; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #d9d7d1; color: var(--noite); font-family: 'Archivo', Arial, sans-serif; font-size: 11pt; line-height: 1.5; }
+  .barra { position: sticky; top: 0; z-index: 2; display: flex; gap: 16px; align-items: center; justify-content: center; padding: 12px 16px; background: var(--noite); color: var(--papel); font-size: 14px; }
+  .barra button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 3px; background: #EF6F55; color: var(--noite); font: inherit; font-weight: 650; cursor: pointer; }
+  .folha { position: relative; width: 210mm; min-height: 297mm; margin: 12mm auto; padding: 22mm 20mm; background: var(--papel); }
+  h1, h2 { font-weight: 800; font-stretch: 118%; letter-spacing: -0.015em; line-height: 1.08; }
+  h1 { font-size: 34pt; }
+  h2 { font-size: 13pt; margin: 9mm 0 3mm; padding-top: 4mm; border-top: 1px solid var(--noite); }
+  p + p { margin-top: 2mm; }
+  .apoio { color: var(--apoio); }
+  .capa { display: flex; flex-direction: column; }
+  .capa img { width: 62mm; }
+  .capa h1 { margin-top: 70mm; max-width: 14ch; }
+  .capa dl { margin-top: auto; display: grid; grid-template-columns: 34mm 1fr; gap: 2mm 6mm; padding-top: 6mm; border-top: 1px solid var(--noite); }
+  .capa dt { color: var(--apoio); }
+  /* cantos do Foco */
+  .folha.capa::before, .folha.capa::after { content: ''; position: absolute; width: 9mm; height: 9mm; border: 0 solid var(--noite); }
+  .folha.capa::before { top: 10mm; left: 10mm; border-top-width: 2px; border-left-width: 2px; }
+  .folha.capa::after { right: 10mm; bottom: 10mm; border-right-width: 2px; border-bottom-width: 2px; }
+  [contenteditable] { outline: 0; border-bottom: 1px dotted var(--linha); min-width: 20mm; }
+  [contenteditable]:focus { background: #fff; border-bottom-color: var(--ciano); }
+  [contenteditable]:empty::before { content: attr(data-campo); color: #8a8f98; }
+  div[contenteditable], li[contenteditable] { display: block; min-height: 7mm; }
+  ul, ol { padding-left: 5mm; }
+  li { margin-top: 1.5mm; }
+  table { width: 100%; border-collapse: collapse; }
+  td, th { text-align: left; vertical-align: top; padding: 2.5mm 0; border-bottom: 1px solid var(--linha); }
+  th { width: 44mm; font-weight: 650; }
+  .assinaturas { display: grid; grid-template-columns: 1fr 1fr; gap: 14mm; margin-top: 22mm; }
+  .assinaturas div { padding-top: 2mm; border-top: 1px solid var(--noite); font-size: 9.5pt; }
+  .rodape { margin-top: 12mm; font-size: 9pt; color: var(--apoio); }
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: none; }
+    .barra { display: none; }
+    .folha { margin: 0; page-break-after: always; }
+    [contenteditable] { border-bottom: 0; }
+    [contenteditable]:empty::before { content: ''; }
+  }
+</style>
+</head>
+<body>
+<div class="barra">
+  <span>Clique nos campos pontilhados para preencher. Nada fica salvo: preencha e imprima.</span>
+  <button type="button" onclick="window.print()">Imprimir ou salvar em PDF</button>
+</div>
+
+<section class="folha capa">
+  <img src="logo-avilacore-escura.svg" alt="AvilaCore">
+  <h1>Proposta</h1>
+  <dl>
+    <dt>Para</dt><dd><span contenteditable="true" data-campo="Nome do cliente"></span></dd>
+    <dt>Projeto</dt><dd><span contenteditable="true" data-campo="Nome do projeto"></span></dd>
+    <dt>Data</dt><dd><span contenteditable="true" data-campo="dia/mês/ano"></span></dd>
+    <dt>Válida até</dt><dd><span contenteditable="true" data-campo="dia/mês/ano"></span></dd>
+    <dt>De</dt><dd>Matheus Ávila, AvilaCore. Indaiatuba, SP</dd>
+  </dl>
+</section>
+
+<section class="folha">
+  <h2 style="margin-top:0;border-top:0;padding-top:0">O que eu entendi</h2>
+  <div contenteditable="true" data-campo="O que você precisa e para que serve, em poucas linhas."></div>
+
+  <h2>O que eu vou fazer</h2>
+  <ul>
+    <li contenteditable="true" data-campo="Item do escopo"></li>
+    <li contenteditable="true" data-campo="Item do escopo"></li>
+    <li contenteditable="true" data-campo="Item do escopo"></li>
+  </ul>
+
+  <h2>O que não está incluído</h2>
+  <div contenteditable="true" data-campo="O que fica de fora desta proposta."></div>
+
+  <h2>Como funciona</h2>
+  <table>
+    <tr><th>1. Conversa inicial</th><td>Já feita. Esta proposta resume o que combinamos.</td></tr>
+    <tr><th>2. Objetivo e escopo</th><td>Você aprova esta proposta e me envia o material que tiver.</td></tr>
+    <tr><th>3. Produção</th><td contenteditable="true" data-campo="Gravação, voo ou desenvolvimento: o que acontece e onde."></td></tr>
+    <tr><th>4. Revisão</th><td contenteditable="true" data-campo="Quantas rodadas de ajuste estão incluídas."></td></tr>
+    <tr><th>5. Entrega</th><td contenteditable="true" data-campo="O que você recebe e em que formato."></td></tr>
+  </table>
+
+  <h2>Prazo</h2>
+  <div contenteditable="true" data-campo="Datas ou número de dias, contados a partir de quê."></div>
+
+  <h2>Investimento</h2>
+  <table>
+    <tr><th>Valor</th><td contenteditable="true" data-campo="Valor do projeto"></td></tr>
+    <tr><th>Pagamento</th><td contenteditable="true" data-campo="Forma e datas de pagamento"></td></tr>
+  </table>
+
+  <h2>Condições</h2>
+  <ul>
+    <li contenteditable="true" data-campo="Uso das imagens e dos arquivos entregues"></li>
+    <li contenteditable="true" data-campo="O que acontece se o clima ou o local impedir a gravação"></li>
+    <li contenteditable="true" data-campo="Outras condições combinadas"></li>
+  </ul>
+
+  <div class="assinaturas">
+    <div>Matheus Ávila<br><span class="apoio">AvilaCore</span></div>
+    <div><span contenteditable="true" data-campo="Nome de quem aprova"></span><br><span class="apoio">Cliente</span></div>
+  </div>
+
+  <p class="rodape">AvilaCore, de Matheus Ávila. WhatsApp (19) 99380-8005. avilacore.com.br. @avilacore_</p>
+</section>
+</body>
+</html>

@@ -1,0 +1,314 @@
+---
+/**
+ * Kit da marca: ver e baixar tudo. Página fora do índice (noindex) e fora do sitemap.
+ * As regras completas de uso estão em BRAND.md, na raiz do projeto.
+ */
+import Base from '../layouts/Base.astro';
+import TopoPagina from '../components/TopoPagina.astro';
+import LogoClara from '../brand/logo-avilacore-clara.svg';
+import LogoEscura from '../brand/logo-avilacore-escura.svg';
+import FocoClara from '../brand/simbolo-foco-clara.svg';
+import FocoEscura from '../brand/simbolo-foco-escura.svg';
+import FocoApp from '../brand/simbolo-foco-app.svg';
+import Favicon from '../brand/favicon.svg';
+
+const migalhas = [{ nome: 'Kit da marca', caminho: '/marca' }];
+
+const cores = [
+  { nome: 'Noite', hex: '#0E1624', uso: 'Fundo do site' },
+  { nome: 'Noite 2', hex: '#152033', uso: 'Superfícies e campos' },
+  { nome: 'Linha', hex: '#26344B', uso: 'Filetes e grade' },
+  { nome: 'Borda', hex: '#6A7890', uso: 'Borda de campo' },
+  { nome: 'Papel', hex: '#EDEBE6', uso: 'Texto principal' },
+  { nome: 'Névoa', hex: '#A7ADB5', uso: 'Texto de apoio' },
+  { nome: 'Ciano', hex: '#5CC0D0', uso: 'Foco, links, detalhe' },
+  { nome: 'Coral queimado', hex: '#EF6F55', uso: 'Ações' },
+  { nome: 'Ciano escuro', hex: '#0B6477', uso: 'Ciano em fundo claro' },
+  { nome: 'Coral escuro', hex: '#B2412A', uso: 'Coral em fundo claro' },
+];
+
+const b = '/brand/';
+const grupos = [
+  {
+    titulo: 'Logo',
+    arquivos: [
+      ['Clara, para fundo escuro', 'logo-avilacore-clara.svg', 'logo-avilacore-clara.png'],
+      ['Escura, para fundo claro', 'logo-avilacore-escura.svg', 'logo-avilacore-escura.png'],
+      ['Uma cor (SVG herda a cor)', 'logo-avilacore-uma-cor.svg', 'logo-avilacore-branca.png'],
+      ['Uma cor, noite', null, 'logo-avilacore-noite.png'],
+    ],
+  },
+  {
+    titulo: 'Símbolo Foco',
+    arquivos: [
+      ['Claro', 'simbolo-foco-clara.svg', 'simbolo-foco-clara.png'],
+      ['Escuro', 'simbolo-foco-escura.svg', 'simbolo-foco-escura.png'],
+      ['Uma cor', 'simbolo-foco-uma-cor.svg', 'simbolo-foco-branca.png'],
+      ['Ícone de aplicativo', 'simbolo-foco-app.svg', 'simbolo-foco-app.png'],
+    ],
+  },
+  {
+    titulo: 'Instagram',
+    arquivos: [
+      ['Avatar 1080 x 1080', null, 'instagram/avatar-1080.png'],
+      ['Capa de destaque: Audiovisual', null, 'instagram/destaque-audiovisual.png'],
+      ['Capa de destaque: Drone', null, 'instagram/destaque-drone.png'],
+      ['Capa de destaque: Sites', null, 'instagram/destaque-sites.png'],
+    ],
+  },
+  {
+    titulo: 'Vídeo',
+    arquivos: [
+      ["Marca d'água, logo", 'video/marca-dagua-logo.svg', 'video/marca-dagua-logo.png'],
+      ["Marca d'água, símbolo", 'video/marca-dagua-simbolo.svg', 'video/marca-dagua-simbolo.png'],
+      ['Lower third (editável e exemplo)', 'video/lower-third-editavel.svg', 'video/lower-third-exemplo.png'],
+      ['Tela final horizontal', null, 'video/tela-final-1920x1080.png'],
+      ['Tela final vertical', null, 'video/tela-final-1080x1920.png'],
+    ],
+  },
+] as const;
+---
+
+<Base
+  titulo="Kit da marca · AvilaCore"
+  descricao="Logo, símbolo, cores, tipografia e peças da AvilaCore para ver e baixar."
+  migalhas={migalhas}
+  noindex
+>
+  <TopoPagina
+    titulo="Kit da marca"
+    lead="Logo, símbolo, cores e peças prontas. As regras completas estão no arquivo BRAND.md do projeto."
+    migalhas={migalhas}
+  />
+
+  <section class="secao">
+    <div class="grade">
+      <h2>Logo e símbolo</h2>
+      <div class="placas">
+        <figure class="placa"><LogoClara /><figcaption class="pequeno apoio">Clara, sobre fundo escuro</figcaption></figure>
+        <figure class="placa placa--clara"><LogoEscura /><figcaption class="pequeno">Escura, sobre fundo claro</figcaption></figure>
+        <figure class="placa placa--simbolos">
+          <FocoApp width="120" height="120" />
+          <FocoClara width="96" height="96" />
+          <Favicon width="32" height="32" />
+          <Favicon width="16" height="16" />
+          <figcaption class="pequeno apoio">Ícone, símbolo solto e favicon em 32 e 16 px</figcaption>
+        </figure>
+        <figure class="placa placa--clara placa--simbolos">
+          <FocoEscura width="96" height="96" />
+          <figcaption class="pequeno">Símbolo escuro</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade">
+      <h2>Cores</h2>
+      <ul role="list" class="cores">
+        {
+          cores.map((c) => (
+            <li>
+              <span class="cores__amostra" style={`background:${c.hex}`} />
+              <strong>{c.nome}</strong>
+              <code class="numeros">{c.hex}</code>
+              <span class="apoio pequeno">{c.uso}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="apoio regra">
+        Ciano e coral nunca aparecem juntos no mesmo componente. Como texto, os dois só entram sobre o
+        fundo escuro; em fundo claro, use as versões escuras.
+      </p>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade">
+      <h2>Tipografia</h2>
+      <div class="tipos">
+        <p class="tipos__display">Filmagem com drone em Indaiatuba e região</p>
+        <p class="tipos__titulo">Uma marca que precisa de vídeos para o Instagram</p>
+        <p>
+          Archivo variável, uma família só. Títulos em peso 780 a 800, largura 108 no celular e até
+          125 no desktop. Texto em peso 400 e largura 100, de 17 a 19 px, com altura de linha 1,6.
+        </p>
+        <p class="numeros apoio">23°05′24″ S, 47°13′04″ O. Números tabulares da própria fonte.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade">
+      <h2>Arquivos para baixar</h2>
+      <div class="downloads">
+        {
+          grupos.map((g) => (
+            <div class="downloads__grupo">
+              <h3>{g.titulo}</h3>
+              <ul role="list">
+                {g.arquivos.map(([nome, svg, png]) => (
+                  <li>
+                    <span>{nome}</span>
+                    <span class="downloads__links">
+                      {svg && <a href={`${b}${svg}`} download>SVG</a>}
+                      {png && <a href={`${b}${png}`} download>PNG</a>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+        <div class="downloads__grupo">
+          <h3>Site e documentos</h3>
+          <ul role="list">
+            <li><span>Imagem Open Graph (modelo da home)</span><span class="downloads__links"><a href="/og/home.png" download>PNG</a></span></li>
+            <li><span>Favicon</span><span class="downloads__links"><a href="/favicon.svg" download>SVG</a><a href="/favicon.ico" download>ICO</a></span></li>
+            <li><span>Ícone de toque (Apple)</span><span class="downloads__links"><a href="/apple-touch-icon.png" download>PNG</a></span></li>
+            <li><span>Assinatura de e-mail</span><span class="downloads__links"><a href={`${b}assinatura-email.html`}>Abrir</a></span></li>
+            <li><span>Modelo de proposta comercial</span><span class="downloads__links"><a href={`${b}proposta-comercial.html`}>Abrir</a></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="grade bloco">
+      <h2>Regras rápidas</h2>
+      <ul class="bloco__corpo lista-linhas">
+        <li>Escreva AvilaCore, em uma palavra, com A e C maiúsculos.</li>
+        <li>Deixe em volta do logo um espaço livre igual à altura da letra A.</li>
+        <li>Não estique, incline, contorne nem troque as cores do logo.</li>
+        <li>O símbolo Foco substitui o logo em espaços pequenos e quadrados, como avatar e favicon.</li>
+        <li>Os cantos do Foco enquadram a mídia: sempre o superior esquerdo e o inferior direito.</li>
+        <li>Coordenadas, quando aparecem, são as de Indaiatuba: 23°05′24″ S, 47°13′04″ O.</li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .placas {
+    display: grid;
+    gap: var(--calha);
+    margin-top: var(--espaco-m);
+  }
+  .placa {
+    display: grid;
+    gap: var(--espaco-s);
+    align-content: center;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border: var(--traco) solid var(--linha);
+    background: var(--noite-2);
+  }
+  .placa :global(svg) {
+    max-width: 100%;
+    height: auto;
+  }
+  .placa--clara {
+    background: var(--papel);
+    border-color: var(--papel);
+    color: var(--noite);
+  }
+  .placa--simbolos {
+    grid-auto-flow: column;
+    grid-template-columns: repeat(4, max-content);
+    align-items: end;
+    justify-content: start;
+    gap: var(--espaco-s);
+  }
+  .placa--simbolos figcaption {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .cores {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 10.5rem), 1fr));
+    gap: var(--calha);
+    margin-top: var(--espaco-m);
+  }
+  .cores li {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .cores__amostra {
+    display: block;
+    height: 4.5rem;
+    margin-bottom: 0.5rem;
+    border: var(--traco) solid var(--linha);
+  }
+  .cores code {
+    font-family: inherit;
+    color: var(--texto-apoio);
+  }
+  .regra {
+    margin-top: var(--espaco-m);
+    max-width: 60ch;
+  }
+  .tipos {
+    display: grid;
+    gap: var(--espaco-s);
+    margin-top: var(--espaco-m);
+  }
+  .tipos p {
+    max-width: 62ch;
+  }
+  .tipos .tipos__display {
+    font-family: var(--fonte-titulo);
+    font-size: var(--passo-5);
+    font-weight: 800;
+    font-stretch: var(--largura-display);
+    letter-spacing: -0.02em;
+    line-height: 0.98;
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+  .tipos .tipos__titulo {
+    font-family: var(--fonte-titulo);
+    font-size: var(--passo-2);
+    font-weight: var(--peso-titulo);
+    font-stretch: var(--largura-titulo);
+    line-height: 1.12;
+    max-width: 24ch;
+  }
+  .downloads {
+    display: grid;
+    gap: var(--espaco-l) var(--calha);
+    margin-top: var(--espaco-m);
+  }
+  .downloads h3 {
+    margin-bottom: var(--espaco-2xs);
+  }
+  .downloads li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espaco-s);
+    min-height: var(--toque);
+    border-bottom: var(--traco) solid var(--linha);
+  }
+  .downloads__links {
+    display: flex;
+    gap: var(--espaco-xs);
+    flex: none;
+  }
+  .downloads__links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--toque);
+    min-height: var(--toque);
+    padding-inline: 0.35rem;
+  }
+  @media (min-width: 48rem) {
+    .placas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .downloads {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

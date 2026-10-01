@@ -33,7 +33,8 @@ const { Content } = await render(trabalho);
 const estudo = data.tipo === 'estudo';
 const frente = frentes[data.frente];
 
-const titulo = `${data.titulo}, ${data.categoria.toLowerCase()} · AvilaCore`;
+const tituloLongo = `${data.titulo} · ${estudo ? 'Estudo autoral' : data.categoria} · AvilaCore`;
+const titulo = tituloLongo.length <= 60 ? tituloLongo : `${data.titulo} · AvilaCore`;
 const descricao = `${estudo ? 'Estudo autoral. ' : ''}${data.resumo}`;
 const migalhas = [
   { nome: 'Trabalhos', caminho: '/trabalhos' },

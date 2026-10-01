@@ -1,39 +1,53 @@
-<!-- categoria: Inativos — Pessoais -->
-<!-- resumo: Ávila Core — site pessoal (Astro) das frentes: sites, drone e suporte -->
-<!-- gatilhos: meu site; site pessoal; Ávila Core; portfólio; site do drone/suporte -->
-<!-- modificado: 2026-08-27 17:33 -->
-# Ávila Core — Cérebro do projeto
+<!-- categoria: Pessoal — Sites & Clientes -->
+<!-- resumo: Site da AvilaCore (Astro 7), marca de Matheus Ávila: audiovisual, drone e sites. Marca nova (símbolo Foco, Archivo, noite + ciano + coral), portfólio em crescimento -->
+<!-- gatilhos: meu site; site pessoal; AvilaCore; Ávila Core; avilacore.com.br; portfólio; site do drone; adicionar trabalho; kit da marca; logo da AvilaCore -->
+<!-- modificado: 2026-10-01 -->
+# AvilaCore: cérebro do projeto
 
-**Categoria:** Sites & Marketing
-**O que é:** Site pessoal de Matheus Ávila (marca "Ávila Core"): apresenta as três frentes — criação de sites, filmagens com drone e suporte técnico.
-**Stack:** [Astro](https://astro.build) (estático, multipágina), TypeScript, HTML/CSS com tokens próprios. Tipografia **Satoshi** self-hosted (woff2). Deploy na **Vercel**. Domínio: `avilacore.com.br`.
-**Última modificação:** 2026-08-27 17:33 (git — "Feat: páginas de Sites e Suporte com cases, depoimentos e conteúdo"). É repositório git.
-
-## Gatilhos (como me chamar)
-- "meu site", "site pessoal", "Ávila Core", "portfólio", "o site do drone/suporte"
-
-## Arquitetura
-- `src/pages/` — **index** (home), **sites**, **filmagens** (drone), **suporte**.
-- `src/components/` — `Nav.astro`, `WhatsappFab.astro` (botão flutuante do WhatsApp), `EmConstrucao.astro`, `SitePreview.astro`.
-- `src/layouts/Base.astro` — layout base com SEO e fontes.
-- `src/styles/global.css` — tokens de cor, fontes e base.
-- `public/fonts/` — fontes Satoshi (woff2).
-- `astro.config.mjs` — `site: avilacore.com.br`, `compressHTML`, integração **sitemap**.
-- `.claude/launch.json` — config de preview (skill `run`).
-
-## Como rodar
-```bash
-npm install
-npm run dev      # http://localhost:4321
-npm run build    # gera dist/
-npm run preview  # serve o build
-```
-- Não commitar `node_modules/`/`dist/`.
-
-## ⚠️ Atenção — pasta `claude-ig/`
-- Dentro do projeto há uma pasta `claude-ig/` que é uma **ferramenta de terceiros clonada** (toolkit de automação de Instagram: agents `ig-*`, skills, scripts Python de análise). **Não faz parte do site** — é um repo à parte que foi parar aqui. Não confundir com o código do Astro nem incluir no build. Se for limpar o projeto, avaliar mover/remover.
-
-## Como mexer
-- Peça ao Claude pra ler `src/` antes de mudanças maiores. Conteúdo real nas 4 páginas + componentes.
+**Categoria:** Pessoal — Sites & Clientes
+**O que é:** Site profissional real de Matheus Ávila (Indaiatuba, SP), sob a marca **AvilaCore**. Três frentes: audiovisual, drone e sites. Suporte técnico saiu do site.
+**Produção:** https://www.avilacore.com.br (domínio principal na Vercel é o `www`). Repositório público: `DevMathAvila/avilacore`.
+**Estado:** remodelagem completa no branch `remodelagem` (out/2026). Nada vai para `main` sem aprovação do Matheus.
 
 > Índice raiz: ../CLAUDE.md
+
+## Stack
+Astro 7 (páginas estáticas + rota `/api/contato` no servidor), CSS próprio com tokens, fonte Archivo variável auto-hospedada. Adaptador da Vercel no deploy e de Node no build local (o empacotador da Vercel falha no Windows).
+
+## Comandos
+- `npm run dev` · `npm run build` · `npm run preview` · `npm run check`
+- `node scripts/marca/gerar-kit.mjs` gera o kit em `public/brand/` e os ícones
+- `python scripts/testes.py <url>` (axe, teclado, menu, formulário) · `python scripts/revisao.py <url> <pasta>` (capturas em várias larguras) · `python scripts/captura.py <url> <saida.png>`
+- Scanner de design: `node ../.agents/skills/avoid-ai-design/scripts/detect.mjs src`
+
+## Onde mexer
+- Contatos, cidades, navegação, processo: `src/config/site.ts` (campo vazio = dado que falta; o site esconde o bloco)
+- Serviços por frente, com `confirmado: true/false`: `src/content/servicos/*.md`
+- Trabalhos (`publicado`), depoimentos (`autorizado`), guias (`publicado`): `src/content/`
+- Tokens de cor, tipo, espaço e movimento: só em `src/styles/tokens.css`
+- SEO, Open Graph e JSON-LD: `src/layouts/Base.astro`, `src/lib/schema.ts`, `src/lib/og.ts`
+- Redirects 301 e sitemap: `astro.config.mjs` · cabeçalhos: `vercel.json`
+- Como adicionar um trabalho: `README.md`
+
+## Decisões
+- Grafia **AvilaCore**; "Ávila Core" só como `alternateName`. Frase: "Filmo do alto e coloco no ar."
+- Marca: símbolo "Foco" (dois cantos + quadrado), wordmark com o pingo do "i" quadrado. Paleta noite `#0E1624`, papel `#EDEBE6`, ciano `#5CC0D0`, coral `#EF6F55`. Ciano e coral nunca juntos no mesmo componente. Regras em `BRAND.md`.
+- Archivo variável: largura 125 nos títulos do desktop, 108 no celular, 100 no texto.
+- Único momento animado: a entrada do hero da home. Sem Lenis aqui (briefing pede JS mínimo e nada de rolagem sequestrada). Transições de página com View Transitions do CSS.
+- `/processo` virou seção da home (`#como-funciona`) e uma versão em cada serviço.
+- Redirects 301: `/filmagens` → `/drone`; `/suporte`, `/infraestrutura` e `/home` → `/`.
+- Formulário: Resend por `/api/contato`; sem as chaves, o formulário abre o WhatsApp com a mensagem.
+
+## Honestidade (regra do Matheus)
+- Não inventar cliente, projeto, depoimento, número, prazo, preço, certificação ou endereço.
+- Estudos autorais (Soleira, Beiral, Lívia Carvalhal, Varanda) sempre identificados como estudo; as fotos deles são de banco de imagem.
+- Clientes reais (Mayara Gaspareto, Deckboost, Tatiane Silva) e os três depoimentos estão prontos, com `publicado: false` e `autorizado: false`, até a autorização de cada um.
+- Drone: não afirmar cadastro, seguro ou licença sem dado em `src/config/site.ts`. Regra atual: RBAC nº 100 (Resolução ANAC nº 805, de 15/06/2026).
+
+## Pastas que não fazem parte do site
+- `_conteudo/`: material bruto e fichas. Fora do git (o repositório é público).
+- `marketing/`: brand-profile, posts e a pasta `remodelagem/` (progresso, aprovação, pendências). Fora do git.
+- `claude-ig/`: ferramenta de terceiros. Ignorar.
+
+## Pendências e entrega
+`marketing/remodelagem/PENDENCIAS.md` e `marketing/remodelagem/PROGRESSO.md`.
