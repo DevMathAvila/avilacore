@@ -10,7 +10,7 @@ fontes:
     url: https://pergamum.anac.gov.br/pergamum/vinculos/RBAC100EMD00.pdf
   - nome: Página de drones do DECEA
     url: https://www.decea.mil.br/drone/
-publicado: false
+publicado: true
 atualizado: 2026-10-01
 ---
 

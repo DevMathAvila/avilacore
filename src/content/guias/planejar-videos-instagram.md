@@ -6,7 +6,7 @@ frente: audiovisual
 fontes:
   - nome: Diretrizes de música da Meta
     url: https://www.facebook.com/legal/music_guidelines
-publicado: false
+publicado: true
 atualizado: 2026-10-01
 ---
 
