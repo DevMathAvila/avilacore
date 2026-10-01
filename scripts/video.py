@@ -2,9 +2,12 @@
 Prepara um video para o site: previa curta, versao completa em 720p e capa.
 
 Uso:
-  python scripts/video.py <arquivo-original> <slug> [--inicio=9] [--duracao=8] [--capa=13] [--vertical]
+  python scripts/video.py <arquivo-original> <slug> [--inicio=9] [--duracao=8] [--capa=13] [--vertical] [--audio]
 
-Gera, sem audio e sem os metadados do drone (que incluem GPS e numero de serie):
+--audio mantem a primeira faixa de som na versao completa (use so para voz ou trilha
+licenciada; trilha do Instagram nao pode ir para o site). A previa e sempre muda.
+
+Gera, sem os metadados do arquivo (os do drone incluem GPS e numero de serie):
   public/videos/<slug>-previa.mp4   trecho curto e leve, para tocar nas molduras
   public/videos/<slug>.mp4          video inteiro em 720p, para a pagina do trabalho
   src/assets/trabalhos/<slug>.jpg   capa (quadro do segundo indicado em --capa)
@@ -36,6 +39,7 @@ def achar_ffmpeg() -> str:
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 opcoes = dict(a[2:].split("=", 1) for a in sys.argv[1:] if a.startswith("--") and "=" in a)
 vertical = "--vertical" in sys.argv
+com_audio = "--audio" in sys.argv
 if len(args) < 2:
     sys.exit(__doc__)
 
@@ -46,14 +50,16 @@ previa_tam, completo_tam, capa_tam = ("540:960", "720:1280", "1080:1920") if ver
 ff = achar_ffmpeg()
 Path("public/videos").mkdir(parents=True, exist_ok=True)
 Path("src/assets/trabalhos").mkdir(parents=True, exist_ok=True)
-comum = ["-map", "0:v:0", "-an", "-map_metadata", "-1", "-map_chapters", "-1", "-c:v", "libx264", "-profile:v", "high",
+video = ["-map_metadata", "-1", "-map_chapters", "-1", "-c:v", "libx264", "-profile:v", "high",
          "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-preset", "slow"]
+comum = ["-map", "0:v:0", "-an"] + video
+som = ["-map", "0:v:0", "-map", "0:a:0", "-c:a", "aac", "-b:a", "96k", "-ac", "1"] + video if com_audio else comum
 base = [ff, "-hide_banner", "-loglevel", "error", "-y"]
 
 subprocess.run(base + ["-ss", inicio, "-t", duracao, "-i", origem] + comum +
                ["-vf", f"scale={previa_tam}:flags=lanczos", "-crf", "27", "-maxrate", "1400k", "-bufsize", "2800k",
                 f"public/videos/{slug}-previa.mp4"], check=True)
-subprocess.run(base + ["-i", origem] + comum +
+subprocess.run(base + ["-i", origem] + som +
                ["-vf", f"scale={completo_tam}:flags=lanczos", "-crf", "26", "-maxrate", "1700k", "-bufsize", "3400k",
                 f"public/videos/{slug}.mp4"], check=True)
 subprocess.run(base + ["-ss", capa, "-i", origem, "-map_metadata", "-1", "-frames:v", "1",

@@ -31,6 +31,7 @@ const { data, id } = trabalho;
 const m = data.midia;
 const { Content } = await render(trabalho);
 const estudo = data.tipo === 'estudo';
+const vertical = ['9:16', '4:5'].includes(m.proporcao);
 const frente = frentes[data.frente];
 
 const tituloLongo = `${data.titulo} · ${estudo ? 'Estudo autoral' : data.categoria} · AvilaCore`;
@@ -68,6 +69,7 @@ if (m.formato !== 'imagem') {
     description: m.transcricao ? m.transcricao.slice(0, 300) : descricao,
     thumbnailUrl: `${site.url}${capaGrande.src}`,
     uploadDate: dataISO(data.atualizado),
+    ...(m.transcricao ? { transcript: m.transcricao } : {}),
     ...(m.formato === 'video'
       ? { contentUrl: `${site.url}${m.arquivo}` }
       : {
@@ -101,6 +103,7 @@ if (m.formato !== 'imagem') {
       </div>
     </header>
 
+    <div class:list={['corpo', vertical && 'corpo--vertical']}>
     <div class:list={['midia', m.formato === 'imagem' && m.celular ? 'midia--dupla' : '']}>
       <Quadro proporcao={m.proporcao} class="midia__principal">
         {
@@ -174,6 +177,7 @@ if (m.formato !== 'imagem') {
         </div>
       </div>
     </section>
+    </div>
   </article>
 
   {
@@ -243,6 +247,41 @@ if (m.formato !== 'imagem') {
 
   .detalhes .grade {
     row-gap: var(--espaco-l);
+  }
+
+  /* vídeo em pé: fica estreito, com a ficha e o texto ao lado no desktop */
+  .corpo--vertical {
+    display: grid;
+    gap: var(--espaco-l);
+    max-width: calc(var(--largura-max) + 2 * var(--margem));
+    margin-inline: auto;
+    padding-inline: var(--margem);
+    padding-bottom: var(--espaco-2xl);
+  }
+  .corpo--vertical .midia {
+    width: 100%;
+    max-width: 22rem;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+  .corpo--vertical .detalhes {
+    padding-block: 0;
+    content-visibility: visible;
+  }
+  .corpo--vertical .detalhes .grade {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 0;
+  }
+  .corpo--vertical .ficha,
+  .corpo--vertical .contexto {
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 52rem) {
+    .corpo--vertical {
+      grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+      column-gap: clamp(2rem, 7vw, 6rem);
+      align-items: start;
+    }
   }
   .ficha {
     border-top: var(--traco) solid var(--linha);

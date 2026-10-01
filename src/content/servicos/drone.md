@@ -53,10 +53,12 @@ fechamento: Tem um lugar para mostrar do alto?
 atualizado: 2026-10-01
 ---
 
-Uma foto tirada do chão mostra a fachada. Do alto dá para ver o terreno inteiro, a posição da casa no lote, a rua de acesso e o que existe em volta: praça, mata, avenida, vizinhos. Para quem escolhe um imóvel pela internet, isso responde perguntas que a pessoa só tiraria na visita.
+A tomada acima é um lago com chafariz, gravado numa manhã de agosto. Da margem, você veria um trecho de água e as árvores da frente. Do alto, o lago inteiro cabe no quadro: o desenho da margem, a mata em volta e o chafariz no meio.
 
-Em um evento, a imagem aérea mostra o tamanho do público e a montagem do espaço num quadro só. Em um negócio com área externa, como um restaurante com jardim, um galpão ou um loteamento, ela dá a noção de escala que a foto da calçada não dá.
+A imagem aérea faz o mesmo por um imóvel. A foto tirada do chão mostra a fachada. Do alto dá para ver o terreno inteiro, a posição da casa no lote, a rua de acesso e o que existe em volta. Para quem escolhe um imóvel pela internet, isso responde perguntas que a pessoa só tiraria na visita.
 
-O drone é a minha frente mais nova. Ainda não tenho um histórico de trabalhos pagos para mostrar aqui. As tomadas desta página são minhas, gravadas por conta própria, e não uso imagem de banco para preencher espaço. O que eu trago é o cuidado com enquadramento, luz e edição que já uso nos vídeos e nos sites.
+Em um evento, ela mostra o tamanho do público e a montagem do espaço num quadro só. Em um negócio com área externa, como um restaurante com jardim, um galpão ou um loteamento, dá a noção de escala que a foto da calçada não dá.
+
+O drone é a minha frente mais nova. Ainda não tenho um histórico de trabalhos pagos para mostrar aqui. As tomadas desta página são minhas, gravadas por conta própria, e não uso imagem de banco para preencher espaço.
 
 Antes de cada voo eu confiro se o local permite a operação e qual é o melhor horário de luz. Se o lugar ou o clima não deixarem voar com segurança, eu aviso e a gente remarca.

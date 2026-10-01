@@ -15,9 +15,10 @@ interface Props {
 const { trabalho, sizes = '(min-width: 60rem) 50vw, 100vw', nivel: Titulo = 'h3', prioridade = false } = Astro.props;
 const { data, id } = trabalho;
 const imagem = data.midia.formato === 'imagem' ? data.midia.src : data.midia.poster;
+const vertical = ['9:16', '4:5'].includes(data.midia.proporcao);
 ---
 
-<article class="trabalho">
+<article class:list={['trabalho', vertical && 'trabalho--vertical']}>
   <a class="trabalho__link" href={`/trabalhos/${id}`}>
     <Quadro proporcao={data.midia.proporcao}>
       <Picture
@@ -55,6 +56,10 @@ const imagem = data.midia.formato === 'imagem' ? data.midia.src : data.midia.pos
   .trabalho__link:hover :global(.quadro),
   .trabalho__link:focus-visible :global(.quadro) {
     border-color: var(--borda);
+  }
+  /* vídeo em pé: a moldura fica estreita, do tamanho de um celular */
+  .trabalho--vertical :global(.quadro) {
+    max-width: 19rem;
   }
   .trabalho__meta {
     display: flex;

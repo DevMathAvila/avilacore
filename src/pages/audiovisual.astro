@@ -8,6 +8,7 @@ import Base from '../layouts/Base.astro';
 import TopoPagina from '../components/TopoPagina.astro';
 import Quadro from '../components/Quadro.astro';
 import ArteFrente from '../components/ArteFrente.astro';
+import MidiaQuadro from '../components/MidiaQuadro.astro';
 import Processo from '../components/Processo.astro';
 import Duvidas from '../components/Duvidas.astro';
 import CartaoTrabalho from '../components/CartaoTrabalho.astro';
@@ -26,14 +27,20 @@ const migalhas = [{ nome: d.nome, caminho: '/audiovisual' }];
 const etapas = d.itens.filter((i) => i.confirmado);
 const confirmados = etapas.map((i) => i.nome);
 
+/** vídeo em pé desta frente e, para o formato deitado, uma tomada de drone (também é vídeo meu) */
+const emPe = trabalhos.find((x) => x.data.midia.proporcao === '9:16');
+const deitado = (await trabalhosPublicados('drone')).find((x) => x.data.midia.proporcao === '16:9' && x.data.midia.formato === 'video');
+
 const formatos = [
   {
     proporcao: '9:16',
+    trabalho: emPe,
     nome: 'Vertical',
     uso: 'Reels, Stories, Shorts e TikTok. É o formato de quem assiste com o celular em pé.',
   },
   {
     proporcao: '16:9',
+    trabalho: deitado,
     nome: 'Horizontal',
     uso: 'YouTube, site e apresentações. Mostra mais do ambiente e funciona bem em tela grande.',
   },
@@ -62,11 +69,21 @@ const formatos = [
         formatos.map((f) => (
           <figure class={`formato formato--${f.nome.toLowerCase()}`}>
             <Quadro proporcao={f.proporcao}>
-              {f.proporcao === '9:16' ? <ArteFrente frente="audiovisual" /> : <ArteFrente frente="audiovisual-horizontal" />}
+              {f.trabalho ? (
+                <MidiaQuadro trabalho={f.trabalho} widths={[320, 480, 720, 960]} sizes={f.proporcao === '9:16' ? '(min-width: 48rem) 25vw, 45vw' : '(min-width: 48rem) 60vw, 92vw'} />
+              ) : (
+                <ArteFrente frente={f.proporcao === '9:16' ? 'audiovisual' : 'audiovisual-horizontal'} />
+              )}
             </Quadro>
             <figcaption>
               <strong>{f.nome}</strong>
               <span class="apoio">{f.uso}</span>
+              {f.trabalho && (
+                <span class="apoio pequeno">
+                  Na moldura: <a href={`/trabalhos/${f.trabalho.id}`}>{f.trabalho.data.titulo}</a>
+                  {f.trabalho.data.frente === 'drone' ? ', tomada aérea autoral.' : '.'}
+                </span>
+              )}
             </figcaption>
           </figure>
         ))
@@ -126,7 +143,7 @@ const formatos = [
     trabalhos.length > 0 && (
       <section class="secao">
         <div class="grade">
-          <h2>Vídeos</h2>
+          <h2>Vídeos que eu fiz</h2>
           <div class="trabalhos-frente">
             {trabalhos.map((t) => <CartaoTrabalho trabalho={t} />)}
           </div>
