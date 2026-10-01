@@ -17,6 +17,7 @@ Astro 7 (páginas estáticas + rota `/api/contato` no servidor), CSS próprio co
 ## Comandos
 - `npm run dev` · `npm run build` · `npm run preview` · `npm run check`
 - `node scripts/marca/gerar-kit.mjs` gera o kit em `public/brand/` e os ícones
+- `python scripts/video.py <original> <slug> [--inicio --duracao --capa --vertical]` gera prévia, versão 720p e capa de um vídeo, sem áudio e sem metadados (precisa de ffmpeg)
 - `python scripts/testes.py <url>` (axe, teclado, menu, formulário) · `python scripts/revisao.py <url> <pasta>` (capturas em várias larguras) · `python scripts/captura.py <url> <saida.png>`
 - Scanner de design: `node ../.agents/skills/avoid-ai-design/scripts/detect.mjs src`
 
@@ -41,6 +42,7 @@ Astro 7 (páginas estáticas + rota `/api/contato` no servidor), CSS próprio co
 ## Honestidade (regra do Matheus)
 - Não inventar cliente, projeto, depoimento, número, prazo, preço, certificação ou endereço.
 - Estudos autorais (Soleira, Beiral, Lívia Carvalhal, Varanda) sempre identificados como estudo; as fotos deles são de banco de imagem.
+- Tomadas aéreas autorais publicadas (out/2026): Lago com chafariz e Chácaras no fim da tarde, gravadas com DJI Neo, sem cliente e sem local informado. A tomada vertical da obra (pessoa na janela) NÃO foi publicada: aguarda autorização; arquivos em `_conteudo/04-aereo/`.
 - Clientes reais (Mayara Gaspareto, Deckboost, Tatiane Silva) e os três depoimentos estão prontos, com `publicado: false` e `autorizado: false`, até a autorização de cada um.
 - Drone: não afirmar cadastro, seguro ou licença sem dado em `src/config/site.ts`. Regra atual: RBAC nº 100 (Resolução ANAC nº 805, de 15/06/2026).
 

@@ -1,8 +1,8 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Quadro from '../components/Quadro.astro';
 import ArteFrente from '../components/ArteFrente.astro';
+import MidiaQuadro from '../components/MidiaQuadro.astro';
 import Processo from '../components/Processo.astro';
 import CartaoTrabalho from '../components/CartaoTrabalho.astro';
 import Fechamento from '../components/Fechamento.astro';
@@ -16,6 +16,11 @@ const descricao =
 const frentes = await servicos();
 const trabalhos = await trabalhosPublicados();
 const destaque = (f: Frente) => trabalhos.find((t) => t.data.frente === f);
+/** na home, um trabalho de cada frente que já tem algo publicado (no máximo dois) */
+const vitrine = (['drone', 'audiovisual', 'sites'] as Frente[])
+  .map(destaque)
+  .filter((t) => t !== undefined)
+  .slice(0, 2);
 
 /** proporção da moldura de cada frente: o formato do próprio meio */
 const formato: Record<Frente, string> = { audiovisual: '9:16', drone: '16:9', sites: '16:10' };
@@ -106,15 +111,7 @@ const situacoes = [
             <article class={`frente frente--${f.data.frente}`}>
               <Quadro proporcao={formato[f.data.frente]}>
                 {t ? (
-                  <Picture
-                    src={t.data.midia.formato === 'imagem' ? t.data.midia.src : t.data.midia.poster}
-                    alt={t.data.midia.alt}
-                    formats={['avif', 'webp']}
-                    widths={[360, 520, 720, 960]}
-                    sizes="(min-width: 60rem) 30vw, 90vw"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <MidiaQuadro trabalho={t} widths={[360, 520, 720, 960]} sizes="(min-width: 60rem) 40vw, 90vw" />
                 ) : (
                   <ArteFrente frente={f.data.frente} />
                 )}
@@ -169,8 +166,8 @@ const situacoes = [
       {
         trabalhos.length > 0 ? (
           <p class="eixo-b apoio">
-            O portfólio está crescendo. Por enquanto, o que você vê aqui são estudos autorais: sites
-            que criei para marcas fictícias, para mostrar como eu trabalho.
+            O portfólio está crescendo. Por enquanto, o que você vê aqui são estudos autorais:
+            tomadas aéreas que gravei por conta própria e sites que criei para marcas fictícias.
           </p>
         ) : (
           <p class="eixo-b apoio">
@@ -183,7 +180,7 @@ const situacoes = [
     {
       trabalhos.length > 0 && (
         <div class="grade trabalhos-home__lista">
-          {trabalhos.slice(0, 2).map((t) => <CartaoTrabalho trabalho={t} />)}
+          {vitrine.map((t) => <CartaoTrabalho trabalho={t} />)}
           <p class="trabalhos-home__todos">
             <a class="link" href="/trabalhos">Ver todos os trabalhos e estudos</a>
           </p>

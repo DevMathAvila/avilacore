@@ -9,6 +9,7 @@ import Base from '../layouts/Base.astro';
 import TopoPagina from '../components/TopoPagina.astro';
 import Quadro from '../components/Quadro.astro';
 import ArteFrente from '../components/ArteFrente.astro';
+import MidiaQuadro from '../components/MidiaQuadro.astro';
 import ListaItens from '../components/ListaItens.astro';
 import Processo from '../components/Processo.astro';
 import Duvidas from '../components/Duvidas.astro';
@@ -44,11 +45,25 @@ const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
 
   <div class="vista">
     <Quadro proporcao="16:9">
-      <ArteFrente frente="drone" />
+      {
+        trabalhos[0] ? (
+          <MidiaQuadro trabalho={trabalhos[0]} widths={[480, 800, 1200, 1600]} sizes="96vw" prioridade />
+        ) : (
+          <ArteFrente frente="drone" />
+        )
+      }
     </Quadro>
-    <p class="vista__coord pequeno numeros apoio">
-      {site.coordenadas.lat}, {site.coordenadas.lon}. {site.cidade}, {site.uf}
-    </p>
+    {
+      trabalhos[0] ? (
+        <p class="vista__coord pequeno apoio">
+          <a href={`/trabalhos/${trabalhos[0].id}`}>{trabalhos[0].data.titulo}</a>, captação autoral.
+        </p>
+      ) : (
+        <p class="vista__coord pequeno numeros apoio">
+          {site.coordenadas.lat}, {site.coordenadas.lon}. {site.cidade}, {site.uf}
+        </p>
+      )
+    }
   </div>
 
   <section class="secao">
@@ -115,7 +130,7 @@ const confirmados = d.itens.filter((i) => i.confirmado).map((i) => i.nome);
     trabalhos.length > 0 && (
       <section class="secao">
         <div class="grade">
-          <h2>Trabalhos com drone</h2>
+          <h2>{trabalhos.every((x) => x.data.tipo === 'estudo') ? 'Tomadas autorais' : 'Trabalhos com drone'}</h2>
           <div class="trabalhos-frente">
             {trabalhos.map((t) => <CartaoTrabalho trabalho={t} />)}
           </div>

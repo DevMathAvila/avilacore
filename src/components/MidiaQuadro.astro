@@ -1,0 +1,41 @@
+---
+/**
+ * A mídia de um trabalho para pôr dentro de um <Quadro>: a imagem (ou a capa do vídeo)
+ * e, quando o trabalho tem uma prévia curta, o vídeo silencioso por cima.
+ */
+import { Picture } from 'astro:assets';
+import PreviaVideo from './PreviaVideo.astro';
+import type { Trabalho } from '../lib/conteudo';
+
+interface Props {
+  trabalho: Trabalho;
+  widths: number[];
+  sizes: string;
+  /** true para a mídia que aparece na primeira tela */
+  prioridade?: boolean;
+}
+const { trabalho, widths, sizes, prioridade = false } = Astro.props;
+const m = trabalho.data.midia;
+const capa = m.formato === 'imagem' ? m.src : m.poster;
+const previa = m.formato === 'video' ? m.previa : undefined;
+const imagem = {
+  src: capa,
+  alt: m.alt,
+  formats: ['avif', 'webp'] as ('avif' | 'webp')[],
+  widths,
+  sizes,
+  loading: (prioridade ? 'eager' : 'lazy') as 'eager' | 'lazy',
+  fetchpriority: (prioridade ? 'high' : 'auto') as 'high' | 'auto',
+  decoding: 'async' as const,
+};
+---
+
+{
+  previa ? (
+    <PreviaVideo src={previa}>
+      <Picture {...imagem} />
+    </PreviaVideo>
+  ) : (
+    <Picture {...imagem} />
+  )
+}

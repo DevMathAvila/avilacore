@@ -51,7 +51,8 @@ Texto livre contando o contexto do trabalho.
 
 Para vídeo:
 
-- **Arquivo próprio:** `formato: video`, `arquivo: /videos/nome.mp4` (o arquivo fica em `public/videos/`) e `poster: ../../assets/trabalhos/nome.jpg`. Vídeo pesado fica fora do repositório: suba no YouTube ou no Vimeo e use o formato abaixo.
+- **Prepare os arquivos** com `python scripts/video.py "C:\caminho\original.mp4" nome-do-trabalho --inicio=9 --duracao=8 --capa=13` (acrescente `--vertical` para vídeo em pé). O script gera a prévia curta, a versão completa em 720p e a capa, sem áudio e sem os metadados do drone, que incluem GPS e número de série.
+- **Arquivo próprio:** `formato: video`, `arquivo: /videos/nome.mp4`, `previa: /videos/nome-previa.mp4` e `poster: ../../assets/trabalhos/nome.jpg`. Com `previa`, o vídeo toca sozinho, sem som, nas molduras da home e da página da frente. Vídeo com mais de uns 10 MB fica fora do repositório: suba no YouTube ou no Vimeo e use o formato abaixo.
 - **YouTube ou Vimeo:** `formato: video-externo`, `provedor: youtube` (ou `vimeo`), `id: o-id-do-video` e o `poster`. O player só carrega quando a pessoa clica.
 - Se o vídeo tem fala, preencha `transcricao`.
 

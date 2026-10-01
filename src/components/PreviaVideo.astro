@@ -1,25 +1,23 @@
 ---
 /**
- * Prévia silenciosa: toca em loop, sem som, só enquanto está visível.
- * Mostra o poster até carregar, tem botão de pausa (WCAG 2.2.2) e,
- * com prefers-reduced-motion, fica parada no poster até a pessoa tocar.
+ * Prévia silenciosa dentro de uma moldura: toca em loop, sem som, só enquanto está visível.
+ * A capa (slot, com o texto alternativo) fica à mostra até o vídeo começar; o arquivo só é baixado quando a
+ * moldura entra na tela. Tem botão de pausa (WCAG 2.2.2) e, com prefers-reduced-motion,
+ * fica parada na capa até a pessoa tocar.
  */
 interface Props {
-  /** caminho do vídeo em /public (mp4/webm curto e leve) */
+  /** caminho do vídeo curto em /public (mp4 leve, sem áudio) */
   src: string;
-  /** URL do poster já processado (use getImage) */
-  poster: string;
-  /** descrição do que o vídeo mostra */
-  alt: string;
 }
-const { src, poster, alt } = Astro.props;
+const { src } = Astro.props;
 ---
 
 <div class="previa" data-previa>
-  <video muted loop playsinline preload="none" poster={poster} aria-label={alt} disablepictureinpicture>
+  <slot />
+  <video muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture>
     <source src={src} type={src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
   </video>
-  <button type="button" class="previa__botao" data-previa-botao aria-pressed="false">Pausar</button>
+  <button type="button" class="previa__botao" data-previa-botao>Tocar vídeo</button>
 </div>
 
 <script>
@@ -32,10 +30,10 @@ const { src, poster, alt } = Astro.props;
     let pausadoPelaPessoa = semMovimento.matches;
 
     const atualizar = () => {
-      botao.textContent = video.paused ? 'Tocar' : 'Pausar';
-      botao.setAttribute('aria-pressed', String(video.paused));
+      botao.textContent = video.paused ? 'Tocar vídeo' : 'Pausar vídeo';
     };
     const tocar = () => video.play().then(atualizar, atualizar);
+    video.addEventListener('playing', () => caixa.setAttribute('data-tocando', ''), { once: true });
     atualizar();
 
     new IntersectionObserver(
@@ -46,7 +44,7 @@ const { src, poster, alt } = Astro.props;
           atualizar();
         }
       },
-      { threshold: 0.5 },
+      { threshold: 0.4 },
     ).observe(caixa);
 
     botao.addEventListener('click', () => {
@@ -67,15 +65,27 @@ const { src, poster, alt } = Astro.props;
     position: absolute;
     inset: 0;
   }
+  .previa :global(picture),
+  .previa :global(img),
   .previa video {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+  /* o vídeo fica transparente sobre a capa até começar a tocar */
+  .previa video {
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--curva);
+  }
+  .previa[data-tocando] video {
+    opacity: 1;
+  }
   .previa__botao {
     position: absolute;
-    right: 0.75rem;
-    top: 0.75rem;
+    left: 0.6rem;
+    bottom: 0.6rem;
     z-index: 3;
     min-width: var(--toque);
     min-height: var(--toque);

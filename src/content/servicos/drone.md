@@ -57,6 +57,6 @@ Uma foto tirada do chão mostra a fachada. Do alto dá para ver o terreno inteir
 
 Em um evento, a imagem aérea mostra o tamanho do público e a montagem do espaço num quadro só. Em um negócio com área externa, como um restaurante com jardim, um galpão ou um loteamento, ela dá a noção de escala que a foto da calçada não dá.
 
-O drone é a minha frente mais nova. Ainda não tenho um histórico de trabalhos pagos para mostrar aqui, e não vou preencher a página com imagens que não são minhas. O que eu trago é o cuidado com enquadramento, luz e edição que já uso nos vídeos e nos sites.
+O drone é a minha frente mais nova. Ainda não tenho um histórico de trabalhos pagos para mostrar aqui. As tomadas desta página são minhas, gravadas por conta própria, e não uso imagem de banco para preencher espaço. O que eu trago é o cuidado com enquadramento, luz e edição que já uso nos vídeos e nos sites.
 
 Antes de cada voo eu confiro se o local permite a operação e qual é o melhor horário de luz. Se o lugar ou o clima não deixarem voar com segurança, eu aviso e a gente remarca.

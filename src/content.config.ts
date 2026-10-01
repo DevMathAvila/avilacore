@@ -70,6 +70,8 @@ const trabalhos = defineCollection({
           formato: z.literal('video'),
           /** caminho do arquivo em /public (ex.: /videos/meu-video.mp4) */
           arquivo: z.string(),
+          /** trecho curto e leve, sem som, para tocar nas molduras (ex.: /videos/meu-video-previa.mp4) */
+          previa: z.string().optional(),
           poster: image(),
           alt: z.string().min(10),
           proporcao,
