@@ -19,7 +19,7 @@ nota: Projeto demonstrativo. A construtora, os números, os contatos e os depoim
 link:
   rotulo: Visitar o estudo
   url: https://demonstrativo-construtora.vercel.app
-ordem: 2
+ordem: 5
 publicado: true
 atualizado: 2026-10-01
 ---

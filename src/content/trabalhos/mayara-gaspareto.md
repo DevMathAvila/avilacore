@@ -19,9 +19,11 @@ creditos:
 link:
   rotulo: Visitar o site
   url: https://www.mayaragaspareto.com.br
-ordem: 10
-# AGUARDANDO AUTORIZAÇÃO da cliente (ver _conteudo/03-digital/mayara-gaspareto/info.md).
-# Com a autorização registrada, troque para true.
-publicado: false
+ordem: 1
+publicado: true
 atualizado: 2026-10-01
 ---
+
+Site da engenheira civil Mayara Gaspareto, de Indaiatuba, no ar em mayaragaspareto.com.br. Reúne os projetos dela, os serviços e o contato pelo WhatsApp.
+
+Feito em Next.js.

@@ -7,7 +7,7 @@
 **Categoria:** Pessoal — Sites & Clientes
 **O que é:** Site profissional real de Matheus Ávila (Indaiatuba, SP), sob a marca **AvilaCore**. Três frentes: audiovisual, drone e sites. Suporte técnico saiu do site.
 **Produção:** https://www.avilacore.com.br (domínio principal na Vercel é o `www`). Repositório público: `DevMathAvila/avilacore`.
-**Estado:** remodelagem completa no branch `remodelagem` (out/2026). Nada vai para `main` sem aprovação do Matheus.
+**Estado:** remodelagem publicada em 01/10/2026 (`main` = `remodelagem`). O trabalho continua no branch `remodelagem`; nada vai para `main` sem aprovação do Matheus.
 
 > Índice raiz: ../CLAUDE.md
 
@@ -43,7 +43,9 @@ Astro 7 (páginas estáticas + rota `/api/contato` no servidor), CSS próprio co
 - Não inventar cliente, projeto, depoimento, número, prazo, preço, certificação ou endereço.
 - Estudos autorais (Soleira, Beiral, Lívia Carvalhal, Varanda) sempre identificados como estudo; as fotos deles são de banco de imagem.
 - Tomadas aéreas autorais publicadas (out/2026): Lago com chafariz e Chácaras no fim da tarde, gravadas com DJI Neo, sem cliente e sem local informado. A tomada vertical da obra (pessoa na janela) NÃO foi publicada: aguarda autorização; arquivos em `_conteudo/04-aereo/`.
-- Clientes reais (Mayara Gaspareto, Deckboost, Tatiane Silva) e os três depoimentos estão prontos, com `publicado: false` e `autorizado: false`, até a autorização de cada um.
+- Sites de clientes publicados em 01/10/2026 a pedido do Matheus: Mayara Gaspareto, Deckboost e Tatiane Silva (`tipo: real`, com link para o site no ar). Em `/sites` eles vêm antes dos estudos, em "Sites no ar".
+- Vídeos de cliente publicados: Da obra ao projeto e O projeto virando casa (Reels da Mayara Gaspareto).
+- Os três depoimentos continuam com `autorizado: false`: só entram quando o Matheus confirmar a autorização de cada pessoa.
 - Drone: não afirmar cadastro, seguro ou licença sem dado em `src/config/site.ts`. Regra atual: RBAC nº 100 (Resolução ANAC nº 805, de 15/06/2026).
 
 ## Pastas que não fazem parte do site

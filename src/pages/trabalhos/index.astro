@@ -22,7 +22,7 @@ const soEstudos = trabalhos.length > 0 && trabalhos.every((t) => t.data.tipo ===
 
 const titulo = 'Trabalhos e estudos · AvilaCore';
 const descricao =
-  'Vídeos, imagens aéreas e sites da AvilaCore. Estudos autorais aparecem identificados como estudo.';
+  'Vídeos, imagens aéreas e sites da AvilaCore, feitos para clientes ou como estudo autoral. Cada um aparece identificado.';
 const migalhas = [{ nome: 'Trabalhos', caminho: '/trabalhos' }];
 
 const nomes = (lista: Frente[]) => {
@@ -35,7 +35,7 @@ const lead =
     ? 'O portfólio está crescendo. Os trabalhos entram aqui conforme forem publicados, com crédito e contexto.'
     : soEstudos
       ? 'O portfólio está crescendo. Por enquanto, estes são estudos autorais: tomadas aéreas que gravei por conta própria e sites que criei para marcas fictícias.'
-      : 'Trabalhos para clientes e estudos autorais, cada um identificado.';
+      : 'Sites e vídeos feitos para clientes, ao lado de estudos autorais. Cada um aparece identificado.';
 ---
 
 <Base

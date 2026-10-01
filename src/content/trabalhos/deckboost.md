@@ -18,9 +18,9 @@ creditos:
 link:
   rotulo: Visitar o site
   url: https://www.deckboost.com.br
-ordem: 11
-# AGUARDANDO AUTORIZAÇÃO do cliente (ver _conteudo/03-digital/deckboost/info.md).
-# Antes de publicar, refaça a captura sem o aviso de cookies.
-publicado: false
+ordem: 2
+publicado: true
 atualizado: 2026-10-01
 ---
+
+Site da Deckboost, no ar em deckboost.com.br. A página conta, em sequência, o problema que a empresa resolve para times comerciais e como ela trabalha.

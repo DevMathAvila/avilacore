@@ -19,7 +19,7 @@ nota: Projeto demonstrativo. A clínica, os profissionais, os registros e os con
 link:
   rotulo: Visitar o estudo
   url: https://demonstrativo-odontologia.vercel.app
-ordem: 4
+ordem: 7
 publicado: true
 atualizado: 2026-10-01
 ---

@@ -1,7 +1,7 @@
 ---
 /**
- * Sites: a única frente com material para mostrar hoje, então a página abre
- * com os estudos autorais e só depois explica o serviço.
+ * Sites: a página abre com o que já existe (primeiro os sites no ar, feitos
+ * para clientes, depois os estudos autorais) e só então explica o serviço.
  */
 import { render } from 'astro:content';
 import { Image } from 'astro:assets';
@@ -19,7 +19,8 @@ const s = await servicoDa('sites');
 const { Content } = await render(s);
 const d = s.data;
 const trabalhos = await trabalhosPublicados('sites');
-const soEstudos = trabalhos.every((t) => t.data.tipo === 'estudo');
+const reais = trabalhos.filter((t) => t.data.tipo === 'real');
+const estudos = trabalhos.filter((t) => t.data.tipo === 'estudo');
 const depoimentos = await Promise.all(
   (await depoimentosAutorizados('sites')).map(async (dep) => ({ dep, Texto: (await render(dep)).Content })),
 );
@@ -51,20 +52,34 @@ const todoSite = [
   </TopoPagina>
 
   {
-    trabalhos.length > 0 && (
-      <section class="vitrine" aria-labelledby="t-vitrine">
+    reais.length > 0 && (
+      <section class="vitrine" aria-labelledby="t-clientes">
         <div class="grade">
-          <h2 id="t-vitrine">{soEstudos ? 'Estudos autorais' : 'Sites que eu fiz'}</h2>
-          {soEstudos && (
-            <p class="eixo-b apoio vitrine__nota">
-              Sites que criei para marcas fictícias, cada um para um tipo de negócio. Servem para
-              você ver como eu trabalho antes de conversar.
-            </p>
-          )}
+          <h2 id="t-clientes">Sites no ar</h2>
+          <p class="eixo-b apoio vitrine__nota">Feitos para clientes e publicados no domínio de cada um.</p>
         </div>
         <div class="grade vitrine__lista">
-          {trabalhos.map((t, i) => (
+          {reais.map((t, i) => (
             <CartaoTrabalho trabalho={t} nivel="h3" prioridade={i === 0} sizes="(min-width: 60rem) 45vw, 92vw" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    estudos.length > 0 && (
+      <section class="vitrine" aria-labelledby="t-estudos">
+        <div class="grade">
+          <h2 id="t-estudos">Estudos autorais</h2>
+          <p class="eixo-b apoio vitrine__nota">
+            Sites que criei para marcas fictícias, cada um para um tipo de negócio. Mostram como eu
+            trabalharia em áreas em que ainda não tenho cliente.
+          </p>
+        </div>
+        <div class="grade vitrine__lista">
+          {estudos.map((t, i) => (
+            <CartaoTrabalho trabalho={t} nivel="h3" prioridade={reais.length === 0 && i === 0} sizes="(min-width: 60rem) 45vw, 92vw" />
           ))}
         </div>
       </section>

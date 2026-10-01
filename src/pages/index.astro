@@ -17,10 +17,13 @@ const frentes = await servicos();
 const trabalhos = await trabalhosPublicados();
 const destaque = (f: Frente) => trabalhos.find((t) => t.data.frente === f);
 const temReal = trabalhos.some((t) => t.data.tipo === 'real');
-/** na home, um trabalho de cada frente que já tem algo publicado (no máximo dois) */
-const vitrine = (['audiovisual', 'drone', 'sites'] as Frente[])
-  .map(destaque)
+/** na home, um trabalho por frente (no máximo dois), com os feitos para cliente na frente dos estudos */
+const daFrente = (f: Frente, tipo: 'real' | 'estudo') =>
+  trabalhos.find((t) => t.data.frente === f && t.data.tipo === tipo);
+const vitrine = (['sites', 'audiovisual', 'drone'] as Frente[])
+  .map((f) => daFrente(f, 'real') ?? daFrente(f, 'estudo'))
   .filter((t) => t !== undefined)
+  .sort((a, b) => Number(b.data.tipo === 'real') - Number(a.data.tipo === 'real'))
   .slice(0, 2);
 
 /** proporção da moldura de cada frente: o formato do próprio meio */
@@ -169,7 +172,7 @@ const situacoes = [
           <p class="eixo-b apoio">
             {
               temReal
-                ? 'O portfólio está crescendo. Aqui entram vídeos feitos para clientes e estudos autorais, como tomadas aéreas e sites para marcas fictícias. Cada um aparece identificado.'
+                ? 'Sites e vídeos feitos para clientes, ao lado de estudos autorais: tomadas aéreas que gravei por conta própria e sites para marcas fictícias. Cada um aparece identificado.'
                 : 'O portfólio está crescendo. Por enquanto, o que você vê aqui são estudos autorais: tomadas aéreas que gravei por conta própria e sites que criei para marcas fictícias.'
             }
           </p>

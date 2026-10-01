@@ -19,7 +19,7 @@ nota: Projeto demonstrativo. A advogada, o número da OAB e os contatos são fic
 link:
   rotulo: Visitar o estudo
   url: https://demonstrativo-advocacia.vercel.app
-ordem: 3
+ordem: 6
 publicado: true
 atualizado: 2026-10-01
 ---

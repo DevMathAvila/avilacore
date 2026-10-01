@@ -19,7 +19,7 @@ nota: Projeto demonstrativo. O escritório, as pessoas e os projetos são fictí
 link:
   rotulo: Visitar o estudo
   url: https://demonstrativo-arquitetura.vercel.app
-ordem: 1
+ordem: 4
 publicado: true
 atualizado: 2026-10-01
 ---

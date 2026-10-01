@@ -19,9 +19,9 @@ creditos:
 link:
   rotulo: Visitar o site
   url: https://www.tatianesilvadv.com.br
-ordem: 12
-# AGUARDANDO AUTORIZAÇÃO da cliente. Advocacia tem regras de publicidade da OAB:
-# confirme com ela o que pode ser exposto antes de trocar para true.
-publicado: false
+ordem: 3
+publicado: true
 atualizado: 2026-10-01
 ---
+
+Site da advogada Tatiane Silva, de Salto, no ar em tatianesilvadv.com.br. Institucional, apresenta a atuação dela em Direito de Família, o jeito de trabalhar e o contato pelo WhatsApp, em linguagem simples.
