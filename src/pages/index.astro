@@ -110,7 +110,7 @@ const situacoes = [
                     src={t.data.midia.formato === 'imagem' ? t.data.midia.src : t.data.midia.poster}
                     alt={t.data.midia.alt}
                     formats={['avif', 'webp']}
-                    widths={[400, 640, 960]}
+                    widths={[360, 520, 720, 960]}
                     sizes="(min-width: 60rem) 30vw, 90vw"
                     loading="lazy"
                     decoding="async"
@@ -349,8 +349,9 @@ const situacoes = [
     .hero::after {
       animation: foco-b var(--dur-3) var(--curva) both;
     }
+    /* o título só desliza (sem sumir), para ser pintado já no primeiro quadro */
     .hero h1 {
-      animation: sobe 560ms var(--curva) both;
+      animation: desliza 560ms var(--curva) both;
     }
     .hero__lead {
       animation: sobe 560ms var(--curva) 120ms both;
@@ -389,6 +390,11 @@ const situacoes = [
   @keyframes sobe {
     from {
       opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+  @keyframes desliza {
+    from {
       transform: translateY(0.75rem);
     }
   }

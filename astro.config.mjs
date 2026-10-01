@@ -43,6 +43,8 @@ export default defineConfig({
   site: SITE,
   trailingSlash: 'never',
   compressHTML: true,
+  // CSS embutido no HTML: nenhuma folha de estilo bloqueando a primeira renderização
+  build: { inlineStylesheets: 'always' },
   devToolbar: { enabled: false },
   // Na Vercel usa o adaptador dela. Fora dela (build local, astro preview), o de Node:
   // o empacotador da Vercel falha no Windows (EISDIR em readlink) e o de Node não.

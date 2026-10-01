@@ -165,6 +165,9 @@ textarea {
 
 .secao {
   padding-block: var(--espaco-2xl);
+  /* seções fora da tela só são calculadas quando chegam perto: menos trabalho no carregamento */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 40rem;
 }
 .secao + .secao {
   border-top: var(--traco) solid var(--linha);

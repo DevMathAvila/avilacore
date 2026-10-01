@@ -24,7 +24,7 @@ const imagem = data.midia.formato === 'imagem' ? data.midia.src : data.midia.pos
         src={imagem}
         alt={data.midia.alt}
         formats={['avif', 'webp']}
-        widths={[480, 800, 1200, 1600]}
+        widths={[400, 640, 800, 1200, 1600]}
         sizes={sizes}
         loading={prioridade ? 'eager' : 'lazy'}
         fetchpriority={prioridade ? 'high' : 'auto'}
